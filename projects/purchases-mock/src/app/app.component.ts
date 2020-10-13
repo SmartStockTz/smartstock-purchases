@@ -1,10 +1,14 @@
 import { Component } from '@angular/core';
+// import { PurchasesComponent } from 'smartstocks-purchase';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
+  template: `<lib-purchases></lib-purchases>`,
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
   title = 'purchases-mock';
+
+  lib() {
+  }
 }
