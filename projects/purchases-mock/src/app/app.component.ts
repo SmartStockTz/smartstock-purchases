@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-// import { PurchasesComponent } from 'smartstocks-purchase';
 
 @Component({
   selector: 'app-root',
@@ -9,6 +8,5 @@ import { Component } from '@angular/core';
 export class AppComponent {
   title = 'purchases-mock';
 
-  lib() {
-  }
+ 
 }
