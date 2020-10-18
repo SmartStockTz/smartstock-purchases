@@ -27,6 +27,15 @@ import { PurchasePageComponent } from './pages/purchase.page';
 import { PurchaseDetailsComponent } from './components/details.component';
 import { CreatePageComponent } from './pages/create.page';
 import { LibModule } from '@smartstock/core-libs';
+import {
+  DialogDeleteComponent,
+  StockDetailsComponent,
+} from './components/stock.component';
+import {
+  DialogSupplierDeleteComponent,
+  DialogSupplierNewComponent,
+  SuppliersComponent,
+} from './components/suppliers.component';
 
 const routes: Routes = [
   { path: '', component: PurchasePageComponent },
@@ -38,6 +47,11 @@ const routes: Routes = [
     PurchasePageComponent,
     PurchaseDetailsComponent,
     CreatePageComponent,
+    DialogDeleteComponent,
+    SuppliersComponent,
+    DialogSupplierNewComponent,
+    StockDetailsComponent,
+    DialogSupplierDeleteComponent,
   ],
   imports: [
     CommonModule,

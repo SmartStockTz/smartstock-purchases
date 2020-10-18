@@ -178,10 +178,10 @@ import { DeviceInfoUtil } from '@smartstock/core-libs/utils/device-info.util';
             </mat-tab>
           </mat-tab-group>
         </div>
-
+        <!-- 
         <smartstock-purchase-mobile
           *ngIf="isMobile"
-        ></smartstock-purchase-mobile>
+        ></smartstock-purchase-mobile> -->
 
         <smartstock-bottom-bar
           *ngIf="isMobile && !enoughWidth()"

@@ -376,7 +376,7 @@ import { StorageService } from '@smartstock/core-libs/services/storage.service';
       </mat-sidenav-content>
     </mat-sidenav-container>
   `,
-  styleUrls: ['../styles/create.style.css'],
+  styleUrls: ['../styles/create.style.scss'],
 })
 export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
   invoiceForm: FormGroup;
