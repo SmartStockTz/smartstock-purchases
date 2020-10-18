@@ -1,25 +1,27 @@
-import {Injectable} from '@angular/core';
-import {PurchaseModel} from '../models/purchase.model';
-import {HttpClient} from '@angular/common/http';
-import {ReceiptModel} from '../models/receipt.model';
-import {SettingsService} from '../../account/services/settings.service';
-import {BFast} from 'bfastjs';
-import {StorageService} from '../../lib/services/storage.service';
-import {SupplierModel} from '../models/supplier.model';
+import { Injectable } from '@angular/core';
+import { PurchaseModel } from '../models/purchase.model';
+import { HttpClient } from '@angular/common/http';
+import { ReceiptModel } from '../models/receipt.model';
+import { SettingsService } from '../services/settings.service';
+import { BFast } from 'bfastjs';
+// import {StorageService} from '../../lib/services/storage.service';
+import { SupplierModel } from '../models/supplier.model';
+import { StorageService } from '@smartstock/core-libs/services/storage.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PurchaseState {
-
-  constructor(private readonly _httpClient: HttpClient,
-              private readonly _storage: StorageService,
-              private readonly _settings: SettingsService) {
-  }
+  constructor(
+    private readonly _httpClient: HttpClient,
+    private readonly _storage: StorageService,
+    private readonly _settings: SettingsService
+  ) {}
 
   async recordPayment(id: string): Promise<any> {
     const activeShop = await this._storage.getActiveShop();
-    return BFast.database(activeShop.projectId).collection('purchases')
+    return BFast.database(activeShop.projectId)
+      .collection('purchases')
       .query()
       .byId(id)
       .updateBuilder()
@@ -27,14 +29,11 @@ export class PurchaseState {
       .update();
   }
 
-  addAllInvoices(invoices: ReceiptModel[], callback: (value: any) => void) {
-  }
+  addAllInvoices(invoices: ReceiptModel[], callback: (value: any) => void) {}
 
-  addAllPurchase(purchases: PurchaseModel[], callback: (value: any) => void) {
-  }
+  addAllPurchase(purchases: PurchaseModel[], callback: (value: any) => void) {}
 
-  addAllReceipts(invoices: ReceiptModel[], callback: (value: any) => void) {
-  }
+  addAllReceipts(invoices: ReceiptModel[], callback: (value: any) => void) {}
 
   addInvoice(invoice: ReceiptModel, callback: (value: any) => void) {
     // this.addReceipt(invoice, callback);
@@ -42,56 +41,64 @@ export class PurchaseState {
 
   async addPurchase(purchaseI: PurchaseModel): Promise<any> {
     const shop = await this._storage.getActiveShop();
-    return BFast.database(shop.projectId).transaction()
+    return BFast.database(shop.projectId)
+      .transaction()
       .create('purchases', purchaseI)
-      .update('stocks', purchaseI.items.filter(x => x.product.purchasable === true).map(item => {
-        return {
-          query: {
-            id: item.product.id
-          },
-          update: {
-            $set: {
-              expire: item.expire,
-              purchase: Number(item.purchase),
-              retailPrice: Number(item.retailPrice),
-              wholesalePrice: Number(item.wholesalePrice),
-              wholesaleQuantity: Number(item.wholesaleQuantity)
-            },
-            $currentDate: {
-              '_updated_at': true
-            },
-            $inc: {
-              quantity: item.product.stockable === true ? Number(item.quantity) : 0
-            }
-          }
-        };
-      }))
+      .update(
+        'stocks',
+        purchaseI.items
+          .filter((x) => x.product.purchasable === true)
+          .map((item) => {
+            return {
+              query: {
+                id: item.product.id,
+              },
+              update: {
+                $set: {
+                  expire: item.expire,
+                  purchase: Number(item.purchase),
+                  retailPrice: Number(item.retailPrice),
+                  wholesalePrice: Number(item.wholesalePrice),
+                  wholesaleQuantity: Number(item.wholesaleQuantity),
+                },
+                $currentDate: {
+                  _updated_at: true,
+                },
+                $inc: {
+                  quantity:
+                    item.product.stockable === true ? Number(item.quantity) : 0,
+                },
+              },
+            };
+          })
+      )
       .commit();
   }
 
-  addReceipt(invoice: ReceiptModel, callback: (value: any) => void) {
-  }
+  addReceipt(invoice: ReceiptModel, callback: (value: any) => void) {}
 
-  deleteInvoice(id: string, callback: (value: any) => void) {
-  }
+  deleteInvoice(id: string, callback: (value: any) => void) {}
 
-  deleteReceipts(id: string, callback: (value: any) => void) {
-  }
+  deleteReceipts(id: string, callback: (value: any) => void) {}
 
-  getAllInvoice(callback: (invoices: ReceiptModel[]) => void) {
-  }
+  getAllInvoice(callback: (invoices: ReceiptModel[]) => void) {}
 
   async deletePurchase(purchase: PurchaseModel): Promise<PurchaseModel> {
     const activeShop = await this._storage.getActiveShop();
-    return BFast.database(activeShop.projectId).collection('purchase')
+    return BFast.database(activeShop.projectId)
+      .collection('purchase')
       .query()
       .byId(purchase.id)
       .delete();
   }
 
-  async getAllPurchase(page: { size?: number, skip?: number }): Promise<PurchaseModel[]> {
+  async getAllPurchase(page: {
+    size?: number;
+    skip?: number;
+  }): Promise<PurchaseModel[]> {
     const activeShop = await this._storage.getActiveShop();
-    return BFast.database(activeShop.projectId).collection('purchases')
+    return BFast.database(activeShop.projectId)
+      .collection('purchases')
       .query()
       .orderBy('_created_at', -1)
       .size(page.size)
@@ -119,24 +126,25 @@ export class PurchaseState {
     callback(null);
   }
 
-  getInvoice(id: string, callback: (invoice: ReceiptModel) => void) {
-  }
+  getInvoice(id: string, callback: (invoice: ReceiptModel) => void) {}
 
-  getPurchase(id: string, callback: (purchase: PurchaseModel) => void) {
-  }
+  getPurchase(id: string, callback: (purchase: PurchaseModel) => void) {}
 
-  async getAllSupplier(pagination: { size?: number, skip?: number }): Promise<SupplierModel[]> {
+  async getAllSupplier(pagination: {
+    size?: number;
+    skip?: number;
+  }): Promise<SupplierModel[]> {
     const shop = await this._storage.getActiveShop();
-    const suppliers: SupplierModel[] = await BFast.database(shop.projectId).collection<SupplierModel>('suppliers').getAll<SupplierModel>();
+    const suppliers: SupplierModel[] = await BFast.database(shop.projectId)
+      .collection<SupplierModel>('suppliers')
+      .getAll<SupplierModel>();
     suppliers.sort((a, b) => {
       return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
     });
     return suppliers;
   }
 
-  getReceipt(id: string, callback: (invoice: ReceiptModel) => void) {
-  }
+  getReceipt(id: string, callback: (invoice: ReceiptModel) => void) {}
 
-  updatePurchase(id: string, callback: (value: any) => void) {
-  }
+  updatePurchase(id: string, callback: (value: any) => void) {}
 }
