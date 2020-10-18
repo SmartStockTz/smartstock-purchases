@@ -1,9 +1,12 @@
-import {Component, Inject} from '@angular/core';
-import {MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef} from '@angular/material/bottom-sheet';
+import { Component, Inject } from '@angular/core';
+import {
+  MAT_BOTTOM_SHEET_DATA,
+  MatBottomSheetRef,
+} from '@angular/material/bottom-sheet';
 /** must be removed to common module **/
-import {StockDetailsComponent} from '../../stocks/components/stock.component';
+import { StockDetailsComponent } from './stock.component';
 /** must be removed to common module **/
-import {PurchaseModel} from '../models/purchase.model';
+import { PurchaseModel } from '../models/purchase.model';
 
 @Component({
   selector: 'smartstock-purchase-details',
@@ -14,40 +17,54 @@ import {PurchaseModel} from '../models/purchase.model';
     <!--  <mat-divider style="margin-bottom: 8px"></mat-divider>-->
     <!--</div>-->
 
-
     <div class="container" style="min-width: 300px">
-      <div mat-card-title>{{'Invoice #' + data.refNumber + ' Details'}}</div>
+      <div mat-card-title>{{ 'Invoice #' + data.refNumber + ' Details' }}</div>
       <!--  <smartstock-no-data *ngIf="!invoice" [isLoading]="fetchInvoiceProgress" (refreshCallback)="getInvoice()"></smartstock-no-data>-->
       <!--  -->
       <div class="row d-flex flex-column">
         <mat-card-subtitle>Purchase date</mat-card-subtitle>
-        <h5>{{getDate(data.date) | date}}</h5>
+        <h5>{{ getDate(data.date) | date }}</h5>
         <mat-divider></mat-divider>
         <mat-card-subtitle>Due date</mat-card-subtitle>
-        <h5>{{getDate(data.due) | date}}</h5>
+        <h5>{{ getDate(data.due) | date }}</h5>
         <mat-divider></mat-divider>
         <mat-card-subtitle>Amount</mat-card-subtitle>
-        <h5>{{data.amount | currency: 'TZS '}}</h5>
+        <h5>{{ data.amount | currency: 'TZS ' }}</h5>
         <mat-divider></mat-divider>
         <mat-card-subtitle>Supplier</mat-card-subtitle>
-        <h5>{{data.supplier.name}}</h5>
+        <h5>{{ data.supplier.name }}</h5>
         <mat-divider></mat-divider>
-        <mat-expansion-panel class="mat-elevation-z0" *ngFor="let item of data.items">
+        <mat-expansion-panel
+          class="mat-elevation-z0"
+          *ngFor="let item of data.items"
+        >
           <mat-expansion-panel-header>
-            {{item.product.product}}
+            {{ item.product.product }}
           </mat-expansion-panel-header>
           <div class="d-flex  flex-row flex-wrap">
-            <mat-form-field class="my-input" style="margin: 5px" appearance="fill">
+            <mat-form-field
+              class="my-input"
+              style="margin: 5px"
+              appearance="fill"
+            >
               <mat-label>Purchase</mat-label>
-              <input matInput [readonly]="true" [value]="item.purchase">
+              <input matInput [readonly]="true" [value]="item.purchase" />
             </mat-form-field>
-            <mat-form-field class="my-input" style="margin: 5px" appearance="fill">
+            <mat-form-field
+              class="my-input"
+              style="margin: 5px"
+              appearance="fill"
+            >
               <mat-label>Quantity</mat-label>
-              <input matInput [readonly]="true" [value]="item.quantity">
+              <input matInput [readonly]="true" [value]="item.quantity" />
             </mat-form-field>
-            <mat-form-field class="my-input" style="margin: 5px" appearance="fill">
+            <mat-form-field
+              class="my-input"
+              style="margin: 5px"
+              appearance="fill"
+            >
               <mat-label>Amount</mat-label>
-              <input matInput [readonly]="true" [value]="item.amount">
+              <input matInput [readonly]="true" [value]="item.amount" />
             </mat-form-field>
           </div>
         </mat-expansion-panel>
@@ -59,13 +76,13 @@ import {PurchaseModel} from '../models/purchase.model';
       <!--    </button>-->
       <!--  </mat-card-actions>-->
     </div>
-
-  `
+  `,
 })
 export class PurchaseDetailsComponent {
-  constructor(private _bottomSheetRef: MatBottomSheetRef<StockDetailsComponent>,
-              @Inject(MAT_BOTTOM_SHEET_DATA) public data: PurchaseModel) {
-  }
+  constructor(
+    private _bottomSheetRef: MatBottomSheetRef<StockDetailsComponent>,
+    @Inject(MAT_BOTTOM_SHEET_DATA) public data: PurchaseModel
+  ) {}
 
   getDate(date: any) {
     if (date && date.iso) {

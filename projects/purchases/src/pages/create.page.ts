@@ -12,11 +12,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { StorageService } from '../../lib/services/storage.service';
-import { DialogSupplierNewComponent } from '../../stocks/components/suppliers.component';
+// import { StorageService } from '../../lib/services/storage.service';
+import { DialogSupplierNewComponent } from '../components/suppliers.component';
 import { StockModel } from '../models/stock.model';
 import { PurchaseState } from '../states/purchase.state';
-import { DeviceInfoUtil } from '../../lib/utils/device-info.util';
+// import { DeviceInfoUtil } from '../../lib/utils/device-info.util';
+import { DeviceInfoUtil } from '@smartstock/core-libs/utils/device-info.util';
+import { StorageService } from '@smartstock/core-libs/services/storage.service';
 
 @Component({
   selector: 'smartstock-purchase-create',
@@ -45,7 +47,7 @@ import { DeviceInfoUtil } from '../../lib/utils/device-info.util';
         <div style="margin-top: 16px" class="container">
           <form [formGroup]="invoiceForm" (ngSubmit)="saveInvoice()">
             <div class="row d-flex justify-content-center align-items-center">
-                      <div class="col-12 col-xl-9 col-lg-9">
+              <div class="col-12 col-xl-9 col-lg-9">
                 <h4>Information</h4>
                 <mat-card class="mat-elevation-z0">
                   <mat-card-content class="card-content">
