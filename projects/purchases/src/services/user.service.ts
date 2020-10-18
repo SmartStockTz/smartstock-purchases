@@ -1,26 +1,27 @@
-import {Injectable} from '@angular/core';
-import {UserModel} from '../models/user.model';
-import {HttpClient} from '@angular/common/http';
-import {SettingsService} from './settings.service';
-import {ShopModel} from '../models/shop.model';
-import {StorageService} from '../../lib/services/storage.service';
-import {BFast} from 'bfastjs';
-import {MatDialog} from '@angular/material/dialog';
-import {LogService} from '../../lib/services/log.service';
-import {VerifyEMailDialogComponent} from '../components/verify-dialog.component';
+import { Injectable } from '@angular/core';
+import { UserModel } from '../models/user.model';
+import { HttpClient } from '@angular/common/http';
+import { SettingsService } from './settings.service';
+import { ShopModel } from '../models/shop.model';
+// import {StorageService} from '../../lib/services/storage.service';
+import { BFast } from 'bfastjs';
+import { MatDialog } from '@angular/material/dialog';
+// import {LogService} from '../../lib/services/log.service';
+import { VerifyEMailDialogComponent } from '../components/verify-dialog.component';
+import { StorageService } from '@smartstock/core-libs/services/storage.service';
+import { LogService } from '@smartstock/core-libs/services/log.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UserService {
-
-
-  constructor(private readonly _httpClient: HttpClient,
-              private readonly _settings: SettingsService,
-              private readonly dialog: MatDialog,
-              private readonly logger: LogService,
-              private readonly _storage: StorageService) {
-  }
+  constructor(
+    private readonly _httpClient: HttpClient,
+    private readonly _settings: SettingsService,
+    private readonly dialog: MatDialog,
+    private readonly logger: LogService,
+    private readonly _storage: StorageService
+  ) {}
 
   async currentUser(): Promise<any> {
     const user = await BFast.auth().currentUser();
@@ -37,29 +38,37 @@ export class UserService {
     return BFast.functions()
       .request('/functions/users/' + user.id)
       .delete({
-        data: {context: {admin: await BFast.auth().currentUser()}}
+        data: { context: { admin: await BFast.auth().currentUser() } },
       });
   }
 
-  async getAllUser(pagination: { size: number, skip: number }): Promise<UserModel[]> {
+  async getAllUser(pagination: {
+    size: number;
+    skip: number;
+  }): Promise<UserModel[]> {
     const projectId = await this._settings.getCustomerProjectId();
-    return BFast.database().collection('_User')
+    return BFast.database()
+      .collection('_User')
       .query()
       .equalTo('projectId', projectId)
       .includesIn('role', ['user', 'manager'])
       .size(pagination.size)
       .skip(pagination.skip)
       .find<UserModel[]>({
-        useMasterKey: true
+        useMasterKey: true,
       });
   }
 
-  getUser(user: UserModel, callback?: (user: UserModel) => void) {
+  getUser(user: UserModel, callback?: (user: UserModel) => void) {}
 
-  }
-
-  async login(user: { username: string, password: string }): Promise<UserModel> {
-    const authUser = await BFast.auth().logIn<UserModel>(user.username, user.password);
+  async login(user: {
+    username: string;
+    password: string;
+  }): Promise<UserModel> {
+    const authUser = await BFast.auth().logIn<UserModel>(
+      user.username,
+      user.password
+    );
     await this._storage.removeActiveShop();
     if (authUser && authUser.role !== 'admin') {
       await this._storage.saveActiveUser(authUser);
@@ -68,12 +77,14 @@ export class UserService {
       await this._storage.saveActiveUser(authUser);
       return authUser;
     } else {
-      await BFast.functions().request('/functions/users/reVerifyAccount/' + user.username).post();
+      await BFast.functions()
+        .request('/functions/users/reVerifyAccount/' + user.username)
+        .post();
       this.dialog.open(VerifyEMailDialogComponent, {
         closeOnNavigation: true,
-        disableClose: true
+        disableClose: true,
       });
-      throw {code: 403, err: 'account not verified'};
+      throw { code: 403, err: 'account not verified' };
     }
   }
 
@@ -91,13 +102,15 @@ export class UserService {
         printerHeader: '',
         saleWithoutPrinter: true,
         allowRetail: true,
-        allowWholesale: true
+        allowWholesale: true,
       };
       user.shops = [];
       await this._storage.removeActiveShop();
-      return await BFast.functions().request('/functions/users/create').post(user, {
-        headers: this._settings.ssmFunctionsHeader
-      });
+      return await BFast.functions()
+        .request('/functions/users/create')
+        .post(user, {
+          headers: this._settings.ssmFunctionsHeader,
+        });
     } catch (e) {
       if (e && e.response && e.response.data) {
         throw e.response.data;
@@ -108,7 +121,9 @@ export class UserService {
   }
 
   resetPassword(username: string): Promise<any> {
-    return BFast.functions().request('/functions/users/resetPassword/' + encodeURIComponent(username)).get();
+    return BFast.functions()
+      .request('/functions/users/resetPassword/' + encodeURIComponent(username))
+      .get();
   }
 
   async refreshToken(): Promise<any> {
@@ -119,20 +134,31 @@ export class UserService {
     return new Promise<UserModel>(async (resolve, reject) => {
       const shop = await this._storage.getActiveShop();
       const shops = user.shops ? user.shops : [];
-      const shops1 = shops.filter(value => value.applicationId !== shop.applicationId);
+      const shops1 = shops.filter(
+        (value) => value.applicationId !== shop.applicationId
+      );
       user.applicationId = shop.applicationId;
       user.projectUrlId = shop.projectUrlId;
       user.projectId = shop.projectId;
       user.businessName = shop.businessName;
       user.settings = shop.settings;
       user.shops = shops1;
-      this._httpClient.post<UserModel>(this._settings.ssmFunctionsURL + '/functions/users/seller', user, {
-        headers: this._settings.ssmFunctionsHeader
-      }).subscribe(value => {
-        resolve(value);
-      }, error => {
-        reject(error);
-      });
+      this._httpClient
+        .post<UserModel>(
+          this._settings.ssmFunctionsURL + '/functions/users/seller',
+          user,
+          {
+            headers: this._settings.ssmFunctionsHeader,
+          }
+        )
+        .subscribe(
+          (value) => {
+            resolve(value);
+          },
+          (error) => {
+            reject(error);
+          }
+        );
     });
   }
 
@@ -140,7 +166,7 @@ export class UserService {
     try {
       const user = await this._storage.getActiveUser();
       const shops = [];
-      user.shops.forEach(element => {
+      user.shops.forEach((element) => {
         shops.push(element);
       });
       shops.push({
@@ -151,7 +177,7 @@ export class UserService {
         settings: user.settings,
         street: user.street,
         country: user.country,
-        region: user.region
+        region: user.region,
       });
       return shops;
     } catch (e) {
@@ -162,7 +188,12 @@ export class UserService {
   async getCurrentShop(): Promise<ShopModel> {
     try {
       const activeShop = await this._storage.getActiveShop();
-      if (activeShop && activeShop.projectId && activeShop.applicationId && activeShop.projectUrlId) {
+      if (
+        activeShop &&
+        activeShop.projectId &&
+        activeShop.applicationId &&
+        activeShop.projectUrlId
+      ) {
         return activeShop;
       } else {
         throw new Error('No active shop in records');
@@ -181,7 +212,7 @@ export class UserService {
     }
   }
 
-  createShop(data: { admin: UserModel, shop: ShopModel }): Promise<ShopModel> {
+  createShop(data: { admin: UserModel; shop: ShopModel }): Promise<ShopModel> {
     return undefined;
     // return new Promise<ShopModel>(async (resolve, reject) => {
     //   this.httpClient.post<ShopModel>(this.settings.ssmFunctionsURL + '/functions/shop', data, {
@@ -204,25 +235,45 @@ export class UserService {
 
   updatePassword(user: UserModel, password: string): Promise<any> {
     return new Promise<UserModel>((resolve, reject) => {
-      this._httpClient.put<any>(this._settings.ssmFunctionsURL + '/functions/users/password/' + user.id, {
-        password: password
-      }, {
-        headers: this._settings.ssmFunctionsHeader
-      }).subscribe(value => {
-        resolve(value);
-      }, error => {
-        reject(error);
-      });
+      this._httpClient
+        .put<any>(
+          this._settings.ssmFunctionsURL +
+            '/functions/users/password/' +
+            user.id,
+          {
+            password: password,
+          },
+          {
+            headers: this._settings.ssmFunctionsHeader,
+          }
+        )
+        .subscribe(
+          (value) => {
+            resolve(value);
+          },
+          (error) => {
+            reject(error);
+          }
+        );
     });
   }
 
   updateUser(user: UserModel, data: { [p: string]: any }): Promise<UserModel> {
     return new Promise(async (resolve, reject) => {
-      this._httpClient.put<UserModel>(this._settings.ssmFunctionsURL + '/functions/users/' + user.id, data, {
-        headers: this._settings.ssmFunctionsHeader
-      }).subscribe(value => resolve(value), error1 => {
-        reject(error1);
-      });
+      this._httpClient
+        .put<UserModel>(
+          this._settings.ssmFunctionsURL + '/functions/users/' + user.id,
+          data,
+          {
+            headers: this._settings.ssmFunctionsHeader,
+          }
+        )
+        .subscribe(
+          (value) => resolve(value),
+          (error1) => {
+            reject(error1);
+          }
+        );
     });
   }
 
@@ -234,17 +285,32 @@ export class UserService {
     }
   }
 
-  changePasswordFromOld(data: { lastPassword: string; password: string; user: UserModel }): Promise<any> {
+  changePasswordFromOld(data: {
+    lastPassword: string;
+    password: string;
+    user: UserModel;
+  }): Promise<any> {
     return new Promise<any>((resolve, reject) => {
-      this._httpClient.put<UserModel>(this._settings.ssmFunctionsURL + '/functions/users/password/change/' + data.user.id, {
-        lastPassword: data.lastPassword,
-        username: data.user.username,
-        password: data.password
-      }, {
-        headers: this._settings.ssmFunctionsHeader
-      }).subscribe(value => resolve(value), error1 => {
-        reject(error1);
-      });
+      this._httpClient
+        .put<UserModel>(
+          this._settings.ssmFunctionsURL +
+            '/functions/users/password/change/' +
+            data.user.id,
+          {
+            lastPassword: data.lastPassword,
+            username: data.user.username,
+            password: data.password,
+          },
+          {
+            headers: this._settings.ssmFunctionsHeader,
+          }
+        )
+        .subscribe(
+          (value) => resolve(value),
+          (error1) => {
+            reject(error1);
+          }
+        );
     });
   }
 }

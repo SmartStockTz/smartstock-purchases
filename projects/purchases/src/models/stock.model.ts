@@ -12,7 +12,7 @@ export interface StockModel {
   category: string;
   type?: 'simple' | 'grouped';
   downloadable: boolean | false;
-  downloads: { name: string, type: string, url: string }[];
+  downloads: { name: string; type: string; url: string }[] | any;
   stockable: boolean | true;
   purchasable: boolean | true;
   quantity: number;

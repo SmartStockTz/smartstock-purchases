@@ -22,7 +22,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 /** must be removed to common module **/
 /** must be removed to common module **/
 import { ReactiveFormsModule } from '@angular/forms';
-import { RouterModule, Routes } from '@angular/router';
+// import { RouterModule, Routes } from '@angular/router';
+
 import { PurchasePageComponent } from './pages/purchase.page';
 import { PurchaseDetailsComponent } from './components/details.component';
 import { CreatePageComponent } from './pages/create.page';
@@ -36,11 +37,12 @@ import {
   DialogSupplierNewComponent,
   SuppliersComponent,
 } from './components/suppliers.component';
+import { VerifyEMailDialogComponent } from './components/verify-dialog.component';
 
-const routes: Routes = [
-  { path: '', component: PurchasePageComponent },
-  { path: 'create', component: CreatePageComponent },
-];
+// const routes: Routes = [
+//   { path: '', component: PurchasePageComponent },
+//   { path: 'create', component: CreatePageComponent },
+// ];
 
 @NgModule({
   declarations: [
@@ -52,10 +54,11 @@ const routes: Routes = [
     DialogSupplierNewComponent,
     StockDetailsComponent,
     DialogSupplierDeleteComponent,
+    VerifyEMailDialogComponent,
   ],
   imports: [
     CommonModule,
-    RouterModule.forChild(routes),
+    // RouterModule.forChild(routes),
     MatSidenavModule,
     LibModule,
     MatFormFieldModule,

@@ -1,27 +1,28 @@
-import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {StorageService} from '../../lib/services/storage.service';
-import {environment} from '../../../../environments/environment';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+// import {StorageService} from '../../lib/services/storage.service';
+import { environment } from '../environments/environment';
+import { StorageService } from '@smartstock/core-libs/services/storage.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SettingsService {
-
   ssmServerURL = environment.smartstock.databaseURL;
   ssmFunctionsURL = environment.smartstock.functionsURL;
   ssmHeader = {
-    'X-Parse-Application-Id': 'smartstock'
+    'X-Parse-Application-Id': 'smartstock',
   };
   ssmFunctionsHeader = {
     'bfast-application-id': 'smartstock',
-    'content-type': 'application/json'
+    'content-type': 'application/json',
   };
 
-  constructor(private readonly _httpClient: HttpClient,
-              private readonly _storage: StorageService,
-              private readonly indexDb: StorageService) {
-  }
+  constructor(
+    private readonly _httpClient: HttpClient,
+    private readonly _storage: StorageService,
+    private readonly indexDb: StorageService
+  ) {}
 
   async getSSMUserHeader() {
     try {
@@ -35,13 +36,13 @@ export class SettingsService {
         return {
           'X-Parse-Application-Id': 'smartstock',
           'X-Parse-Session-Token': user.sessionToken,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         };
       } else {
         throw new Error('token not found');
       }
     } catch (e) {
-      throw {message: 'Fails to get user, so to retrieve token'};
+      throw { message: 'Fails to get user, so to retrieve token' };
     }
   }
 
@@ -53,7 +54,7 @@ export class SettingsService {
       }
       return activeShop.applicationId;
     } catch (e) {
-      throw {message: 'Fails to get application id', reason: e.toString()};
+      throw { message: 'Fails to get application id', reason: e.toString() };
     }
   }
 
@@ -65,14 +66,14 @@ export class SettingsService {
       }
       return activeShop.projectUrlId;
     } catch (reason) {
-      throw {message: 'Fails to get user', reason: reason.toString()};
+      throw { message: 'Fails to get user', reason: reason.toString() };
     }
   }
 
   async getCustomerHeader(): Promise<any> {
     try {
       return {
-        'X-Parse-Application-Id': await this.getCustomerApplicationId()
+        'X-Parse-Application-Id': await this.getCustomerApplicationId(),
       };
     } catch (e) {
       console.warn(e);
@@ -84,10 +85,13 @@ export class SettingsService {
     try {
       return {
         'X-Parse-Application-Id': await this.getCustomerApplicationId(),
-        'content-type': contentType ? contentType : 'application/json'
+        'content-type': contentType ? contentType : 'application/json',
       };
     } catch (e) {
-      throw {message: 'Fails to get customer post header', reason: e.toString()};
+      throw {
+        message: 'Fails to get customer post header',
+        reason: e.toString(),
+      };
     }
   }
 
@@ -95,7 +99,7 @@ export class SettingsService {
     try {
       return `https://${await this.getCustomerServerURLId()}.bfast.fahamutech.com`;
     } catch (e) {
-      throw {message: 'Fails to get server url', reason: e.toString()};
+      throw { message: 'Fails to get server url', reason: e.toString() };
     }
   }
 
@@ -107,14 +111,16 @@ export class SettingsService {
       }
       return activeShop.projectId;
     } catch (e) {
-      throw {message: 'Fails to get project id', reason: e.toString()};
+      throw { message: 'Fails to get project id', reason: e.toString() };
     }
   }
 
   /**
    * @deprecated
    */
-  public getPrinterAddress(callback: (value: { ip: string, name: string }) => void) {
+  public getPrinterAddress(
+    callback: (value: { ip: string; name: string }) => void
+  ) {
     // this.indexDb.getItem<{ ip: string, name: string }>('printerAddress').then(value => {
     //   callback(null);
     // }).catch(reason => {
@@ -128,18 +134,30 @@ export class SettingsService {
     return new Promise<any>(async (resolve, reject) => {
       try {
         const activeShop = await this._storage.getActiveShop();
-        this._httpClient.put<any>(this.ssmFunctionsURL + '/settings/' + activeShop.projectId, settings, {
-          headers: this.ssmFunctionsHeader
-        }).subscribe(_ => {
-          activeShop.settings = _.settings;
-          this._storage.saveActiveShop(activeShop).then(_1 => {
-            resolve('Shop settings updated');
-          }).catch(reason => {
-            reject(reason);
-          });
-        }, error => {
-          reject(error);
-        });
+        this._httpClient
+          .put<any>(
+            this.ssmFunctionsURL + '/settings/' + activeShop.projectId,
+            settings,
+            {
+              headers: this.ssmFunctionsHeader,
+            }
+          )
+          .subscribe(
+            (_) => {
+              activeShop.settings = _.settings;
+              this._storage
+                .saveActiveShop(activeShop)
+                .then((_1) => {
+                  resolve('Shop settings updated');
+                })
+                .catch((reason) => {
+                  reject(reason);
+                });
+            },
+            (error) => {
+              reject(error);
+            }
+          );
       } catch (e) {
         reject(e);
       }
@@ -147,23 +165,26 @@ export class SettingsService {
   }
 
   async getSettings(): Promise<{
-    printerFooter: string, printerHeader: string, saleWithoutPrinter: boolean,
-    allowRetail: boolean, allowWholesale: boolean
+    printerFooter: string;
+    printerHeader: string;
+    saleWithoutPrinter: boolean;
+    allowRetail: boolean;
+    allowWholesale: boolean;
   }> {
     try {
       const activeShop = await this._storage.getActiveShop();
       if (!activeShop || !activeShop.settings) {
         return {
-          'printerFooter': 'Thank you',
-          'printerHeader': '',
-          'saleWithoutPrinter': true,
-          'allowRetail': true,
-          'allowWholesale': true,
+          printerFooter: 'Thank you',
+          printerHeader: '',
+          saleWithoutPrinter: true,
+          allowRetail: true,
+          allowWholesale: true,
         };
       }
       return activeShop.settings;
     } catch (e) {
-      throw {message: 'Fails to get settings', reason: e.toString()};
+      throw { message: 'Fails to get settings', reason: e.toString() };
     }
   }
 }

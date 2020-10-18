@@ -7,7 +7,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { PurchaseModel } from '../models/purchase.model';
 import { environment } from '../environments/environment';
 import { PurchaseDetailsComponent } from '../components/details.component';
-import { PurchaseState } from '../states/purchase.state';
+import { PurchaseState } from './../states/purchase.state';
 // import { DeviceInfoUtil } from '../../lib/utils/device-info.util';
 import { DeviceInfoUtil } from '@smartstock/core-libs/utils/device-info.util';
 
