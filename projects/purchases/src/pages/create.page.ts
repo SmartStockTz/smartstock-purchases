@@ -12,11 +12,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Router } from '@angular/router';
-// import { StorageService } from '../../lib/services/storage.service';
 import { DialogSupplierNewComponent } from '../components/suppliers.component';
 import { StockModel } from '../models/stock.model';
 import { PurchaseState } from '../states/purchase.state';
-// import { DeviceInfoUtil } from '../../lib/utils/device-info.util';
 import { DeviceInfoUtil } from '@smartstocktz/core-libs';
 import { StorageService } from '@smartstocktz/core-libs';
 
@@ -399,14 +397,14 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
     private readonly formBuilder: FormBuilder,
     private readonly snack: MatSnackBar,
     private readonly router: Router,
-    private readonly _dialog: MatDialog,
+    private readonly matDialog: MatDialog,
     private readonly indexDb: StorageService,
     private readonly purchaseState: PurchaseState
   ) {
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.invoiceForm = this.formBuilder.group({
       refNumber: ['', [Validators.nullValidator, Validators.required]],
       supplier: [null, [Validators.nullValidator, Validators.required]],
@@ -427,11 +425,11 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
       });
   }
 
-  get invoiceItems() {
+  get invoiceItems(): FormArray {
     return this.invoiceForm.get('items') as FormArray;
   }
 
-  searchProduct(productName: string) {
+  searchProduct(productName: string): void {
     if (
       !this.selectedProduct ||
       (this.selectedProduct && this.selectedProduct.product !== productName)
@@ -461,7 +459,7 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
     }
   }
 
-  saveInvoice() {
+  saveInvoice(): void {
     if (!this.invoiceForm.valid) {
       this.snack.open('Please fill all required information', 'Ok', {
         duration: 3000,
@@ -514,10 +512,10 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
       });
   }
 
-  addNewSupplier($event: MouseEvent) {
+  addNewSupplier($event: MouseEvent): void {
     $event.preventDefault();
     $event.stopPropagation();
-    this._dialog
+    this.matDialog
       .open(DialogSupplierNewComponent, {
         // minWidth: '80%',
         closeOnNavigation: true,
@@ -530,13 +528,13 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
       });
   }
 
-  refreshSuppliers($event: MouseEvent) {
+  refreshSuppliers($event: MouseEvent): void {
     $event.preventDefault();
     $event.stopPropagation();
     this.getSuppliers();
   }
 
-  getSuppliers() {
+  getSuppliers(): void {
     this.supplierFetching = true;
     this.purchaseState
       .getAllSupplier({ size: 200 })
@@ -552,7 +550,7 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
       });
   }
 
-  getTotalAmountOfInvoice() {
+  getTotalAmountOfInvoice(): void {
     // reduce((a, b) => a + b, 0)
     const itemsValues: any[] = this.invoiceItems.value;
     const sum = itemsValues.reduce((a, b) => a + b.amount, 0);
@@ -560,7 +558,7 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
     this.invoiceForm.get('amount').setValue(sum);
   }
 
-  addItem($event) {
+  addItem($event): void {
     $event.preventDefault();
     if (!this.searchProductFormControl.valid) {
       this.snack.open('No item to add, search and select a product', 'Ok', {
@@ -603,7 +601,7 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
     this.getTotalAmountOfInvoice();
   }
 
-  updateAmount(formGroup: AbstractControl) {
+  updateAmount(formGroup: AbstractControl): void {
     formGroup = formGroup as FormGroup;
     formGroup
       .get('amount')
@@ -611,13 +609,13 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
     this.getTotalAmountOfInvoice();
   }
 
-  removeItem(index, $event) {
+  removeItem(index, $event): void {
     $event.preventDefault();
     this.invoiceItems.removeAt(index);
     this.getTotalAmountOfInvoice();
   }
 
-  checkKey($event: KeyboardEvent) {
+  checkKey($event: KeyboardEvent): void {
     if ($event.code === 'Enter') {
       $event.preventDefault();
     }

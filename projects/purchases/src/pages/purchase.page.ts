@@ -1,14 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-/** must be removed to common module **/
-/** must be removed to common module **/
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { PurchaseModel } from '../models/purchase.model';
 import { environment } from '../environments/environment';
 import { PurchaseDetailsComponent } from '../components/details.component';
-import { PurchaseState } from './../states/purchase.state';
-// import { DeviceInfoUtil } from '../../lib/utils/device-info.util';
+import { PurchaseState } from '../states/purchase.state';
 import { DeviceInfoUtil } from '@smartstocktz/core-libs';
 
 @Component({
@@ -216,11 +213,11 @@ export class PurchasePageComponent extends DeviceInfoUtil implements OnInit {
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this._getAllPurchases();
   }
 
-  handleSearch(query: string) {
+  handleSearch(query: string): void {
     if (query) {
       this.purchasesDatasource.filter = query.toLowerCase();
     } else {
@@ -228,7 +225,7 @@ export class PurchasePageComponent extends DeviceInfoUtil implements OnInit {
     }
   }
 
-  private _getAllPurchases() {
+  private _getAllPurchases(): void {
     this.getPurchaseProgress = true;
     this.purchaseDatabase
       .getAllPurchase({})
@@ -245,11 +242,11 @@ export class PurchasePageComponent extends DeviceInfoUtil implements OnInit {
       });
   }
 
-  reload() {
+  reload(): void {
     this._getAllPurchases();
   }
 
-  loadMore() {
+  loadMore(): void {
     this.loadMoreProgress = true;
     this.purchaseDatabase
       .getAllPurchase({ skip: this.purchasesDatasource.data.length })
@@ -278,14 +275,14 @@ export class PurchasePageComponent extends DeviceInfoUtil implements OnInit {
       });
   }
 
-  showPurchaseDetails(purchase: PurchaseModel) {
+  showPurchaseDetails(purchase: PurchaseModel): void {
     this.bottomSheet.open(PurchaseDetailsComponent, {
       data: purchase,
       closeOnNavigation: true,
     });
   }
 
-  recordPayment(purchase: PurchaseModel) {
+  recordPayment(purchase: PurchaseModel): void {
     this.snack.open('Start update payment record..');
     this.purchaseDatabase
       .recordPayment(purchase.id ? purchase.id : purchase.objectId)

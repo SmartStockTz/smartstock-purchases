@@ -42,7 +42,8 @@ import {IndexPage} from "./pages/index.page";
 import {MatDialogModule} from "@angular/material/dialog";
 
 const routes: Routes = [
-  { path: '', component: PurchasePageComponent },
+  { path: '', component: IndexPage },
+  { path: 'reference', component: PurchasePageComponent },
   { path: 'create', component: CreatePageComponent },
 ];
 

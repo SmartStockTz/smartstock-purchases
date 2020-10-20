@@ -33,8 +33,8 @@ import {DeviceInfoUtil} from '@smartstocktz/core-libs';
 export class IndexPage extends DeviceInfoUtil implements OnInit {
   pages = [
     {
-      name: 'Purchases',
-      path: '/purchase',
+      name: 'Receipts & Invoices',
+      path: '/purchase/reference',
       icon: 'receipt'
     }
   ];
