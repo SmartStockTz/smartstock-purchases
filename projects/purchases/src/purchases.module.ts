@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import {ANALYZE_FOR_ENTRY_COMPONENTS, NgModule} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
@@ -19,15 +19,11 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
-/** must be removed to common module **/
-/** must be removed to common module **/
 import { ReactiveFormsModule } from '@angular/forms';
-// import { RouterModule, Routes } from '@angular/router';
-
 import { PurchasePageComponent } from './pages/purchase.page';
 import { PurchaseDetailsComponent } from './components/details.component';
 import { CreatePageComponent } from './pages/create.page';
-import { LibModule } from '@smartstock/core-libs';
+import { LibModule } from '@smartstocktz/core-libs';
 import {
   DialogDeleteComponent,
   StockDetailsComponent,
@@ -38,11 +34,17 @@ import {
   SuppliersComponent,
 } from './components/suppliers.component';
 import { VerifyEMailDialogComponent } from './components/verify-dialog.component';
+import {RouterModule, ROUTES, Routes} from '@angular/router';
+import {MatSnackBarModule} from "@angular/material/snack-bar";
+import {HttpClientModule} from "@angular/common/http";
+import {MatNativeDateModule, MatRippleModule} from "@angular/material/core";
+import {IndexPage} from "./pages/index.page";
+import {MatDialogModule} from "@angular/material/dialog";
 
-// const routes: Routes = [
-//   { path: '', component: PurchasePageComponent },
-//   { path: 'create', component: CreatePageComponent },
-// ];
+const routes: Routes = [
+  { path: '', component: PurchasePageComponent },
+  { path: 'create', component: CreatePageComponent },
+];
 
 @NgModule({
   declarations: [
@@ -55,10 +57,25 @@ import { VerifyEMailDialogComponent } from './components/verify-dialog.component
     StockDetailsComponent,
     DialogSupplierDeleteComponent,
     VerifyEMailDialogComponent,
+    IndexPage
   ],
   imports: [
     CommonModule,
-    // RouterModule.forChild(routes),
+    {
+      ngModule: RouterModule,
+      providers: [
+        // {
+        //   provide: ANALYZE_FOR_ENTRY_COMPONENTS,
+        //   multi: true,
+        //   useValue: routes
+        // },
+        {
+          provide: ROUTES,
+          multi: true,
+          useValue: routes
+        }
+      ]
+    },
     MatSidenavModule,
     LibModule,
     MatFormFieldModule,
@@ -80,6 +97,11 @@ import { VerifyEMailDialogComponent } from './components/verify-dialog.component
     MatBottomSheetModule,
     MatExpansionModule,
     MatSelectModule,
+    MatSnackBarModule,
+    HttpClientModule,
+    MatNativeDateModule,
+    MatDialogModule,
+    MatRippleModule
   ],
 })
 export class PurchasesModule {}

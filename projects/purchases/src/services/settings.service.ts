@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-// import {StorageService} from '../../lib/services/storage.service';
 import { environment } from '../environments/environment';
-import { StorageService } from '@smartstock/core-libs/services/storage.service';
+import { StorageService } from '@smartstocktz/core-libs';
 
 @Injectable({
   providedIn: 'root',
@@ -19,15 +18,15 @@ export class SettingsService {
   };
 
   constructor(
-    private readonly _httpClient: HttpClient,
-    private readonly _storage: StorageService,
+    private readonly httpClient: HttpClient,
+    private readonly storageService: StorageService,
     private readonly indexDb: StorageService
   ) {}
 
-  async getSSMUserHeader() {
+  async getSSMUserHeader(): Promise<any> {
     try {
-      const user = await this._storage.getActiveUser();
-      const activeShop = await this._storage.getActiveShop();
+      const user = await this.storageService.getActiveUser();
+      const activeShop = await this.storageService.getActiveShop();
       if (!user) {
         // console.log('no user records found');
         throw new Error('no user records found');
@@ -46,9 +45,9 @@ export class SettingsService {
     }
   }
 
-  async getCustomerApplicationId() {
+  async getCustomerApplicationId(): Promise<any> {
     try {
-      const activeShop = await this._storage.getActiveShop();
+      const activeShop = await this.storageService.getActiveShop();
       if (!activeShop) {
         throw new Error('No user record');
       }
@@ -58,9 +57,9 @@ export class SettingsService {
     }
   }
 
-  async getCustomerServerURLId() {
+  async getCustomerServerURLId(): Promise<any> {
     try {
-      const activeShop = await this._storage.getActiveShop();
+      const activeShop = await this.storageService.getActiveShop();
       if (!activeShop) {
         throw new Error('No user in local storage');
       }
@@ -120,7 +119,7 @@ export class SettingsService {
    */
   public getPrinterAddress(
     callback: (value: { ip: string; name: string }) => void
-  ) {
+  ): void {
     // this.indexDb.getItem<{ ip: string, name: string }>('printerAddress').then(value => {
     //   callback(null);
     // }).catch(reason => {
@@ -133,8 +132,8 @@ export class SettingsService {
   saveSettings(settings: any): Promise<any> {
     return new Promise<any>(async (resolve, reject) => {
       try {
-        const activeShop = await this._storage.getActiveShop();
-        this._httpClient
+        const activeShop = await this.storageService.getActiveShop();
+        this.httpClient
           .put<any>(
             this.ssmFunctionsURL + '/settings/' + activeShop.projectId,
             settings,
@@ -145,7 +144,7 @@ export class SettingsService {
           .subscribe(
             (_) => {
               activeShop.settings = _.settings;
-              this._storage
+              this.storageService
                 .saveActiveShop(activeShop)
                 .then((_1) => {
                   resolve('Shop settings updated');
@@ -172,7 +171,7 @@ export class SettingsService {
     allowWholesale: boolean;
   }> {
     try {
-      const activeShop = await this._storage.getActiveShop();
+      const activeShop = await this.storageService.getActiveShop();
       if (!activeShop || !activeShop.settings) {
         return {
           printerFooter: 'Thank you',

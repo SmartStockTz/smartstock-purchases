@@ -1,25 +1,25 @@
-import { Injectable } from '@angular/core';
-import { PurchaseModel } from '../models/purchase.model';
-import { HttpClient } from '@angular/common/http';
-import { ReceiptModel } from '../models/receipt.model';
-import { SettingsService } from '../services/settings.service';
-import { BFast } from 'bfastjs';
-// import {StorageService} from '../../lib/services/storage.service';
-import { SupplierModel } from '../models/supplier.model';
-import { StorageService } from '@smartstock/core-libs/services/storage.service';
+import {Injectable} from '@angular/core';
+import {PurchaseModel} from '../models/purchase.model';
+import {HttpClient} from '@angular/common/http';
+import {ReceiptModel} from '../models/receipt.model';
+import {SettingsService} from '../services/settings.service';
+import {BFast} from 'bfastjs';
+import {SupplierModel} from '../models/supplier.model';
+import {StorageService} from '@smartstocktz/core-libs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PurchaseState {
   constructor(
-    private readonly _httpClient: HttpClient,
-    private readonly _storage: StorageService,
-    private readonly _settings: SettingsService
-  ) {}
+    private readonly httpClient: HttpClient,
+    private readonly storageService: StorageService,
+    private readonly settingsService: SettingsService
+  ) {
+  }
 
   async recordPayment(id: string): Promise<any> {
-    const activeShop = await this._storage.getActiveShop();
+    const activeShop = await this.storageService.getActiveShop();
     return BFast.database(activeShop.projectId)
       .collection('purchases')
       .query()
@@ -29,18 +29,21 @@ export class PurchaseState {
       .update();
   }
 
-  addAllInvoices(invoices: ReceiptModel[], callback: (value: any) => void) {}
+  addAllInvoices(invoices: ReceiptModel[], callback: (value: any) => void): void {
+  }
 
-  addAllPurchase(purchases: PurchaseModel[], callback: (value: any) => void) {}
+  addAllPurchase(purchases: PurchaseModel[], callback: (value: any) => void): void {
+  }
 
-  addAllReceipts(invoices: ReceiptModel[], callback: (value: any) => void) {}
+  addAllReceipts(invoices: ReceiptModel[], callback: (value: any) => void): void {
+  }
 
-  addInvoice(invoice: ReceiptModel, callback: (value: any) => void) {
+  addInvoice(invoice: ReceiptModel, callback: (value: any) => void): void {
     // this.addReceipt(invoice, callback);
   }
 
   async addPurchase(purchaseI: PurchaseModel): Promise<any> {
-    const shop = await this._storage.getActiveShop();
+    const shop = await this.storageService.getActiveShop();
     return BFast.database(shop.projectId)
       .transaction()
       .create('purchases', purchaseI)
@@ -75,16 +78,20 @@ export class PurchaseState {
       .commit();
   }
 
-  addReceipt(invoice: ReceiptModel, callback: (value: any) => void) {}
+  addReceipt(invoice: ReceiptModel, callback: (value: any) => void): void {
+  }
 
-  deleteInvoice(id: string, callback: (value: any) => void) {}
+  deleteInvoice(id: string, callback: (value: any) => void): void {
+  }
 
-  deleteReceipts(id: string, callback: (value: any) => void) {}
+  deleteReceipts(id: string, callback: (value: any) => void): void {
+  }
 
-  getAllInvoice(callback: (invoices: ReceiptModel[]) => void) {}
+  getAllInvoice(callback: (invoices: ReceiptModel[]) => void): void {
+  }
 
   async deletePurchase(purchase: PurchaseModel): Promise<PurchaseModel> {
-    const activeShop = await this._storage.getActiveShop();
+    const activeShop = await this.storageService.getActiveShop();
     return BFast.database(activeShop.projectId)
       .collection('purchase')
       .query()
@@ -96,7 +103,7 @@ export class PurchaseState {
     size?: number;
     skip?: number;
   }): Promise<PurchaseModel[]> {
-    const activeShop = await this._storage.getActiveShop();
+    const activeShop = await this.storageService.getActiveShop();
     return BFast.database(activeShop.projectId)
       .collection('purchases')
       .query()
@@ -107,7 +114,7 @@ export class PurchaseState {
   }
 
   // must be updated and its socket method
-  getAllReceipts(callback: (invoices: ReceiptModel[]) => void) {
+  getAllReceipts(callback: (invoices: ReceiptModel[]) => void): void {
     // const query = new Parse.Query('purchaseRefs');
     // const subscription = query.subscribe();
     // subscription.on('open', () => {
@@ -126,15 +133,17 @@ export class PurchaseState {
     callback(null);
   }
 
-  getInvoice(id: string, callback: (invoice: ReceiptModel) => void) {}
+  getInvoice(id: string, callback: (invoice: ReceiptModel) => void): void {
+  }
 
-  getPurchase(id: string, callback: (purchase: PurchaseModel) => void) {}
+  getPurchase(id: string, callback: (purchase: PurchaseModel) => void): void {
+  }
 
   async getAllSupplier(pagination: {
     size?: number;
     skip?: number;
   }): Promise<SupplierModel[]> {
-    const shop = await this._storage.getActiveShop();
+    const shop = await this.storageService.getActiveShop();
     const suppliers: SupplierModel[] = await BFast.database(shop.projectId)
       .collection<SupplierModel>('suppliers')
       .getAll<SupplierModel>();
@@ -144,7 +153,9 @@ export class PurchaseState {
     return suppliers;
   }
 
-  getReceipt(id: string, callback: (invoice: ReceiptModel) => void) {}
+  getReceipt(id: string, callback: (invoice: ReceiptModel) => void): void {
+  }
 
-  updatePurchase(id: string, callback: (value: any) => void) {}
+  updatePurchase(id: string, callback: (value: any) => void): void {
+  }
 }

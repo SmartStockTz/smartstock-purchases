@@ -9,7 +9,7 @@ import { environment } from '../environments/environment';
 import { PurchaseDetailsComponent } from '../components/details.component';
 import { PurchaseState } from './../states/purchase.state';
 // import { DeviceInfoUtil } from '../../lib/utils/device-info.util';
-import { DeviceInfoUtil } from '@smartstock/core-libs/utils/device-info.util';
+import { DeviceInfoUtil } from '@smartstocktz/core-libs';
 
 @Component({
   selector: 'smartstock-purchase',
@@ -178,7 +178,7 @@ import { DeviceInfoUtil } from '@smartstock/core-libs/utils/device-info.util';
             </mat-tab>
           </mat-tab-group>
         </div>
-        <!-- 
+        <!--
         <smartstock-purchase-mobile
           *ngIf="isMobile"
         ></smartstock-purchase-mobile> -->

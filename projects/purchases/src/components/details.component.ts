@@ -3,9 +3,7 @@ import {
   MAT_BOTTOM_SHEET_DATA,
   MatBottomSheetRef,
 } from '@angular/material/bottom-sheet';
-/** must be removed to common module **/
 import { StockDetailsComponent } from './stock.component';
-/** must be removed to common module **/
 import { PurchaseModel } from '../models/purchase.model';
 
 @Component({
@@ -80,11 +78,11 @@ import { PurchaseModel } from '../models/purchase.model';
 })
 export class PurchaseDetailsComponent {
   constructor(
-    private _bottomSheetRef: MatBottomSheetRef<StockDetailsComponent>,
+    private sheetRef: MatBottomSheetRef<StockDetailsComponent>,
     @Inject(MAT_BOTTOM_SHEET_DATA) public data: PurchaseModel
   ) {}
 
-  getDate(date: any) {
+  getDate(date: any): Date {
     if (date && date.iso) {
       return date.iso;
     } else {

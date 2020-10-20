@@ -4,7 +4,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {StockModel} from '../models/stock.model';
 
 @Component({
-  selector: 'smartstock-stock-details',
+  selector: 'smartstock-purchase-details',
   template: `
     <div>
       <img style="max-width: 400px; height: auto" [src]="data.image" alt="">
@@ -26,16 +26,16 @@ import {StockModel} from '../models/stock.model';
   `
 })
 export class StockDetailsComponent {
-  constructor(private _bottomSheetRef: MatBottomSheetRef<StockDetailsComponent>,
+  constructor(private sheetRef: MatBottomSheetRef<StockDetailsComponent>,
               @Inject(MAT_BOTTOM_SHEET_DATA) public data: StockModel) {
   }
 
   openLink(event: MouseEvent): void {
-    this._bottomSheetRef.dismiss();
+    this.sheetRef.dismiss();
     event.preventDefault();
   }
 
-  getStocks() {
+  getStocks(): string[] {
     return Object.keys(this.data);
   }
 }
@@ -68,11 +68,11 @@ export class DialogDeleteComponent {
     @Inject(MAT_DIALOG_DATA) public data: StockModel) {
   }
 
-  delete(stock: StockModel) {
+  delete(stock: StockModel): void {
     this.dialogRef.close(stock);
   }
 
-  cancel() {
+  cancel(): void {
     this.dialogRef.close('no');
   }
 }

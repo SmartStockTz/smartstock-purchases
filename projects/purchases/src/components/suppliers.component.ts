@@ -1,4 +1,4 @@
-import { StockState } from './../states/stock.state';
+import { StockState } from '../states/stock.state';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import {
   FormBuilder,
@@ -27,8 +27,7 @@ import { MatTableDataSource } from '@angular/material/table';
           (click)="openAddSupplierDialog()"
           color="primary"
           class="ft-button"
-          mat-flat-button
-        >
+          mat-flat-button>
           Add Supplier
         </button>
         <span class="toolbar-spacer"></span>
@@ -49,8 +48,7 @@ import { MatTableDataSource } from '@angular/material/table';
             !fetchSuppliersFlag && suppliersArray && suppliersArray.length > 0
           "
           mat-table
-          [dataSource]="suppliersDatasource"
-        >
+          [dataSource]="suppliersDatasource">
           <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef>Name</th>
             <td
@@ -60,8 +58,7 @@ import { MatTableDataSource } from '@angular/material/table';
               [matMenuTriggerData]="{ id: element.id, data: element.name }"
               matRipple
               mat-cell
-              *matCellDef="let element"
-            >
+              *matCellDef="let element">
               {{ element.name }}
               <mat-menu #nameMenu>
                 <ng-template matMenuContent let-id="id" let-data="data">
@@ -81,8 +78,7 @@ import { MatTableDataSource } from '@angular/material/table';
                           nameMenuTrigger
                         )
                       "
-                      mat-button
-                    >
+                      mat-button>
                       Update
                     </button>
                   </div>
@@ -108,8 +104,7 @@ import { MatTableDataSource } from '@angular/material/table';
                   style="padding: 16px"
                   matMenuContent
                   let-id="id"
-                  let-data="data"
-                >
+                  let-data="data">
                   <div (click)="$event.stopPropagation()" style="padding: 16px">
                     <mat-form-field class="my-input" appearance="outline">
                       <mat-label>Mobile</mat-label>
@@ -126,8 +121,7 @@ import { MatTableDataSource } from '@angular/material/table';
                           mobileMenuTrigger
                         )
                       "
-                      mat-button
-                    >
+                      mat-button>
                       Update
                     </button>
                   </div>
@@ -145,16 +139,14 @@ import { MatTableDataSource } from '@angular/material/table';
               [matMenuTriggerData]="{ id: element.id, data: element.email }"
               matRipple
               mat-cell
-              *matCellDef="let element"
-            >
+              *matCellDef="let element">
               {{ element.email }}
               <mat-menu #emailMenu>
                 <ng-template
                   style="padding: 16px"
                   matMenuContent
                   let-id="id"
-                  let-data="data"
-                >
+                  let-data="data">
                   <div (click)="$event.stopPropagation()" style="padding: 16px">
                     <mat-form-field class="my-input" appearance="outline">
                       <mat-label>Email</mat-label>
@@ -171,8 +163,7 @@ import { MatTableDataSource } from '@angular/material/table';
                           emailMenuTrigger
                         )
                       "
-                      mat-button
-                    >
+                      mat-button>
                       Update
                     </button>
                   </div>
@@ -190,16 +181,14 @@ import { MatTableDataSource } from '@angular/material/table';
               [matMenuTriggerData]="{ id: element.id, data: element.address }"
               matRipple
               mat-cell
-              *matCellDef="let element"
-            >
+              *matCellDef="let element">
               {{ element.address }}
               <mat-menu #addressMenu>
                 <ng-template
                   style="padding: 16px"
                   matMenuContent
                   let-id="id"
-                  let-data="data"
-                >
+                  let-data="data">
                   <div (click)="$event.stopPropagation()" style="padding: 16px">
                     <mat-form-field class="my-input" appearance="outline">
                       <mat-label>Address</mat-label>
@@ -216,8 +205,7 @@ import { MatTableDataSource } from '@angular/material/table';
                           addressMenuTrigger
                         )
                       "
-                      mat-button
-                    >
+                      mat-button>
                       Update
                     </button>
                   </div>
@@ -237,8 +225,7 @@ import { MatTableDataSource } from '@angular/material/table';
                 <button
                   [matMenuTriggerFor]="opts"
                   color="primary"
-                  mat-icon-button
-                >
+                  mat-icon-button>
                   <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #opts>
@@ -262,8 +249,7 @@ import { MatTableDataSource } from '@angular/material/table';
             matTooltip="fetch suppliers"
             [diameter]="30"
             mode="indeterminate"
-            color="primary"
-          >
+            color="primary">
           </mat-progress-spinner>
         </div>
         <mat-paginator
@@ -284,7 +270,6 @@ export class SuppliersComponent implements OnInit {
   suppliersArray: SupplierModel[];
   fetchSuppliersFlag = false;
   nameFormControl = new FormControl();
-  descriptionFormControl = new FormControl();
   addressFormControl = new FormControl();
   emailFormControl = new FormControl();
   mobileFormControl = new FormControl();
@@ -296,11 +281,11 @@ export class SuppliersComponent implements OnInit {
     private readonly snack: MatSnackBar
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.getSuppliers();
   }
 
-  searchSupplier(query: string) {
+  searchSupplier(query: string): void {
     // if ($event && $event.query) {
     //   this.fetchSuppliersFlag = true;
     //   this.stockDatabase.searchSupplier($event.query, {size: 20}).then(data => {
@@ -320,7 +305,7 @@ export class SuppliersComponent implements OnInit {
     // }
   }
 
-  getSuppliers() {
+  getSuppliers(): void {
     this.fetchSuppliersFlag = true;
     this.stockState
       .getAllSupplier({ size: 100 })
@@ -338,7 +323,7 @@ export class SuppliersComponent implements OnInit {
       });
   }
 
-  deleteSupplier(element: any) {
+  deleteSupplier(element: any): void {
     this.dialog
       .open(DialogSupplierDeleteComponent, {
         data: element,
@@ -364,7 +349,7 @@ export class SuppliersComponent implements OnInit {
       });
   }
 
-  updateSupplierName(supplier, matMenu: MatMenuTrigger) {
+  updateSupplierName(supplier, matMenu: MatMenuTrigger): void {
     matMenu.toggleMenu();
     if (supplier && supplier.value) {
       supplier.field = 'name';
@@ -372,7 +357,7 @@ export class SuppliersComponent implements OnInit {
     }
   }
 
-  updateSupplier(supplier: { id: string; value: string; field: string }) {
+  updateSupplier(supplier: { id: string; value: string; field: string }): void {
     this.snack.open('Update in progress..', 'Ok');
     this.stockState
       .updateSupplier(supplier)
@@ -401,7 +386,7 @@ export class SuppliersComponent implements OnInit {
       });
   }
 
-  openAddSupplierDialog() {
+  openAddSupplierDialog(): void {
     this.dialog
       .open(DialogSupplierNewComponent, {
         closeOnNavigation: true,
@@ -416,7 +401,7 @@ export class SuppliersComponent implements OnInit {
       });
   }
 
-  updateSupplierEmail(supplier: any, matMenu: MatMenuTrigger) {
+  updateSupplierEmail(supplier: any, matMenu: MatMenuTrigger): void {
     matMenu.toggleMenu();
     if (supplier && supplier.value) {
       supplier.field = 'email';
@@ -424,7 +409,7 @@ export class SuppliersComponent implements OnInit {
     }
   }
 
-  updateSupplierAddress(supplier: any, matMenu: MatMenuTrigger) {
+  updateSupplierAddress(supplier: any, matMenu: MatMenuTrigger): void {
     matMenu.toggleMenu();
     if (supplier && supplier.value) {
       supplier.field = 'address';
@@ -432,7 +417,7 @@ export class SuppliersComponent implements OnInit {
     }
   }
 
-  updateSupplierMobile(supplier: any, matMenu: MatMenuTrigger) {
+  updateSupplierMobile(supplier: any, matMenu: MatMenuTrigger): void {
     matMenu.toggleMenu();
     if (supplier && supplier.value) {
       supplier.field = 'number';
@@ -458,8 +443,7 @@ export class SuppliersComponent implements OnInit {
             [disabled]="deleteProgress"
             color="primary"
             mat-button
-            (click)="deleteSupplier(data)"
-          >
+            (click)="deleteSupplier(data)">
             Delete
             <mat-progress-spinner
               *ngIf="deleteProgress"
@@ -477,8 +461,7 @@ export class SuppliersComponent implements OnInit {
             [disabled]="deleteProgress"
             color="primary"
             mat-button
-            (click)="cancel()"
-          >
+            (click)="cancel()">
             Cancel
           </button>
         </div>
@@ -499,7 +482,7 @@ export class DialogSupplierDeleteComponent {
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 
-  deleteSupplier(supplier: SupplierModel) {
+  deleteSupplier(supplier: SupplierModel): void {
     this.errorSupplierMessage = undefined;
     this.deleteProgress = true;
     this.stockDatabase
@@ -514,7 +497,7 @@ export class DialogSupplierDeleteComponent {
       });
   }
 
-  cancel() {
+  cancel(): void {
     this.dialogRef.close(null);
   }
 }
@@ -528,8 +511,7 @@ export class DialogSupplierDeleteComponent {
         <form
           class="d-flex flex-column"
           [formGroup]="newSupplierForm"
-          (ngSubmit)="createSupplier()"
-        >
+          (ngSubmit)="createSupplier()">
           <mat-form-field appearance="outline">
             <mat-label>Name</mat-label>
             <input matInput type="text" formControlName="name" required />
@@ -558,15 +540,13 @@ export class DialogSupplierDeleteComponent {
             color="primary"
             [disabled]="createSupplierProgress"
             mat-flat-button
-            class="ft-button"
-          >
+            class="ft-button">
             Save
             <mat-progress-spinner
               style="display: inline-block"
               *ngIf="createSupplierProgress"
               [diameter]="20"
-              mode="indeterminate"
-            >
+              mode="indeterminate">
             </mat-progress-spinner>
           </button>
           <button mat-dialog-close="" class="btn-block" mat-button color="warn">
@@ -597,7 +577,7 @@ export class DialogSupplierNewComponent implements OnInit {
     this.initiateForm();
   }
 
-  initiateForm() {
+  initiateForm(): void {
     this.newSupplierForm = this.formBuilder.group({
       name: ['', [Validators.nullValidator, Validators.required]],
       email: [''],
@@ -606,7 +586,7 @@ export class DialogSupplierNewComponent implements OnInit {
     });
   }
 
-  createSupplier() {
+  createSupplier(): void {
     if (!this.newSupplierForm.valid) {
       this.snack.open('Please fll all details', 'Ok', {
         duration: 3000,
@@ -637,7 +617,7 @@ export class DialogSupplierNewComponent implements OnInit {
       });
   }
 
-  cancel($event: Event) {
+  cancel($event: Event): void {
     $event.preventDefault();
     this.dialogRef.close(null);
   }

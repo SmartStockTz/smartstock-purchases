@@ -17,8 +17,8 @@ import { DialogSupplierNewComponent } from '../components/suppliers.component';
 import { StockModel } from '../models/stock.model';
 import { PurchaseState } from '../states/purchase.state';
 // import { DeviceInfoUtil } from '../../lib/utils/device-info.util';
-import { DeviceInfoUtil } from '@smartstock/core-libs/utils/device-info.util';
-import { StorageService } from '@smartstock/core-libs/services/storage.service';
+import { DeviceInfoUtil } from '@smartstocktz/core-libs';
+import { StorageService } from '@smartstocktz/core-libs';
 
 @Component({
   selector: 'smartstock-purchase-create',

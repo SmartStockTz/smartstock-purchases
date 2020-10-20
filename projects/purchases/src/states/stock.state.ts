@@ -8,7 +8,7 @@ import { CategoryModel } from '../models/category.model';
 import { BFast } from 'bfastjs';
 // import {StorageService} from '../../lib/services/storage.service';
 import { StockModel } from '../models/stock.model';
-import { StorageService } from '@smartstock/core-libs/services/storage.service';
+import { StorageService } from '@smartstocktz/core-libs';
 
 @Injectable({
   providedIn: 'root',
