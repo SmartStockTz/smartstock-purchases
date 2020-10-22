@@ -58,90 +58,102 @@ import { StorageService } from '@smartstocktz/core-libs';
                     >
                       Invoice purchase
                     </mat-slide-toggle>
-                    <mat-form-field appearance="fill" class="my-input">
-                      <mat-label>ref #</mat-label>
-                      <input matInput formControlName="refNumber" />
-                      <mat-error>Purchase reference number required</mat-error>
-                    </mat-form-field>
-
-                    <mat-form-field appearance="fill" class="my-input">
-                      <mat-label>Supplier</mat-label>
-                      <mat-select formControlName="supplier">
-                        <mat-option
-                          *ngFor="let supplier of suppliers | async"
-                          [value]="supplier"
-                        >
-                          {{ supplier.name }}
-                        </mat-option>
-                      </mat-select>
-                      <mat-progress-spinner
-                        matTooltip="Fetching suppliers"
-                        *ngIf="supplierFetching"
-                        matSuffix
-                        color="accent"
-                        mode="indeterminate"
-                        [diameter]="20"
-                      ></mat-progress-spinner>
-                      <mat-error>Supplier required</mat-error>
-                      <div matSuffix class="d-flex flex-row">
-                        <button
-                          (click)="refreshSuppliers($event)"
-                          mat-icon-button
-                          matTooltip="refresh suppliers"
-                          *ngIf="!supplierFetching"
-                        >
-                          <mat-icon>refresh</mat-icon>
-                        </button>
-                        <button
-                          (click)="addNewSupplier($event)"
-                          mat-icon-button
-                          matTooltip="add new supplier"
-                          *ngIf="!supplierFetching"
-                        >
-                          <mat-icon>add</mat-icon>
-                        </button>
+                    <div class="row">
+                      <div class="col-md-3 col-lg-3">
+                        <mat-form-field appearance="outline" class="my-input">
+                          <mat-label>ref #</mat-label>
+                          <input matInput formControlName="refNumber" />
+                          <mat-error
+                            >Purchase reference number required</mat-error
+                          >
+                        </mat-form-field>
                       </div>
-                    </mat-form-field>
-
-                    <mat-form-field appearance="fill" class="my-input">
-                      <mat-label>Purchase Date</mat-label>
-                      <input
-                        matInput
-                        [matDatepicker]="picker"
-                        formControlName="date"
-                        required
-                      />
-                      <mat-datepicker-toggle
-                        matSuffix
-                        [for]="picker"
-                      ></mat-datepicker-toggle>
-                      <mat-datepicker [touchUi]="true" #picker></mat-datepicker>
-                    </mat-form-field>
-
-                    <mat-form-field
-                      *ngIf="isInvoiceFormControl.value"
-                      appearance="fill"
-                      class="my-input"
-                    >
-                      <mat-label>Due Date</mat-label>
-                      <input
-                        matInput
-                        [matDatepicker]="pickerDue"
-                        formControlName="due"
-                      />
-                      <mat-datepicker-toggle
-                        matSuffix
-                        [for]="pickerDue"
-                      ></mat-datepicker-toggle>
-                      <mat-datepicker
-                        [touchUi]="true"
-                        #pickerDue
-                      ></mat-datepicker>
-                    </mat-form-field>
+                      <div class="col-md-3 col-lg-3">
+                        <mat-form-field appearance="outline" class="my-input">
+                          <mat-label>Supplier</mat-label>
+                          <mat-select formControlName="supplier">
+                            <mat-option
+                              *ngFor="let supplier of suppliers | async"
+                              [value]="supplier"
+                            >
+                              {{ supplier.name }}
+                            </mat-option>
+                          </mat-select>
+                          <mat-progress-spinner
+                            matTooltip="Fetching suppliers"
+                            *ngIf="supplierFetching"
+                            matSuffix
+                            color="accent"
+                            mode="indeterminate"
+                            [diameter]="20"
+                          ></mat-progress-spinner>
+                          <mat-error>Supplier required</mat-error>
+                          <div matSuffix class="d-flex flex-row">
+                            <button
+                              (click)="refreshSuppliers($event)"
+                              mat-icon-button
+                              matTooltip="refresh suppliers"
+                              *ngIf="!supplierFetching"
+                            >
+                              <mat-icon>refresh</mat-icon>
+                            </button>
+                            <button
+                              (click)="addNewSupplier($event)"
+                              mat-icon-button
+                              matTooltip="add new supplier"
+                              *ngIf="!supplierFetching"
+                            >
+                              <mat-icon>add</mat-icon>
+                            </button>
+                          </div>
+                        </mat-form-field>
+                      </div>
+                      <div class="col-md-3 col-lg-3">
+                        <mat-form-field appearance="outline" class="my-input">
+                          <mat-label>Purchase Date</mat-label>
+                          <input
+                            matInput
+                            [matDatepicker]="picker"
+                            formControlName="date"
+                            required
+                          />
+                          <mat-datepicker-toggle
+                            matSuffix
+                            [for]="picker"
+                          ></mat-datepicker-toggle>
+                          <mat-datepicker
+                            [touchUi]="true"
+                            #picker
+                          ></mat-datepicker>
+                        </mat-form-field>
+                      </div>
+                      <div class="col-md-3 col-lg-3">
+                        <mat-form-field
+                          *ngIf="isInvoiceFormControl.value"
+                          appearance="outline"
+                          class="my-input"
+                        >
+                          <mat-label>Due Date</mat-label>
+                          <input
+                            matInput
+                            [matDatepicker]="pickerDue"
+                            formControlName="due"
+                          />
+                          <mat-datepicker-toggle
+                            matSuffix
+                            [for]="pickerDue"
+                          ></mat-datepicker-toggle>
+                          <mat-datepicker
+                            [touchUi]="true"
+                            #pickerDue
+                          ></mat-datepicker>
+                        </mat-form-field>
+                      </div>
+                    </div>
                   </mat-card-content>
                 </mat-card>
 
-                <h4>Items</h4>
+                <h4>Product details</h4>
 
                 <mat-card class="mat-elevation-z0">
                   <mat-card-content class="card-content">
@@ -163,7 +175,7 @@ import { StorageService } from '@smartstocktz/core-libs';
                             <div formGroupName="product">
                               <mat-form-field
                                 class="my-input"
-                                appearance="fill"
+                                appearance="outline"
                               >
                                 <mat-label>Product</mat-label>
                                 <input
@@ -177,7 +189,10 @@ import { StorageService } from '@smartstocktz/core-libs';
                               </mat-form-field>
                             </div>
 
-                            <mat-form-field appearance="fill" class="my-input">
+                            <mat-form-field
+                              appearance="outline"
+                              class="my-input"
+                            >
                               <mat-label>Expire Date</mat-label>
                               <input
                                 matInput
@@ -194,7 +209,10 @@ import { StorageService } from '@smartstocktz/core-libs';
                               ></mat-datepicker>
                             </mat-form-field>
 
-                            <mat-form-field class="my-input" appearance="fill">
+                            <mat-form-field
+                              class="my-input"
+                              appearance="outline"
+                            >
                               <mat-label>Purchase Price</mat-label>
                               <input
                                 type="number"
@@ -209,7 +227,10 @@ import { StorageService } from '@smartstocktz/core-libs';
                               <mat-error>Purchase price required</mat-error>
                             </mat-form-field>
 
-                            <mat-form-field class="my-input" appearance="fill">
+                            <mat-form-field
+                              class="my-input"
+                              appearance="outline"
+                            >
                               <mat-label>Retail Price</mat-label>
                               <input
                                 type="number"
@@ -221,7 +242,10 @@ import { StorageService } from '@smartstocktz/core-libs';
                               <mat-error>Retail price required</mat-error>
                             </mat-form-field>
 
-                            <mat-form-field class="my-input" appearance="fill">
+                            <mat-form-field
+                              class="my-input"
+                              appearance="outline"
+                            >
                               <mat-label>Wholesale Price</mat-label>
                               <input
                                 type="number"
@@ -233,7 +257,10 @@ import { StorageService } from '@smartstocktz/core-libs';
                               <mat-error>Wholesale price required</mat-error>
                             </mat-form-field>
 
-                            <mat-form-field class="my-input" appearance="fill">
+                            <mat-form-field
+                              class="my-input"
+                              appearance="outline"
+                            >
                               <mat-label>Wholesale Quantity</mat-label>
                               <input
                                 type="number"
@@ -245,7 +272,10 @@ import { StorageService } from '@smartstocktz/core-libs';
                               <mat-error>Wholesale quantity required</mat-error>
                             </mat-form-field>
 
-                            <mat-form-field class="my-input" appearance="fill">
+                            <mat-form-field
+                              class="my-input"
+                              appearance="outline"
+                            >
                               <mat-label>Quantity</mat-label>
                               <input
                                 type="number"
@@ -260,7 +290,10 @@ import { StorageService } from '@smartstocktz/core-libs';
                               <mat-error>Quantity required</mat-error>
                             </mat-form-field>
 
-                            <mat-form-field class="my-input" appearance="fill">
+                            <mat-form-field
+                              class="my-input"
+                              appearance="outline"
+                            >
                               <mat-label>Amount</mat-label>
                               <input
                                 type="number"
