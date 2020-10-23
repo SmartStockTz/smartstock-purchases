@@ -160,7 +160,6 @@ import { StorageService } from '@smartstocktz/core-libs';
                     *ngFor="let item of invoiceItems.controls; let i = index"
                   >
                     <div [formGroupName]="i">
-                      <div>{{ item | async }}</div>
                       <div class="row">
                         <div class="col-md-4 col-lg-4">
                           <div formGroupName="product">
