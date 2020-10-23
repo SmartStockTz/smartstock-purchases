@@ -155,120 +155,127 @@ import { StorageService } from '@smartstocktz/core-libs';
 
                 <h4>Product details</h4>
 
-                <!-- <div formArrayName="items" (click)="$event.preventDefault()">
-                <div *ngFor="let item of invoiceItems.controls; let i = index">
-                <div [formGroupName]="i"> -->
-                <div class="row">
-                  <div class="col-md-4 col-lg-4">
-                    <mat-form-field appearance="outline" class="my-input">
-                      <mat-label>Search Product</mat-label>
-                      <input
-                        matInput
-                        type="text"
-                        [matAutocomplete]="autocomplete"
-                        [formControl]="searchProductFormControl"
-                      />
-                      <mat-error>Field required</mat-error>
-                      <mat-progress-spinner
-                        matSuffix
-                        mode="indeterminate"
-                        [diameter]="20"
-                        *ngIf="searchProductProgress"
-                        color="accent"
-                      >
-                      </mat-progress-spinner>
-                    </mat-form-field>
+                <div formArrayName="items" (click)="$event.preventDefault()">
+                  <div
+                    *ngFor="let item of invoiceItems.controls; let i = index"
+                  >
+                    <div [formGroupName]="i">
+                      <div class="row">
+                        <div class="col-md-4 col-lg-4">
+                          <div formGroupName="product">
+                            <mat-form-field
+                              class="my-input"
+                              appearance="outline"
+                            >
+                              <mat-label>Product</mat-label>
+                              <input
+                                matInput
+                                formControlName="product"
+                                type="text"
+                                [readonly]="true"
+                                required
+                              />
+                              <mat-error>Product is required</mat-error>
+                            </mat-form-field>
+                          </div>
+                        </div>
+                        <div class="col-md-4 col-lg-4">
+                          <mat-form-field appearance="outline" class="my-input">
+                            <mat-label>Expire Date</mat-label>
+                            <input
+                              matInput
+                              [matDatepicker]="picker"
+                              formControlName="expire"
+                            />
+                            <mat-datepicker-toggle
+                              matSuffix
+                              [for]="picker"
+                            ></mat-datepicker-toggle>
+                            <mat-datepicker
+                              [touchUi]="true"
+                              #picker
+                            ></mat-datepicker>
+                          </mat-form-field>
+                        </div>
+                        <div class="col-md-4 col-lg-4">
+                          <mat-form-field class="my-input" appearance="outline">
+                            <mat-label>Quantity</mat-label>
+                            <input
+                              type="number"
+                              (keyup)="checkKey($event)"
+                              (keydown)="checkKey($event)"
+                              (change)="updateAmount(item)"
+                              min="0"
+                              formControlName="quantity"
+                              matInput
+                              required
+                            />
+                            <mat-error>Quantity required</mat-error>
+                          </mat-form-field>
+                        </div>
+                      </div>
 
-                    <mat-autocomplete #autocomplete>
-                      <mat-option
-                        (onSelectionChange)="selectedProduct = product"
-                        *ngFor="let product of products | async"
-                        [value]="product.product"
-                      >
-                        {{ product.product }}
-                      </mat-option>
-                    </mat-autocomplete>
-                  </div>
-                  <div class="col-md-4 col-lg-4">
-                    <mat-form-field appearance="outline" class="my-input">
-                      <mat-label>Expire Date</mat-label>
-                      <input
-                        matInput
-                        [matDatepicker]="picker"
-                        formControlName="expire"
-                      />
-                      <mat-datepicker-toggle
-                        matSuffix
-                        [for]="picker"
-                      ></mat-datepicker-toggle>
-                      <mat-datepicker [touchUi]="true" #picker></mat-datepicker>
-                    </mat-form-field>
-                  </div>
-                  <div class="col-md-4 col-lg-4">
-                    <mat-form-field class="my-input" appearance="outline">
-                      <mat-label>Quantity</mat-label>
-                      <input
-                        type="number"
-                        (keyup)="checkKey($event)"
-                        (keydown)="checkKey($event)"
-                        (change)="updateAmount(item)"
-                        min="0"
-                        formControlName="quantity"
-                        matInput
-                        required
-                      />
-                      <mat-error>Quantity required</mat-error>
-                    </mat-form-field>
+                      <div class="row">
+                        <div class="col-md-3 col-lg-3">
+                          <mat-form-field class="my-input" appearance="outline">
+                            <mat-label>Purchase Price</mat-label>
+                            <input
+                              type="number"
+                              (keyup)="checkKey($event)"
+                              (keydown)="checkKey($event)"
+                              (change)="updateAmount(item)"
+                              min="0"
+                              formControlName="purchase"
+                              matInput
+                              required
+                            />
+                            <mat-error>Purchase price required</mat-error>
+                          </mat-form-field>
+                        </div>
+                        <div class="col-md-3 col-lg-3">
+                          <mat-form-field class="my-input" appearance="outline">
+                            <mat-label>Retail Price</mat-label>
+                            <input
+                              type="number"
+                              min="0"
+                              formControlName="retailPrice"
+                              matInput
+                              required
+                            />
+                            <mat-error>Retail price required</mat-error>
+                          </mat-form-field>
+                        </div>
+                        <div class="col-md-3 col-lg-3">
+                          <mat-form-field class="my-input" appearance="outline">
+                            <mat-label>Wholesale Price</mat-label>
+                            <input
+                              type="number"
+                              min="0"
+                              formControlName="wholesalePrice"
+                              matInput
+                              required
+                            />
+                            <mat-error>Wholesale price required</mat-error>
+                          </mat-form-field>
+                        </div>
+                        <div class="col-md-3 col-lg-3">
+                          <mat-form-field class="my-input" appearance="outline">
+                            <mat-label>Amount x quantity</mat-label>
+                            <input
+                              type="number"
+                              min="0"
+                              formControlName="amount"
+                              matInput
+                              [readonly]="true"
+                              required
+                            />
+                            <mat-error>Amount required</mat-error>
+                          </mat-form-field>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-
-                <div class="row">
-                  <div class="col-md-4 col-lg-4">
-                    <mat-form-field class="my-input" appearance="outline">
-                      <mat-label>Purchase Price</mat-label>
-                      <input
-                        type="number"
-                        (keyup)="checkKey($event)"
-                        (keydown)="checkKey($event)"
-                        (change)="updateAmount(item)"
-                        min="0"
-                        formControlName="purchase"
-                        matInput
-                        required
-                      />
-                      <mat-error>Purchase price required</mat-error>
-                    </mat-form-field>
-                  </div>
-                  <div class="col-md-4 col-lg-4">
-                    <mat-form-field class="my-input" appearance="outline">
-                      <mat-label>Retail Price</mat-label>
-                      <input
-                        type="number"
-                        min="0"
-                        formControlName="retailPrice"
-                        matInput
-                        required
-                      />
-                      <mat-error>Retail price required</mat-error>
-                    </mat-form-field>
-                  </div>
-                  <div class="col-md-4 col-lg-4">
-                    <mat-form-field class="my-input" appearance="outline">
-                      <mat-label>Wholesale Price</mat-label>
-                      <input
-                        type="number"
-                        min="0"
-                        formControlName="wholesalePrice"
-                        matInput
-                        required
-                      />
-                      <mat-error>Wholesale price required</mat-error>
-                    </mat-form-field>
-                  </div>
-                </div>
-                <!-- </div> -->
-                <!-- </div> -->
-                <!-- </div> -->
 
                 <!-- <mat-card class="mat-elevation-z0">
                   <mat-card-content class="card-content">
@@ -436,48 +443,48 @@ import { StorageService } from '@smartstocktz/core-libs';
                         </div>
                         <hr />
                       </div>
-                    </div>
+                     </div>  -->
 
-                    <mat-form-field appearance="outline" class="my-input">
-                      <mat-label>Search Product</mat-label>
-                      <input
-                        matInput
-                        type="text"
-                        [matAutocomplete]="autocomplete"
-                        [formControl]="searchProductFormControl"
-                      />
-                      <mat-error>Field required</mat-error>
-                      <mat-progress-spinner
-                        matSuffix
-                        mode="indeterminate"
-                        [diameter]="20"
-                        *ngIf="searchProductProgress"
-                        color="accent"
-                      >
-                      </mat-progress-spinner>
-                    </mat-form-field>
+                <mat-form-field appearance="outline" class="my-input">
+                  <mat-label>Search Product</mat-label>
+                  <input
+                    matInput
+                    type="text"
+                    [matAutocomplete]="autocomplete"
+                    [formControl]="searchProductFormControl"
+                  />
+                  <mat-error>Field required</mat-error>
+                  <mat-progress-spinner
+                    matSuffix
+                    mode="indeterminate"
+                    [diameter]="20"
+                    *ngIf="searchProductProgress"
+                    color="accent"
+                  >
+                  </mat-progress-spinner>
+                </mat-form-field>
 
-                    <mat-autocomplete #autocomplete>
-                      <mat-option
-                        (onSelectionChange)="selectedProduct = product"
-                        *ngFor="let product of products | async"
-                        [value]="product.product"
-                      >
-                        {{ product.product }}
-                      </mat-option>
-                    </mat-autocomplete>
+                <mat-autocomplete #autocomplete>
+                  <mat-option
+                    (onSelectionChange)="selectedProduct = product"
+                    *ngFor="let product of products | async"
+                    [value]="product.product"
+                  >
+                    {{ product.product }}
+                  </mat-option>
+                </mat-autocomplete>
 
-                    <button
-                      matTooltip="Add new item"
-                      (click)="addItem($event)"
-                      class="ft-button"
-                      mat-flat-button
-                      color="primary"
-                    >
-                      Add Item
-                    </button>
-                  </mat-card-content>
-                </mat-card> -->
+                <button
+                  matTooltip="Add new item"
+                  (click)="addItem($event)"
+                  class="ft-button"
+                  mat-flat-button
+                  color="primary"
+                >
+                  Add Item
+                </button>
+                <!-- </mat-card-content> -->
+                <!-- </mat-card>  -->
               </div>
 
               <div class="col-12 col-xl-9 col-lg-9">
@@ -608,6 +615,8 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
   }
 
   saveInvoice(): void {
+    console.log(this.invoiceForm.value);
+
     if (!this.invoiceForm.valid) {
       this.snack.open('Please fill all required information', 'Ok', {
         duration: 3000,
