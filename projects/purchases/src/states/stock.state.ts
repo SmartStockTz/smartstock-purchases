@@ -8,17 +8,37 @@ import { CategoryModel } from '../models/category.model';
 import { BFast } from 'bfastjs';
 // import {StorageService} from '../../lib/services/storage.service';
 import { StockModel } from '../models/stock.model';
-import { StorageService } from '@smartstocktz/core-libs';
+import { MessageService, StorageService } from '@smartstocktz/core-libs';
+import { BehaviorSubject } from 'rxjs';
+import { StockService } from './../services/stock.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class StockState {
+  stocks: BehaviorSubject<StockModel[]> = new BehaviorSubject<StockModel[]>([]);
+  selectedStock: BehaviorSubject<StockModel> = new BehaviorSubject<StockModel>(
+    null
+  );
+  isFetchStocks: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  isExportToExcel: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
+    false
+  );
+  isImportProducts: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
+    false
+  );
+  isDeleteStocks: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
+    false
+  );
   constructor(
     private readonly _httpClient: HttpClient,
     private readonly _user: UserService,
     private readonly _storage: StorageService,
-    private readonly _settings: SettingsService
+    private readonly _settings: SettingsService,
+
+    private readonly stockService: StockService,
+    private readonly messageService: MessageService,
+    private readonly storageService: StorageService
   ) {}
 
   async exportToExcel(): Promise<any> {
@@ -268,6 +288,26 @@ export class StockState {
       .updateBuilder()
       .doc(category)
       .update();
+  }
+
+  getStocksFromRemote(): void {
+    this.isFetchStocks.next(true);
+    this.stockService
+      .getAllStock()
+      .then((remoteStocks) => {
+        this.stocks.next(remoteStocks);
+        return this.storageService.saveStock(remoteStocks as any);
+      })
+      .catch((reason) => {
+        this.messageService.showMobileInfoMessage(
+          reason && reason.message ? reason.message : reason,
+          2000,
+          'bottom'
+        );
+      })
+      .finally(() => {
+        this.isFetchStocks.next(false);
+      });
   }
 
   // async updateStock(stock: StockModel, progress: (d) => void): Promise<StockModel> {

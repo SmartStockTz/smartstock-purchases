@@ -1,4 +1,4 @@
-import {ANALYZE_FOR_ENTRY_COMPONENTS, NgModule} from '@angular/core';
+import { ANALYZE_FOR_ENTRY_COMPONENTS, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
@@ -34,12 +34,12 @@ import {
   SuppliersComponent,
 } from './components/suppliers.component';
 import { VerifyEMailDialogComponent } from './components/verify-dialog.component';
-import {RouterModule, ROUTES, Routes} from '@angular/router';
-import {MatSnackBarModule} from "@angular/material/snack-bar";
-import {HttpClientModule} from "@angular/common/http";
-import {MatNativeDateModule, MatRippleModule} from "@angular/material/core";
-import {IndexPage} from "./pages/index.page";
-import {MatDialogModule} from "@angular/material/dialog";
+import { RouterModule, ROUTES, Routes } from '@angular/router';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { HttpClientModule } from '@angular/common/http';
+import { MatNativeDateModule, MatRippleModule } from '@angular/material/core';
+import { IndexPage } from './pages/index.page';
+import { MatDialogModule } from '@angular/material/dialog';
 
 const routes: Routes = [
   { path: '', component: IndexPage },
@@ -58,7 +58,7 @@ const routes: Routes = [
     StockDetailsComponent,
     DialogSupplierDeleteComponent,
     VerifyEMailDialogComponent,
-    IndexPage
+    IndexPage,
   ],
   imports: [
     CommonModule,
@@ -73,9 +73,9 @@ const routes: Routes = [
         {
           provide: ROUTES,
           multi: true,
-          useValue: routes
-        }
-      ]
+          useValue: routes,
+        },
+      ],
     },
     MatSidenavModule,
     LibModule,
@@ -102,7 +102,7 @@ const routes: Routes = [
     HttpClientModule,
     MatNativeDateModule,
     MatDialogModule,
-    MatRippleModule
+    MatRippleModule,
   ],
 })
 export class PurchasesModule {}
