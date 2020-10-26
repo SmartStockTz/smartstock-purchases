@@ -213,10 +213,7 @@ export class StockState {
     //   .count({}, {cacheEnable: false, dtl: 0});
     const stocks: StockModel[] = await BFast.database(shop.projectId)
       .collection<StockModel>('stocks')
-      .getAll<StockModel>(undefined, {
-        cacheEnable: false,
-        dtl: 0,
-      });
+      .getAll<StockModel>();
     await this._storage.saveStocks(stocks);
     // stocks.sort((a, b) => {
     //   return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();

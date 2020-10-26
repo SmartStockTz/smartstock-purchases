@@ -48,7 +48,7 @@ import { StockService } from '../services/stock.service';
           <form [formGroup]="invoiceForm" (ngSubmit)="saveInvoice()">
             <div class="row d-flex justify-content-center align-items-center">
               <div class="col-12 col-xl-9 col-lg-9">
-                <h4>Information</h4>
+                <h2>Receipt information</h2>
                 <mat-card class="mat-elevation-z0">
                   <mat-card-content class="card-content">
                     <mat-slide-toggle
@@ -155,7 +155,7 @@ import { StockService } from '../services/stock.service';
                   </mat-card-content>
                 </mat-card>
 
-                <h4>Product details</h4>
+                <h2>Purchased products</h2>
 
                 <div formArrayName="items" (click)="$event.preventDefault()">
                   <div
@@ -169,7 +169,7 @@ import { StockService } from '../services/stock.service';
                               class="my-input"
                               appearance="outline"
                             >
-                              <mat-label>Product</mat-label>
+                              <mat-label>Product name</mat-label>
                               <input
                                 matInput
                                 formControlName="product"
@@ -262,7 +262,7 @@ import { StockService } from '../services/stock.service';
                         </div>
                         <div class="col-md-3 col-lg-3">
                           <mat-form-field class="my-input" appearance="outline">
-                            <mat-label>Amount x quantity</mat-label>
+                            <mat-label>Purchase price x quantity</mat-label>
                             <input
                               type="number"
                               min="0"
@@ -274,6 +274,17 @@ import { StockService } from '../services/stock.service';
                             <mat-error>Amount required</mat-error>
                           </mat-form-field>
                         </div>
+                      </div>
+                      <div class="flex-grow-0 removeitem">
+                        <button
+                          matTooltip="Remove this item"
+                          (click)="removeItem(i, $event)"
+                          mat-flat-button
+                          class="ft-button"
+                          color="warn"
+                        >
+                          Remove Item
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -505,14 +516,14 @@ import { StockService } from '../services/stock.service';
                   mat-flat-button
                   color="primary"
                 >
-                  Add Item
+                  Add product
                 </button>
                 <!-- </mat-card-content> -->
                 <!-- </mat-card>  -->
               </div>
 
-              <div class="col-12 col-xl-9 col-lg-9">
-                <h4>Status</h4>
+              <div class="col-12 col-xl-9 col-lg-9 status">
+                <h2>Status</h2>
                 <mat-card class="mat-elevation-z0">
                   <mat-card-content class="card-content">
                     <mat-form-field class="my-input" appearance="outline">
@@ -639,8 +650,8 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
     }
   }
 
-  getstocks() {
-    console.log(this.stockstate.getStocksFromRemote());
+  getstocks(): void {
+    this.stockstate.getAllStock();
   }
 
   saveInvoice(): void {
