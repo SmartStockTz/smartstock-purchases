@@ -63,7 +63,5 @@ export class IndexPage extends DeviceInfoUtil implements OnInit {
     super();
   }
 
-  ngOnInit(): void {
-    console.log(this.stocks.getStocksFromRemote());
-  }
+  ngOnInit(): void {}
 }

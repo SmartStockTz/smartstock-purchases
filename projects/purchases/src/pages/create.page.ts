@@ -445,34 +445,55 @@ import { StorageService } from '@smartstocktz/core-libs';
                       </div>
                      </div>  -->
 
-                <mat-form-field appearance="outline" class="my-input">
-                  <mat-label>Search Product</mat-label>
-                  <input
-                    matInput
-                    type="text"
-                    [matAutocomplete]="autocomplete"
-                    [formControl]="searchProductFormControl"
-                  />
-                  <mat-error>Field required</mat-error>
-                  <mat-progress-spinner
-                    matSuffix
-                    mode="indeterminate"
-                    [diameter]="20"
-                    *ngIf="searchProductProgress"
-                    color="accent"
-                  >
-                  </mat-progress-spinner>
-                </mat-form-field>
+                <div class="row">
+                  <div class="col-lg-9 col-md-9">
+                    <mat-form-field appearance="outline" class="my-input">
+                      <mat-label>Search Product</mat-label>
+                      <input
+                        matInput
+                        type="text"
+                        [matAutocomplete]="autocomplete"
+                        [formControl]="searchProductFormControl"
+                      />
+                      <mat-error>Field required</mat-error>
+                      <mat-progress-spinner
+                        matSuffix
+                        mode="indeterminate"
+                        [diameter]="20"
+                        *ngIf="searchProductProgress"
+                        color="accent"
+                      >
+                      </mat-progress-spinner>
+                    </mat-form-field>
 
-                <mat-autocomplete #autocomplete>
-                  <mat-option
-                    (onSelectionChange)="selectedProduct = product"
-                    *ngFor="let product of products | async"
-                    [value]="product.product"
-                  >
-                    {{ product.product }}
-                  </mat-option>
-                </mat-autocomplete>
+                    <mat-autocomplete #autocomplete>
+                      <mat-option
+                        (onSelectionChange)="selectedProduct = product"
+                        *ngFor="let product of products | async"
+                        [value]="product.product"
+                      >
+                        {{ product.product }}
+                      </mat-option>
+                    </mat-autocomplete>
+                  </div>
+                  <div class="col-lg-3 col-md-3">
+                    <button
+                      matTooltip="Reload from server"
+                      color="primary"
+                      class="ft-button"
+                      mat-flat-button
+                    >
+                      <mat-icon> refresh </mat-icon>
+                      <!-- <mat-progress-spinner
+                        [diameter]="20"
+                        matTooltip="Fetch products from server"
+                        mode="indeterminate"
+                        color="primary"
+                      >
+                      </mat-progress-spinner> -->
+                    </button>
+                  </div>
+                </div>
 
                 <button
                   matTooltip="Add new item"
