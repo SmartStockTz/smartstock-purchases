@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { DeviceInfoUtil } from '@smartstocktz/core-libs';
-import { StockState } from '../states/stock.state';
 
 @Component({
   selector: 'smartstock-purchases-index',
@@ -59,7 +58,7 @@ export class IndexPage extends DeviceInfoUtil implements OnInit {
     },
   ];
 
-  constructor(private stocks: StockState) {
+  constructor() {
     super();
   }
 

@@ -17,6 +17,8 @@ import { StockModel } from '../models/stock.model';
 import { PurchaseState } from '../states/purchase.state';
 import { DeviceInfoUtil } from '@smartstocktz/core-libs';
 import { StorageService } from '@smartstocktz/core-libs';
+import { StockState } from '../states/stock.state';
+import { StockService } from '../services/stock.service';
 
 @Component({
   selector: 'smartstock-purchase-create',
@@ -482,6 +484,7 @@ import { StorageService } from '@smartstocktz/core-libs';
                       color="primary"
                       class="ft-button"
                       mat-flat-button
+                      (click)="getstocks()"
                     >
                       <mat-icon> refresh </mat-icon>
                       <!-- <mat-progress-spinner
@@ -575,7 +578,8 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
     private readonly router: Router,
     private readonly matDialog: MatDialog,
     private readonly indexDb: StorageService,
-    private readonly purchaseState: PurchaseState
+    private readonly purchaseState: PurchaseState,
+    private stockstate: StockState
   ) {
     super();
   }
@@ -635,9 +639,11 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
     }
   }
 
-  saveInvoice(): void {
-    console.log(this.invoiceForm.value);
+  getstocks() {
+    console.log(this.stockstate.getStocksFromRemote());
+  }
 
+  saveInvoice(): void {
     if (!this.invoiceForm.valid) {
       this.snack.open('Please fill all required information', 'Ok', {
         duration: 3000,
