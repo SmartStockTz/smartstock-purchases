@@ -32,7 +32,7 @@ const routes: Routes = [
   declarations: [AppComponent, LoginPageComponent],
   imports: [
     BrowserModule,
-    RouterModule.forRoot(routes),
+    RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' }),
     PurchasesModule,
     BrowserAnimationsModule,
     MatProgressSpinnerModule,
