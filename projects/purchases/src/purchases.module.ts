@@ -40,6 +40,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { MatNativeDateModule, MatRippleModule } from '@angular/material/core';
 import { IndexPage } from './pages/index.page';
 import { MatDialogModule } from '@angular/material/dialog';
+import { ProductDetailComponent } from './components/product-details-component';
 
 const routes: Routes = [
   { path: '', component: IndexPage },
@@ -49,6 +50,7 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [
+    ProductDetailComponent,
     PurchasePageComponent,
     PurchaseDetailsComponent,
     CreatePageComponent,
@@ -77,6 +79,7 @@ const routes: Routes = [
         },
       ],
     },
+
     MatSidenavModule,
     LibModule,
     MatFormFieldModule,

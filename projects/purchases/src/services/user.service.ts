@@ -7,7 +7,7 @@ import { BFast } from 'bfastjs';
 import { MatDialog } from '@angular/material/dialog';
 import { VerifyEMailDialogComponent } from '../components/verify-dialog.component';
 import { StorageService } from '@smartstocktz/core-libs';
-import {LogService} from '@smartstocktz/core-libs';
+import { LogService } from '@smartstocktz/core-libs';
 
 @Injectable({
   providedIn: 'root',
@@ -69,10 +69,10 @@ export class UserService {
     );
     await this.storageService.removeActiveShop();
     if (authUser && authUser.role !== 'admin') {
-      await this.storageService.saveActiveUser(authUser);
+      await this.storageService.saveActiveUser(authUser as any);
       return authUser;
     } else if (authUser && authUser.verified === true) {
-      await this.storageService.saveActiveUser(authUser);
+      await this.storageService.saveActiveUser(authUser as any);
       return authUser;
     } else {
       await BFast.functions()
@@ -192,7 +192,7 @@ export class UserService {
         activeShop.applicationId &&
         activeShop.projectUrlId
       ) {
-        return activeShop;
+        return activeShop as any;
       } else {
         throw new Error('No active shop in records');
       }
@@ -277,7 +277,7 @@ export class UserService {
 
   async updateCurrentUser(user: UserModel): Promise<UserModel> {
     try {
-      return await this.storageService.saveActiveUser(user);
+      return await this.storageService.saveActiveUser(user as any);
     } catch (e) {
       throw e;
     }
