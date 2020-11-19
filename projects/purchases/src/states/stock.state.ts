@@ -221,6 +221,43 @@ export class StockState {
     return stocks;
   }
 
+  getStocks(): void {
+    this.isFetchStocks.next(true);
+    this.storageService
+      .getStocks()
+      .then((localStocks) => {
+        if (
+          localStocks &&
+          Array.isArray(localStocks) &&
+          localStocks.length > 0
+        ) {
+          this.stocks.next(localStocks);
+        } else {
+          return this.stockService.getAllStock();
+        }
+      })
+      .then((remoteStocks) => {
+        if (
+          remoteStocks &&
+          Array.isArray(remoteStocks) &&
+          remoteStocks.length > 0
+        ) {
+          this.stocks.next(remoteStocks);
+          return this.storageService.saveStock(remoteStocks as any);
+        }
+      })
+      .catch((reason) => {
+        this.messageService.showMobileInfoMessage(
+          reason && reason.message ? reason.message : reason,
+          2000,
+          'bottom'
+        );
+      })
+      .finally(() => {
+        this.isFetchStocks.next(false);
+      });
+  }
+
   async getAllSupplier(pagination: {
     size?: number;
     skip?: number;

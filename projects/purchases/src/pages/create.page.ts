@@ -157,6 +157,7 @@ import { StockService } from '../services/stock.service';
 
                 <h2>Purchased products</h2>
 
+                <app-product-details></app-product-details>
                 <div formArrayName="items" (click)="$event.preventDefault()">
                   <div
                     *ngFor="let item of invoiceItems.controls; let i = index"
@@ -330,13 +331,6 @@ import { StockService } from '../services/stock.service';
                       (click)="getstocks()"
                     >
                       <mat-icon> refresh </mat-icon>
-                      <!-- <mat-progress-spinner
-                        [diameter]="20"
-                        matTooltip="Fetch products from server"
-                        mode="indeterminate"
-                        color="primary"
-                      >
-                      </mat-progress-spinner> -->
                     </button>
                   </div>
                 </div>

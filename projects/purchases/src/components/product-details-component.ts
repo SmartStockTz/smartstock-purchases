@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Input, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 
@@ -47,6 +47,8 @@ import { MatTableDataSource } from '@angular/material/table';
   styleUrls: ['../styles/productdetails.style.scss'],
 })
 export class ProductDetailComponent implements AfterViewInit {
+  @Input() heroname;
+
   displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
   dataSource = new MatTableDataSource<PeriodicElement>(ELEMENT_DATA);
 

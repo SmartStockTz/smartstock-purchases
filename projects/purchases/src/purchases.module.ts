@@ -24,6 +24,8 @@ import { PurchasePageComponent } from './pages/purchase.page';
 import { PurchaseDetailsComponent } from './components/details.component';
 import { CreatePageComponent } from './pages/create.page';
 import { LibModule } from '@smartstocktz/core-libs';
+import { ScrollingModule } from '@angular/cdk/scrolling';
+
 import {
   DialogDeleteComponent,
   StockDetailsComponent,
@@ -41,6 +43,8 @@ import { MatNativeDateModule, MatRippleModule } from '@angular/material/core';
 import { IndexPage } from './pages/index.page';
 import { MatDialogModule } from '@angular/material/dialog';
 import { ProductDetailComponent } from './components/product-details-component';
+import { ProductSearchDialogComponent } from './components/product-search-dialog.component';
+import { CdkTableModule } from '@angular/cdk/table';
 
 const routes: Routes = [
   { path: '', component: IndexPage },
@@ -50,6 +54,7 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [
+    ProductSearchDialogComponent,
     ProductDetailComponent,
     PurchasePageComponent,
     PurchaseDetailsComponent,
@@ -79,7 +84,8 @@ const routes: Routes = [
         },
       ],
     },
-
+    CdkTableModule,
+    ScrollingModule,
     MatSidenavModule,
     LibModule,
     MatFormFieldModule,
