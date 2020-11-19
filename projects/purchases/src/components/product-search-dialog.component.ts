@@ -80,7 +80,7 @@ export class ProductSearchDialogComponent implements OnInit {
     this.searchFormControl.valueChanges
       .pipe(debounceTime(500))
       .subscribe((value) => {
-        // this.stockState.filter(value);
+        this.stockState.filter(value);
       });
     this.stockState.getStocks();
   }

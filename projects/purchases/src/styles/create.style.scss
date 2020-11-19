@@ -10,3 +10,14 @@ mat-card {
 .status {
     padding-top: 1%;
 }
+
+.quantity-input {
+    height: 38px;
+    background: #fafafa;
+    border: 1px solid #e0e0e0;
+    box-sizing: border-box;
+    border-radius: 6px;
+    padding: 0 8px;
+    outline: none !important;
+    width: 70%;
+}

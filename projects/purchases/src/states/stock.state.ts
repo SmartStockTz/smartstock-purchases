@@ -417,4 +417,19 @@ export class StockState {
       .byId(unit.id)
       .delete();
   }
+
+  filter(query: string): void {
+    this.storageService.getStocks().then((stocks) => {
+      if (query) {
+        const results = stocks.filter((x) =>
+          JSON.stringify(x)
+            .toLowerCase()
+            .includes(query.toString().toLowerCase())
+        );
+        this.stocks.next(results);
+      } else {
+        this.getStocks();
+      }
+    });
+  }
 }

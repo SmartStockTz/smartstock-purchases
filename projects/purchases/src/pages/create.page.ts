@@ -18,6 +18,9 @@ import { PurchaseState } from '../states/purchase.state';
 import { DeviceInfoUtil } from '@smartstocktz/core-libs';
 import { StorageService } from '@smartstocktz/core-libs';
 import { StockState } from '../states/stock.state';
+import { ProductSearchDialogComponent } from '../components/product-search-dialog.component';
+import { MatTableDataSource } from '@angular/material/table';
+
 import { StockService } from '../services/stock.service';
 
 @Component({
@@ -157,7 +160,30 @@ import { StockService } from '../services/stock.service';
 
                 <h2>Purchased products</h2>
 
-                <app-product-details></app-product-details>
+                <div
+                  style="margin-bottom: 16px; display: flex; flex-direction: row; flex-wrap: wrap"
+                >
+                  <button
+                    (click)="addProductToTable($event)"
+                    mat-button
+                    color="primary"
+                  >
+                    <mat-icon matSuffix>add</mat-icon>
+                    Add Product
+                  </button>
+                  <div style="width: 16px; height: 16px"></div>
+                  <button mat-flat-button color="primary">
+                    <mat-icon matSuffix>done_all</mat-icon>
+                    Submit
+                    <mat-progress-spinner
+                      mode="indeterminate"
+                      diameter="20"
+                      style="display: inline-block"
+                      color="primary"
+                    ></mat-progress-spinner>
+                  </button>
+                </div>
+                <!-- 
                 <div formArrayName="items" (click)="$event.preventDefault()">
                   <div
                     *ngFor="let item of invoiceItems.controls; let i = index"
@@ -346,10 +372,123 @@ import { StockService } from '../services/stock.service';
                 </button>
                 <!-- </mat-card-content> -->
                 <!-- </mat-card>  -->
+                <mat-card>
+                  <table mat-table [dataSource]="purchaseDatasource">
+                    <ng-container cdkColumnDef="product">
+                      <th mat-header-cell *cdkHeaderCellDef>Product</th>
+                      <td mat-cell *cdkCellDef="let element">
+                        {{ element.product.product }}
+                      </td>
+                      <td mat-footer-cell *cdkFooterCellDef>
+                        <h2 style="margin: 0; padding: 5px">TOTAL</h2>
+                      </td>
+                    </ng-container>
+                    <ng-container cdkColumnDef="expiredate">
+                      <th mat-header-cell *cdkHeaderCellDef>Expire Date</th>
+                      <td mat-cell *cdkCellDef="let element">
+                        <input
+                          class="quantity-input"
+                          type="number"
+                          min="1"
+                          [value]="element.quantity"
+                        />
+                      </td>
+                      <td mat-footer-cell *cdkFooterCellDef></td>
+                    </ng-container>
+                    <ng-container cdkColumnDef="quantity">
+                      <th mat-header-cell *cdkHeaderCellDef>Quantity</th>
+                      <td mat-cell *cdkCellDef="let element">
+                        <input
+                          class="quantity-input"
+                          (change)="updateQuantity(element, $event)"
+                          type="number"
+                          min="1"
+                          [value]="element.quantity"
+                        />
+                      </td>
+                      <td mat-footer-cell *cdkFooterCellDef></td>
+                    </ng-container>
+                    <ng-container cdkColumnDef="purchaseprice">
+                      <th mat-header-cell *cdkHeaderCellDef>Purchase price</th>
+                      <td mat-cell *cdkCellDef="let element">
+                        <input
+                          class="quantity-input"
+                          (change)="updateQuantity(element, $event)"
+                          type="number"
+                          min="1"
+                          [value]="element.quantity"
+                        />
+                      </td>
+                      <td mat-footer-cell *cdkFooterCellDef></td>
+                    </ng-container>
+                    <ng-container cdkColumnDef="retailprice">
+                      <th mat-header-cell *cdkHeaderCellDef>Retail price</th>
+                      <td mat-cell *cdkCellDef="let element">
+                        <input
+                          class="quantity-input"
+                          type="number"
+                          min="1"
+                          [value]="element.quantity"
+                        />
+                      </td>
+                      <td mat-footer-cell *cdkFooterCellDef></td>
+                    </ng-container>
+                    <ng-container cdkColumnDef="wholesaleprice">
+                      <th mat-header-cell *cdkHeaderCellDef>Wholesale price</th>
+                      <td mat-cell *cdkCellDef="let element">
+                        <input
+                          class="quantity-input"
+                          type="number"
+                          min="1"
+                          [value]="element.quantity"
+                        />
+                      </td>
+                      <td mat-footer-cell *cdkFooterCellDef></td>
+                    </ng-container>
+                    <ng-container cdkColumnDef="Amount">
+                      <th mat-header-cell *cdkHeaderCellDef>Amount</th>
+                      <td mat-cell *cdkCellDef="let element">
+                        {{
+                          element.quantity * element.product.purchase | number
+                        }}
+                      </td>
+                      <td mat-footer-cell *cdkFooterCellDef>
+                        <h1 style="margin: 0; padding: 5px">
+                          {{ totalCost | number }}
+                        </h1>
+                      </td>
+                    </ng-container>
+                    <ng-container cdkColumnDef="action">
+                      <th mat-header-cell *cdkHeaderCellDef>Action</th>
+                      <td mat-cell *cdkCellDef="let element">
+                        <button
+                          (click)="removeItem($event, element)"
+                          mat-icon-button
+                          color="warn"
+                        >
+                          <mat-icon>delete</mat-icon>
+                        </button>
+                      </td>
+                      <td mat-footer-cell *cdkFooterCellDef></td>
+                    </ng-container>
+                    <tr
+                      mat-header-row
+                      *cdkHeaderRowDef="purchaseTableColumn"
+                    ></tr>
+                    <tr
+                      mat-row
+                      *matRowDef="let row; columns: purchaseTableColumn"
+                    ></tr>
+                    <tr
+                      mat-footer-row
+                      *cdkFooterRowDef="purchaseTableColumn"
+                    ></tr>
+                  </table>
+                </mat-card>
               </div>
 
               <div class="col-12 col-xl-9 col-lg-9 status">
-                <h2>Status</h2>
+                <!-- <h2>Status</h2>
                 <mat-card class="mat-elevation-z0">
                   <mat-card-content class="card-content">
                     <mat-form-field class="my-input" appearance="outline">
@@ -364,7 +503,7 @@ import { StockService } from '../services/stock.service';
                       <mat-error>Amount required</mat-error>
                     </mat-form-field>
                   </mat-card-content>
-                </mat-card>
+                </mat-card> -->
 
                 <button
                   [disabled]="saveInvoiceProgress"
@@ -393,6 +532,26 @@ import { StockService } from '../services/stock.service';
   styleUrls: ['../styles/create.style.scss'],
 })
 export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
+  purchaseTableColumn = [
+    'product',
+    'expiredate',
+    'quantity',
+    'purchaseprice',
+    'retailprice',
+    'wholesaleprice',
+    'Amount',
+    'action',
+  ];
+
+  purchaseDatasource: MatTableDataSource<{
+    quantity: number;
+    product: StockModel;
+  }> = new MatTableDataSource([]);
+
+  selectedProducts: { quantity: number; product: StockModel }[] = [];
+
+  totalCost: number;
+
   invoiceForm: FormGroup;
   supplierFetching = true;
   suppliers: Observable<any[]>;
@@ -416,7 +575,8 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
     private readonly matDialog: MatDialog,
     private readonly indexDb: StorageService,
     private readonly purchaseState: PurchaseState,
-    private stockstate: StockState
+    private stockstate: StockState,
+    private readonly dialog: MatDialog
   ) {
     super();
   }
@@ -533,6 +693,20 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
       });
   }
 
+  removeItem(
+    $event: MouseEvent,
+    element: { quantity: number; product: StockModel }
+  ): void {
+    $event.preventDefault();
+    this.selectedProducts = this.selectedProducts.filter(
+      (x) => x.product.id !== element.product.id
+    );
+    this.purchaseDatasource = new MatTableDataSource<any>(
+      this.selectedProducts
+    );
+    this.updateTotalCost();
+  }
+
   addNewSupplier($event: MouseEvent): void {
     $event.preventDefault();
     $event.stopPropagation();
@@ -549,6 +723,33 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
       });
   }
 
+  updateQuantity(
+    element: { quantity: number; product: StockModel },
+    $event: Event
+  ): void {
+    // @ts-ignore
+    const newQuantity = Number($event.target.value);
+    // if (newQuantity <= 0) {
+    //   newQuantity = 1;
+    // }
+    this.selectedProducts.map((x) => {
+      if (x.product.id === element.product.id) {
+        x.quantity = newQuantity;
+      }
+      return x;
+    });
+    this.purchaseDatasource = new MatTableDataSource<{
+      quantity: number;
+      product: StockModel;
+    }>(this.selectedProducts);
+    this.updateTotalCost();
+  }
+
+  updateTotalCost(): void {
+    this.totalCost = this.purchaseDatasource.data
+      .map((x) => x.quantity * x.product.purchase)
+      .reduce((a, b) => a + b, 0);
+  }
   refreshSuppliers($event: MouseEvent): void {
     $event.preventDefault();
     $event.stopPropagation();
@@ -568,6 +769,25 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
         // console.log(reason);
         this.suppliers = of([{ name: 'Default Supplier' }]);
         this.supplierFetching = false;
+      });
+  }
+
+  addProductToTable($event: MouseEvent): void {
+    $event.preventDefault();
+    this.dialog
+      .open(ProductSearchDialogComponent)
+      .afterClosed()
+      .subscribe((value) => {
+        if (value && value.product) {
+          this.selectedProducts.unshift({
+            quantity: 1,
+            product: value,
+          });
+          this.purchaseDatasource = new MatTableDataSource<any>(
+            this.selectedProducts
+          );
+          this.updateTotalCost();
+        }
       });
   }
 
@@ -630,11 +850,11 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
     this.getTotalAmountOfInvoice();
   }
 
-  removeItem(index, $event): void {
-    $event.preventDefault();
-    this.invoiceItems.removeAt(index);
-    this.getTotalAmountOfInvoice();
-  }
+  // removeItem(index, $event): void {
+  //   $event.preventDefault();
+  //   this.invoiceItems.removeAt(index);
+  //   this.getTotalAmountOfInvoice();
+  // }
 
   checkKey($event: KeyboardEvent): void {
     if ($event.code === 'Enter') {
