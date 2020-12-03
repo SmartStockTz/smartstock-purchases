@@ -802,7 +802,7 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
   addItem($event): void {
     $event.preventDefault();
     if (!this.searchProductFormControl.valid) {
-      this.snack.open('No item to add, search and select a product', 'Ok', {
+      this.snack.open('To add item, search and select a product', 'Ok', {
         duration: 3000,
       });
       return;
