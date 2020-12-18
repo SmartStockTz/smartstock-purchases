@@ -22,6 +22,7 @@ import { ProductSearchDialogComponent } from '../components/product-search-dialo
 import { MatTableDataSource } from '@angular/material/table';
 
 import { StockService } from '../services/stock.service';
+import { ThisReceiver } from '@angular/compiler';
 
 @Component({
   selector: 'smartstock-purchase-create',
@@ -386,12 +387,25 @@ import { StockService } from '../services/stock.service';
                     <ng-container cdkColumnDef="expiredate">
                       <th mat-header-cell *cdkHeaderCellDef>Expire Date</th>
                       <td mat-cell *cdkCellDef="let element">
-                        <input
+                        <!-- <input
                           class="quantity-input"
                           type="number"
                           min="1"
                           [value]="element.quantity"
+                        /> -->
+                        <input
+                          matInput
+                          [matDatepicker]="picker2"
+                          class="quantity-input"
                         />
+                        <mat-datepicker-toggle
+                          matSuffix
+                          [for]="picker2"
+                        ></mat-datepicker-toggle>
+                        <mat-datepicker
+                          #picker2
+                          color="primary"
+                        ></mat-datepicker>
                       </td>
                       <td mat-footer-cell *cdkFooterCellDef></td>
                     </ng-container>
@@ -642,16 +656,19 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
       this.invoiceForm.value.paid = false;
     } else {
       this.invoiceForm.value.type = 'receipt';
-      this.invoiceForm.value.paid = true;
+      this.invoiceForm.value.paid = false;
     }
     const items = this.invoiceForm.get('items') as FormArray;
     if (items.controls.length === 0) {
       this.snack.open('Must add at least one item', 'Ok', {
         duration: 3000,
       });
+      console.log(items.controls);
+      console.log(this.invoiceForm.value);
+      console.log(this.invoiceItems.value);
       return;
     }
-    console.log(this.invoiceForm.value);
+    // console.log(this.invoiceForm.value);
     this.saveInvoiceProgress = true;
     this.purchaseState
       .addPurchase(this.invoiceForm.value)
