@@ -488,23 +488,6 @@ import { StockService } from '../services/stock.service';
               </div>
 
               <div class="col-12 col-xl-9 col-lg-9 status">
-                <!-- <h2>Status</h2>
-                <mat-card class="mat-elevation-z0">
-                  <mat-card-content class="card-content">
-                    <mat-form-field class="my-input" appearance="outline">
-                      <mat-label>Total Amount</mat-label>
-                      <input
-                        matInput
-                        type="number"
-                        formControlName="amount"
-                        [readonly]="true"
-                        required
-                      />
-                      <mat-error>Amount required</mat-error>
-                    </mat-form-field>
-                  </mat-card-content>
-                </mat-card> -->
-
                 <button
                   [disabled]="saveInvoiceProgress"
                   class="btn-block ft-button"
@@ -588,7 +571,7 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
       date: ['', [Validators.nullValidator, Validators.required]],
       due: [''],
       paid: [false],
-      draft: [true],
+      draft: [false],
       amount: [0, [Validators.nullValidator, Validators.required]],
       items: this.formBuilder.array([]),
     });
@@ -668,6 +651,7 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
       });
       return;
     }
+    console.log(this.invoiceForm.value);
     this.saveInvoiceProgress = true;
     this.purchaseState
       .addPurchase(this.invoiceForm.value)
