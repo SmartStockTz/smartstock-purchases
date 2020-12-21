@@ -184,7 +184,7 @@ import { ThisReceiver } from '@angular/compiler';
                     ></mat-progress-spinner>
                   </button>
                 </div>
-                <!-- 
+                <!--
                 <div formArrayName="items" (click)="$event.preventDefault()">
                   <div
                     *ngFor="let item of invoiceItems.controls; let i = index"
@@ -373,7 +373,13 @@ import { ThisReceiver } from '@angular/compiler';
                 </button>
                 <!-- </mat-card-content> -->
                 <!-- </mat-card>  -->
+
                 <mat-card>
+                  <!-- <div formArrayName="items" (click)="$event.preventDefault()">
+                    <div
+                      *ngFor="let item of invoiceItems.controls; let i = index"
+                    >
+                      <div [formGroupName]="i"> -->
                   <table mat-table [dataSource]="purchaseDatasource">
                     <ng-container cdkColumnDef="product">
                       <th mat-header-cell *cdkHeaderCellDef>Product</th>
@@ -417,6 +423,8 @@ import { ThisReceiver } from '@angular/compiler';
                           (change)="updateQuantity(element, $event)"
                           type="number"
                           min="1"
+                          #quantity
+                          (keyup)="(0)"
                           [value]="element.quantity"
                         />
                       </td>
@@ -430,7 +438,9 @@ import { ThisReceiver } from '@angular/compiler';
                           (change)="updateQuantity(element, $event)"
                           type="number"
                           min="1"
-                          [value]="element.quantity"
+                          #purchase
+                          (keyup)="(0)"
+                          [value]="element.product.purchase"
                         />
                       </td>
                       <td mat-footer-cell *cdkFooterCellDef></td>
@@ -439,10 +449,11 @@ import { ThisReceiver } from '@angular/compiler';
                       <th mat-header-cell *cdkHeaderCellDef>Retail price</th>
                       <td mat-cell *cdkCellDef="let element">
                         <input
+                          matInput
                           class="quantity-input"
                           type="number"
                           min="1"
-                          [value]="element.quantity"
+                          [value]="element.product.retailPrice"
                         />
                       </td>
                       <td mat-footer-cell *cdkFooterCellDef></td>
@@ -451,10 +462,11 @@ import { ThisReceiver } from '@angular/compiler';
                       <th mat-header-cell *cdkHeaderCellDef>Wholesale price</th>
                       <td mat-cell *cdkCellDef="let element">
                         <input
+                          matInput
                           class="quantity-input"
                           type="number"
                           min="1"
-                          [value]="element.quantity"
+                          [value]="element.product.wholesalePrice"
                         />
                       </td>
                       <td mat-footer-cell *cdkFooterCellDef></td>
@@ -485,6 +497,7 @@ import { ThisReceiver } from '@angular/compiler';
                       </td>
                       <td mat-footer-cell *cdkFooterCellDef></td>
                     </ng-container>
+
                     <tr
                       mat-header-row
                       *cdkHeaderRowDef="purchaseTableColumn"
@@ -498,6 +511,9 @@ import { ThisReceiver } from '@angular/compiler';
                       *cdkFooterRowDef="purchaseTableColumn"
                     ></tr>
                   </table>
+                  <!-- </div>
+                    </div>
+                  </div> -->
                 </mat-card>
               </div>
 
@@ -638,6 +654,7 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
   }
 
   saveInvoice(): void {
+    console.log(this.purchaseDatasource.data);
     if (!this.invoiceForm.valid) {
       this.snack.open('Please fill all required information', 'Ok', {
         duration: 3000,
@@ -663,9 +680,9 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
       this.snack.open('Must add at least one item', 'Ok', {
         duration: 3000,
       });
-      console.log(items.controls);
-      console.log(this.invoiceForm.value);
-      console.log(this.invoiceItems.value);
+      // console.log(items.controls);
+      // console.log(this.invoiceForm.value);
+      // console.log(this.invoiceItems.value);
       return;
     }
     // console.log(this.invoiceForm.value);
@@ -730,6 +747,9 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
   ): void {
     // @ts-ignore
     const newQuantity = Number($event.target.value);
+    // console.log(element);
+    // console.log(newQuantity);
+    // console.log(this.selectedProducts);
     // if (newQuantity <= 0) {
     //   newQuantity = 1;
     // }
