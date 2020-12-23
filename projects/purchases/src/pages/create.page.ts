@@ -15,7 +15,7 @@ import { Router } from '@angular/router';
 import { DialogSupplierNewComponent } from '../components/suppliers.component';
 import { StockModel } from '../models/stock.model';
 import { PurchaseState } from '../states/purchase.state';
-import { DeviceInfoUtil } from '@smartstocktz/core-libs';
+import { DeviceInfoUtil, toSqlDate } from '@smartstocktz/core-libs';
 import { StorageService } from '@smartstocktz/core-libs';
 import { StockState } from '../states/stock.state';
 import { ProductSearchDialogComponent } from '../components/product-search-dialog.component';
@@ -172,7 +172,7 @@ import { ThisReceiver } from '@angular/compiler';
                     <mat-icon matSuffix>add</mat-icon>
                     Add Product
                   </button>
-                  <div style="width: 16px; height: 16px"></div>
+                  <!-- <div style="width: 16px; height: 16px"></div>
                   <button mat-flat-button color="primary">
                     <mat-icon matSuffix>done_all</mat-icon>
                     Submit
@@ -182,7 +182,7 @@ import { ThisReceiver } from '@angular/compiler';
                       style="display: inline-block"
                       color="primary"
                     ></mat-progress-spinner>
-                  </button>
+                  </button> -->
                 </div>
                 <!--
                 <div formArrayName="items" (click)="$event.preventDefault()">
@@ -373,7 +373,6 @@ import { ThisReceiver } from '@angular/compiler';
                 </button>
                 <!-- </mat-card-content> -->
                 <!-- </mat-card>  -->
-
                 <mat-card>
                   <!-- <div formArrayName="items" (click)="$event.preventDefault()">
                     <div
@@ -403,6 +402,9 @@ import { ThisReceiver } from '@angular/compiler';
                           matInput
                           [matDatepicker]="picker2"
                           class="quantity-input"
+                          (dateChange)="updateColumn(element, $event, 'expire')"
+                          #expiredate
+                          (keyup)="(0)"
                         />
                         <mat-datepicker-toggle
                           matSuffix
@@ -438,7 +440,7 @@ import { ThisReceiver } from '@angular/compiler';
                           (change)="updateQuantity(element, $event)"
                           type="number"
                           min="1"
-                          #purchase
+                          #purchaseprice
                           (keyup)="(0)"
                           [value]="element.product.purchase"
                         />
@@ -454,6 +456,8 @@ import { ThisReceiver } from '@angular/compiler';
                           type="number"
                           min="1"
                           [value]="element.product.retailPrice"
+                          #retailprice
+                          (keyup)="(0)"
                         />
                       </td>
                       <td mat-footer-cell *cdkFooterCellDef></td>
@@ -467,6 +471,27 @@ import { ThisReceiver } from '@angular/compiler';
                           type="number"
                           min="1"
                           [value]="element.product.wholesalePrice"
+                          #wholesalePrice
+                          (keyup)="(0)"
+                        />
+                      </td>
+                      <td mat-footer-cell *cdkFooterCellDef></td>
+                    </ng-container>
+                    <ng-container cdkColumnDef="wholesalequantity">
+                      <th mat-header-cell *cdkHeaderCellDef>
+                        Wholesale quantity
+                      </th>
+                      <td mat-cell *cdkCellDef="let element">
+                        <input
+                          matInput
+                          class="quantity-input"
+                          (change)="
+                            updateColumn(element, $event, 'wholesalequantity')
+                          "
+                          type="number"
+                          min="1"
+                          #wholesalequantity
+                          (keyup)="(0)"
                         />
                       </td>
                       <td mat-footer-cell *cdkFooterCellDef></td>
@@ -552,17 +577,14 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
     'purchaseprice',
     'retailprice',
     'wholesaleprice',
+    'wholesalequantity',
     'Amount',
     'action',
   ];
 
-  purchaseDatasource: MatTableDataSource<{
-    quantity: number;
-    product: StockModel;
-  }> = new MatTableDataSource([]);
+  purchaseDatasource = new MatTableDataSource([]);
 
-  selectedProducts: { quantity: number; product: StockModel }[] = [];
-
+  selectedProducts = [];
   totalCost: number;
 
   invoiceForm: FormGroup;
@@ -603,7 +625,7 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
       paid: [false],
       draft: [false],
       amount: [0, [Validators.nullValidator, Validators.required]],
-      items: this.formBuilder.array([]),
+      items: [[], [Validators.nullValidator, Validators.required]],
     });
     this.getSuppliers();
     this.searchProductFormControl.valueChanges
@@ -654,7 +676,10 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
   }
 
   saveInvoice(): void {
+    this.invoiceForm.get('items').setValue(this.purchaseDatasource.data);
+    console.log(this.invoiceForm.value);
     console.log(this.purchaseDatasource.data);
+
     if (!this.invoiceForm.valid) {
       this.snack.open('Please fill all required information', 'Ok', {
         duration: 3000,
@@ -759,10 +784,40 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
       }
       return x;
     });
-    this.purchaseDatasource = new MatTableDataSource<{
-      quantity: number;
-      product: StockModel;
-    }>(this.selectedProducts);
+
+    this.purchaseDatasource = new MatTableDataSource(this.selectedProducts);
+    this.updateTotalCost();
+  }
+
+  // updateWholeSaleQuantity(element: any, $event: Event): void {
+  //   // @ts-ignore
+  //   const newWholeSaleQuantity = Number($event.target.value);
+  //   console.log(newWholeSaleQuantity);
+
+  //   this.selectedProducts.map((x) => {
+  //     if (x.product.id === element.product.id) {
+  //       x.wholesalequantity = newWholeSaleQuantity;
+  //     }
+  //     return x;
+  //   });
+
+  //   this.purchaseDatasource = new MatTableDataSource(this.selectedProducts);
+  //   this.updateTotalCost();
+  // }
+
+  updateColumn(element: any, $event: Event, columnName: string): void {
+    // @ts-ignore
+    const newValueForColumn = Number($event.target.value);
+    console.log(newValueForColumn);
+
+    this.selectedProducts.map((x) => {
+      if (x.product.id === element.product.id) {
+        x[columnName] = newValueForColumn;
+      }
+      return x;
+    });
+
+    this.purchaseDatasource = new MatTableDataSource(this.selectedProducts);
     this.updateTotalCost();
   }
 
@@ -803,6 +858,12 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
           this.selectedProducts.unshift({
             quantity: 1,
             product: value,
+            expire: toSqlDate(new Date()),
+            purchaseprice: 0,
+            retailprice: 0,
+            wholesaleprice: 0,
+            wholesalequantity: 0,
+            Amount: 0,
           });
           this.purchaseDatasource = new MatTableDataSource<any>(
             this.selectedProducts
