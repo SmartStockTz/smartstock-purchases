@@ -1,14 +1,24 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { StockModel } from './../models/stock.model';
 
 @Component({
   selector: 'app-product-details',
   template: `
     <form
-      [formGroup]="productdetails"
+      [formGroup]="productdetailsform"
       (ngSubmit)="record()"
       *ngIf="formvisibility"
     >
+      <h3>
+        Name:
+        <strong> {{ productdetails.product }} </strong>
+      </h3>
+      <h3>{{ productdetails.purchase }}</h3>
+      <h3>{{ productdetails.retailPrice }}</h3>
+      <h3>{{ productdetails.wholesalePrice }}</h3>
+      <h3>{{ productdetails.wholesaleQuantity }}</h3>
+
       <div class="row">
         <div class="col-lg-3 col-md-3">
           <mat-form-field color="primary" appearance="outline">
@@ -16,7 +26,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
             <input
               matInput
               [matDatepicker]="picker1"
-              [min]="startdate"
+              [min]="Todaysdate"
               formControlName="expiredate"
             />
             <mat-error> pick a date</mat-error>
@@ -27,7 +37,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
             <mat-datepicker
               [touchUi]="true"
               #picker1
-              [startAt]="startdate"
+              [startAt]="Todaysdate"
             ></mat-datepicker>
           </mat-form-field>
         </div>
@@ -42,6 +52,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
                 type="number"
                 required
                 #quantity
+                [ngModel]="productdetails.purchase"
               />
               <mat-error>product quantity required</mat-error>
             </mat-form-field>
@@ -58,6 +69,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
                 type="number"
                 required
                 #purchaseprice
+                [value]="productdetails.purchase"
               />
               <mat-error>purchase price required</mat-error>
             </mat-form-field>
@@ -75,6 +87,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
                 formControlName="retailprice"
                 type="number"
                 required
+                [value]="productdetails.retailPrice"
               />
               <mat-error>retail price required</mat-error>
             </mat-form-field>
@@ -90,6 +103,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
                 formControlName="wholesaleprice"
                 type="number"
                 required
+                [value]="productdetails.wholesalePrice"
               />
               <mat-error>wholesale price required</mat-error>
             </mat-form-field>
@@ -105,6 +119,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
                 formControlName="wholesalequantity"
                 type="number"
                 required
+                [value]="productdetails.wholesaleQuantity"
               />
               <mat-error>wholesale quantity required</mat-error>
             </mat-form-field>
@@ -121,14 +136,14 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
           <button
             type="submit"
             mat-raised-button
-            [disabled]="!productdetails.valid"
+            [disabled]="!productdetailsform.valid"
           >
             Record
           </button>
         </div>
       </div>
-      <div *ngIf="productdetails.valid">
-        {{ productdetails.value | json }}
+      <div *ngIf="productdetailsform.valid">
+        {{ productdetailsform.value | json }}
       </div>
     </form>
   `,
@@ -136,19 +151,21 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 })
 export class ProductDetailComponent implements OnInit {
   @Input() formvisibility: boolean;
-  productdetails: FormGroup;
-  startdate: Date = new Date();
+  @Input() productdetails: StockModel;
+
+  productdetailsform: FormGroup;
+  Todaysdate: Date = new Date();
 
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
-    this.productdetails = this.fb.group({
+    this.productdetailsform = this.fb.group({
       expiredate: ['', Validators.required],
-      quantity: ['', Validators.required],
-      purchaseprice: ['', Validators.required],
-      retailprice: ['', Validators.required],
-      wholesaleprice: ['', Validators.required],
-      wholesalequantity: ['', Validators.required],
+      quantity: ['', [Validators.required, Validators.min(1)]],
+      purchaseprice: ['', [Validators.required, Validators.min(1)]],
+      retailprice: ['', [Validators.required, Validators.min(1)]],
+      wholesaleprice: ['', [Validators.required, Validators.min(1)]],
+      wholesalequantity: ['', [Validators.required, Validators.min(1)]],
     });
   }
 

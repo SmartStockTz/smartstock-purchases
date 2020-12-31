@@ -173,8 +173,10 @@ import { ThisReceiver } from '@angular/compiler';
                     Add Product
                   </button>
                 </div>
+
                 <app-product-details
                   [formvisibility]="formvisibility"
+                  [productdetails]="productdetails"
                 ></app-product-details>
 
                 <table mat-table [dataSource]="purchaseDatasource">
@@ -360,6 +362,8 @@ import { ThisReceiver } from '@angular/compiler';
 })
 export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
   formvisibility: boolean;
+  productdetails: StockModel;
+
   purchaseTableColumn = [
     'product',
     'expiredate',
@@ -645,12 +649,9 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
       .open(ProductSearchDialogComponent)
       .afterClosed()
       .subscribe((value) => {
-        console.log(value);
-        // if (value) {
-        //   console.log(this.formvisibility);
-        // }
         if (value && value.product) {
           this.formvisibility = true;
+          this.productdetails = value;
           this.selectedProducts.unshift({
             quantity: 1,
             product: value,
