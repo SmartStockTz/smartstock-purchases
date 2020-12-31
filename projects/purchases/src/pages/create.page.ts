@@ -639,11 +639,16 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
   }
 
   addProductToTable($event: MouseEvent): void {
+    this.formvisibility = false;
     $event.preventDefault();
     this.dialog
       .open(ProductSearchDialogComponent)
       .afterClosed()
       .subscribe((value) => {
+        console.log(value);
+        // if (value) {
+        //   console.log(this.formvisibility);
+        // }
         if (value && value.product) {
           this.formvisibility = true;
           this.selectedProducts.unshift({
