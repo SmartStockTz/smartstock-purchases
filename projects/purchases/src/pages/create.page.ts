@@ -159,7 +159,7 @@ import { ThisReceiver } from '@angular/compiler';
                   </mat-card-content>
                 </mat-card>
 
-                <h2>Purchased products</h2>
+                <!-- <h2>Purchased products</h2> -->
 
                 <div
                   style="margin-bottom: 16px; display: flex; flex-direction: row; flex-wrap: wrap"
@@ -172,374 +172,163 @@ import { ThisReceiver } from '@angular/compiler';
                     <mat-icon matSuffix>add</mat-icon>
                     Add Product
                   </button>
-                  <!-- <div style="width: 16px; height: 16px"></div>
-                  <button mat-flat-button color="primary">
-                    <mat-icon matSuffix>done_all</mat-icon>
-                    Submit
-                    <mat-progress-spinner
-                      mode="indeterminate"
-                      diameter="20"
-                      style="display: inline-block"
-                      color="primary"
-                    ></mat-progress-spinner>
-                  </button> -->
                 </div>
-                <!--
-                <div formArrayName="items" (click)="$event.preventDefault()">
-                  <div
-                    *ngFor="let item of invoiceItems.controls; let i = index"
-                  >
-                    <div [formGroupName]="i">
-                      <div class="row">
-                        <div class="col-md-4 col-lg-4">
-                          <div formGroupName="product">
-                            <mat-form-field
-                              class="my-input"
-                              appearance="outline"
-                            >
-                              <mat-label>Product name</mat-label>
-                              <input
-                                matInput
-                                formControlName="product"
-                                type="text"
-                                [readonly]="true"
-                                required
-                              />
-                              <mat-error>Product is required</mat-error>
-                            </mat-form-field>
-                          </div>
-                        </div>
-                        <div class="col-md-4 col-lg-4">
-                          <mat-form-field appearance="outline" class="my-input">
-                            <mat-label>Expire Date</mat-label>
-                            <input
-                              matInput
-                              [matDatepicker]="picker"
-                              formControlName="expire"
-                            />
-                            <mat-datepicker-toggle
-                              matSuffix
-                              [for]="picker"
-                            ></mat-datepicker-toggle>
-                            <mat-datepicker
-                              [touchUi]="true"
-                              #picker
-                            ></mat-datepicker>
-                          </mat-form-field>
-                        </div>
-                        <div class="col-md-4 col-lg-4">
-                          <mat-form-field class="my-input" appearance="outline">
-                            <mat-label>Quantity</mat-label>
-                            <input
-                              type="number"
-                              (keyup)="checkKey($event)"
-                              (keydown)="checkKey($event)"
-                              (change)="updateAmount(item)"
-                              min="0"
-                              formControlName="quantity"
-                              matInput
-                              required
-                            />
-                            <mat-error>Quantity required</mat-error>
-                          </mat-form-field>
-                        </div>
-                      </div>
+                <app-product-details
+                  [formvisibility]="formvisibility"
+                ></app-product-details>
 
-                      <div class="row">
-                        <div class="col-md-3 col-lg-3">
-                          <mat-form-field class="my-input" appearance="outline">
-                            <mat-label>Purchase Price</mat-label>
-                            <input
-                              type="number"
-                              (keyup)="checkKey($event)"
-                              (keydown)="checkKey($event)"
-                              (change)="updateAmount(item)"
-                              min="0"
-                              formControlName="purchase"
-                              matInput
-                              required
-                            />
-                            <mat-error>Purchase price required</mat-error>
-                          </mat-form-field>
-                        </div>
-                        <div class="col-md-3 col-lg-3">
-                          <mat-form-field class="my-input" appearance="outline">
-                            <mat-label>Retail Price</mat-label>
-                            <input
-                              type="number"
-                              min="0"
-                              formControlName="retailPrice"
-                              matInput
-                              required
-                            />
-                            <mat-error>Retail price required</mat-error>
-                          </mat-form-field>
-                        </div>
-                        <div class="col-md-3 col-lg-3">
-                          <mat-form-field class="my-input" appearance="outline">
-                            <mat-label>Wholesale Price</mat-label>
-                            <input
-                              type="number"
-                              min="0"
-                              formControlName="wholesalePrice"
-                              matInput
-                              required
-                            />
-                            <mat-error>Wholesale price required</mat-error>
-                          </mat-form-field>
-                        </div>
-                        <div class="col-md-3 col-lg-3">
-                          <mat-form-field class="my-input" appearance="outline">
-                            <mat-label>Purchase price x quantity</mat-label>
-                            <input
-                              type="number"
-                              min="0"
-                              formControlName="amount"
-                              matInput
-                              [readonly]="true"
-                              required
-                            />
-                            <mat-error>Amount required</mat-error>
-                          </mat-form-field>
-                        </div>
-                      </div>
-                      <div class="flex-grow-0 removeitem">
-                        <button
-                          matTooltip="Remove this item"
-                          (click)="removeItem(i, $event)"
-                          mat-flat-button
-                          class="ft-button"
-                          color="warn"
-                        >
-                          Remove Item
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="row">
-                  <div class="col-lg-9 col-md-9">
-                    <mat-form-field appearance="outline" class="my-input">
-                      <mat-label>Search Product</mat-label>
-                      <input
-                        matInput
-                        type="text"
-                        [matAutocomplete]="autocomplete"
-                        [formControl]="searchProductFormControl"
-                      />
-                      <mat-error>Field required</mat-error>
-                      <mat-progress-spinner
-                        matSuffix
-                        mode="indeterminate"
-                        [diameter]="20"
-                        *ngIf="searchProductProgress"
-                        color="accent"
-                      >
-                      </mat-progress-spinner>
-                    </mat-form-field>
-
-                    <mat-autocomplete #autocomplete>
-                      <mat-option
-                        (onSelectionChange)="selectedProduct = product"
-                        *ngFor="let product of products | async"
-                        [value]="product.product"
-                      >
-                        {{ product.product }}
-                      </mat-option>
-                    </mat-autocomplete>
-                  </div>
-                  <div class="col-lg-3 col-md-3">
-                    <button
-                      matTooltip="Reload from server"
-                      color="primary"
-                      class="ft-button"
-                      mat-flat-button
-                      (click)="getstocks()"
-                    >
-                      <mat-icon> refresh </mat-icon>
-                    </button>
-                  </div>
-                </div>
-
-                <button
-                  matTooltip="Add new item"
-                  (click)="addItem($event)"
-                  class="ft-button"
-                  mat-flat-button
-                  color="primary"
-                >
-                  Add product
-                </button>
-                <!-- </mat-card-content> -->
-                <!-- </mat-card>  -->
-                <mat-card>
-                  <!-- <div formArrayName="items" (click)="$event.preventDefault()">
-                    <div
-                      *ngFor="let item of invoiceItems.controls; let i = index"
-                    >
-                      <div [formGroupName]="i"> -->
-                  <table mat-table [dataSource]="purchaseDatasource">
-                    <ng-container cdkColumnDef="product">
-                      <th mat-header-cell *cdkHeaderCellDef>Product</th>
-                      <td mat-cell *cdkCellDef="let element">
-                        {{ element.product.product }}
-                      </td>
-                      <td mat-footer-cell *cdkFooterCellDef>
-                        <h2 style="margin: 0; padding: 5px">TOTAL</h2>
-                      </td>
-                    </ng-container>
-                    <ng-container cdkColumnDef="expiredate">
-                      <th mat-header-cell *cdkHeaderCellDef>Expire Date</th>
-                      <td mat-cell *cdkCellDef="let element">
-                        <!-- <input
+                <table mat-table [dataSource]="purchaseDatasource">
+                  <ng-container cdkColumnDef="product">
+                    <th mat-header-cell *cdkHeaderCellDef>Product</th>
+                    <td mat-cell *cdkCellDef="let element">
+                      {{ element.product.product }}
+                    </td>
+                    <td mat-footer-cell *cdkFooterCellDef>
+                      <h2 style="margin: 0; padding: 5px">TOTAL</h2>
+                    </td>
+                  </ng-container>
+                  <ng-container cdkColumnDef="expiredate">
+                    <th mat-header-cell *cdkHeaderCellDef>Expire Date</th>
+                    <td mat-cell *cdkCellDef="let element">
+                      <!-- <input
                           class="quantity-input"
                           type="number"
                           min="1"
                           [value]="element.quantity"
                         /> -->
-                        <input
-                          matInput
-                          [matDatepicker]="picker2"
-                          class="quantity-input"
-                          (dateChange)="updateColumn(element, $event, 'expire')"
-                          #expiredate
-                          (keyup)="(0)"
-                        />
-                        <mat-datepicker-toggle
-                          matSuffix
-                          [for]="picker2"
-                        ></mat-datepicker-toggle>
-                        <mat-datepicker
-                          #picker2
-                          color="primary"
-                        ></mat-datepicker>
-                      </td>
-                      <td mat-footer-cell *cdkFooterCellDef></td>
-                    </ng-container>
-                    <ng-container cdkColumnDef="quantity">
-                      <th mat-header-cell *cdkHeaderCellDef>Quantity</th>
-                      <td mat-cell *cdkCellDef="let element">
-                        <input
-                          class="quantity-input"
-                          (change)="updateQuantity(element, $event)"
-                          type="number"
-                          min="1"
-                          #quantity
-                          (keyup)="(0)"
-                          [value]="element.quantity"
-                        />
-                      </td>
-                      <td mat-footer-cell *cdkFooterCellDef></td>
-                    </ng-container>
-                    <ng-container cdkColumnDef="purchaseprice">
-                      <th mat-header-cell *cdkHeaderCellDef>Purchase price</th>
-                      <td mat-cell *cdkCellDef="let element">
-                        <input
-                          class="quantity-input"
-                          (change)="updateQuantity(element, $event)"
-                          type="number"
-                          min="1"
-                          #purchaseprice
-                          (keyup)="(0)"
-                          [value]="element.product.purchase"
-                        />
-                      </td>
-                      <td mat-footer-cell *cdkFooterCellDef></td>
-                    </ng-container>
-                    <ng-container cdkColumnDef="retailprice">
-                      <th mat-header-cell *cdkHeaderCellDef>Retail price</th>
-                      <td mat-cell *cdkCellDef="let element">
-                        <input
-                          matInput
-                          class="quantity-input"
-                          type="number"
-                          min="1"
-                          [value]="element.product.retailPrice"
-                          #retailprice
-                          (keyup)="(0)"
-                        />
-                      </td>
-                      <td mat-footer-cell *cdkFooterCellDef></td>
-                    </ng-container>
-                    <ng-container cdkColumnDef="wholesaleprice">
-                      <th mat-header-cell *cdkHeaderCellDef>Wholesale price</th>
-                      <td mat-cell *cdkCellDef="let element">
-                        <input
-                          matInput
-                          class="quantity-input"
-                          type="number"
-                          min="1"
-                          [value]="element.product.wholesalePrice"
-                          #wholesalePrice
-                          (keyup)="(0)"
-                        />
-                      </td>
-                      <td mat-footer-cell *cdkFooterCellDef></td>
-                    </ng-container>
-                    <ng-container cdkColumnDef="wholesalequantity">
-                      <th mat-header-cell *cdkHeaderCellDef>
-                        Wholesale quantity
-                      </th>
-                      <td mat-cell *cdkCellDef="let element">
-                        <input
-                          matInput
-                          class="quantity-input"
-                          (change)="
-                            updateColumn(element, $event, 'wholesalequantity')
-                          "
-                          type="number"
-                          min="1"
-                          #wholesalequantity
-                          (keyup)="(0)"
-                        />
-                      </td>
-                      <td mat-footer-cell *cdkFooterCellDef></td>
-                    </ng-container>
-                    <ng-container cdkColumnDef="Amount">
-                      <th mat-header-cell *cdkHeaderCellDef>Amount</th>
-                      <td mat-cell *cdkCellDef="let element">
-                        {{
-                          element.quantity * element.product.purchase | number
-                        }}
-                      </td>
-                      <td mat-footer-cell *cdkFooterCellDef>
-                        <h1 style="margin: 0; padding: 5px">
-                          {{ totalCost | number }}
-                        </h1>
-                      </td>
-                    </ng-container>
-                    <ng-container cdkColumnDef="action">
-                      <th mat-header-cell *cdkHeaderCellDef>Action</th>
-                      <td mat-cell *cdkCellDef="let element">
-                        <button
-                          (click)="removeItem($event, element)"
-                          mat-icon-button
-                          color="warn"
-                        >
-                          <mat-icon>delete</mat-icon>
-                        </button>
-                      </td>
-                      <td mat-footer-cell *cdkFooterCellDef></td>
-                    </ng-container>
+                      <input
+                        matInput
+                        [matDatepicker]="picker2"
+                        class="quantity-input"
+                        (dateChange)="updateColumn(element, $event, 'expire')"
+                        #expiredate
+                        (keyup)="(0)"
+                      />
+                      <mat-datepicker-toggle
+                        matSuffix
+                        [for]="picker2"
+                      ></mat-datepicker-toggle>
+                      <mat-datepicker #picker2 color="primary"></mat-datepicker>
+                    </td>
+                    <td mat-footer-cell *cdkFooterCellDef></td>
+                  </ng-container>
+                  <ng-container cdkColumnDef="quantity">
+                    <th mat-header-cell *cdkHeaderCellDef>Quantity</th>
+                    <td mat-cell *cdkCellDef="let element">
+                      <input
+                        class="quantity-input"
+                        (change)="updateQuantity(element, $event)"
+                        type="number"
+                        min="1"
+                        #quantity
+                        (keyup)="(0)"
+                        [value]="element.quantity"
+                      />
+                    </td>
+                    <td mat-footer-cell *cdkFooterCellDef></td>
+                  </ng-container>
+                  <ng-container cdkColumnDef="purchaseprice">
+                    <th mat-header-cell *cdkHeaderCellDef>Purchase price</th>
+                    <td mat-cell *cdkCellDef="let element">
+                      <input
+                        class="quantity-input"
+                        (change)="updateQuantity(element, $event)"
+                        type="number"
+                        min="1"
+                        #purchaseprice
+                        (keyup)="(0)"
+                        [value]="element.product.purchase"
+                      />
+                    </td>
+                    <td mat-footer-cell *cdkFooterCellDef></td>
+                  </ng-container>
+                  <ng-container cdkColumnDef="retailprice">
+                    <th mat-header-cell *cdkHeaderCellDef>Retail price</th>
+                    <td mat-cell *cdkCellDef="let element">
+                      <input
+                        matInput
+                        class="quantity-input"
+                        type="number"
+                        min="1"
+                        [value]="element.product.retailPrice"
+                        #retailprice
+                        (keyup)="(0)"
+                      />
+                    </td>
+                    <td mat-footer-cell *cdkFooterCellDef></td>
+                  </ng-container>
+                  <ng-container cdkColumnDef="wholesaleprice">
+                    <th mat-header-cell *cdkHeaderCellDef>Wholesale price</th>
+                    <td mat-cell *cdkCellDef="let element">
+                      <input
+                        matInput
+                        class="quantity-input"
+                        type="number"
+                        min="1"
+                        [value]="element.product.wholesalePrice"
+                        #wholesalePrice
+                        (keyup)="(0)"
+                      />
+                    </td>
+                    <td mat-footer-cell *cdkFooterCellDef></td>
+                  </ng-container>
+                  <ng-container cdkColumnDef="wholesalequantity">
+                    <th mat-header-cell *cdkHeaderCellDef>
+                      Wholesale quantity
+                    </th>
+                    <td mat-cell *cdkCellDef="let element">
+                      <input
+                        matInput
+                        class="quantity-input"
+                        (change)="
+                          updateColumn(element, $event, 'wholesalequantity')
+                        "
+                        type="number"
+                        min="1"
+                        #wholesalequantity
+                        (keyup)="(0)"
+                      />
+                    </td>
+                    <td mat-footer-cell *cdkFooterCellDef></td>
+                  </ng-container>
+                  <ng-container cdkColumnDef="Amount">
+                    <th mat-header-cell *cdkHeaderCellDef>Amount</th>
+                    <td mat-cell *cdkCellDef="let element">
+                      {{ element.quantity * element.product.purchase | number }}
+                    </td>
+                    <td mat-footer-cell *cdkFooterCellDef>
+                      <h1 style="margin: 0; padding: 5px">
+                        {{ totalCost | number }}
+                      </h1>
+                    </td>
+                  </ng-container>
+                  <ng-container cdkColumnDef="action">
+                    <th mat-header-cell *cdkHeaderCellDef>Action</th>
+                    <td mat-cell *cdkCellDef="let element">
+                      <button
+                        (click)="removeItem($event, element)"
+                        mat-icon-button
+                        color="warn"
+                      >
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </td>
+                    <td mat-footer-cell *cdkFooterCellDef></td>
+                  </ng-container>
 
-                    <tr
-                      mat-header-row
-                      *cdkHeaderRowDef="purchaseTableColumn"
-                    ></tr>
-                    <tr
-                      mat-row
-                      *matRowDef="let row; columns: purchaseTableColumn"
-                    ></tr>
-                    <tr
-                      mat-footer-row
-                      *cdkFooterRowDef="purchaseTableColumn"
-                    ></tr>
-                  </table>
-                  <!-- </div>
-                    </div>
-                  </div> -->
-                </mat-card>
+                  <tr
+                    mat-header-row
+                    *cdkHeaderRowDef="purchaseTableColumn"
+                  ></tr>
+                  <tr
+                    mat-row
+                    *matRowDef="let row; columns: purchaseTableColumn"
+                  ></tr>
+                  <tr
+                    mat-footer-row
+                    *cdkFooterRowDef="purchaseTableColumn"
+                  ></tr>
+                </table>
               </div>
 
               <div class="col-12 col-xl-9 col-lg-9 status">
@@ -570,6 +359,7 @@ import { ThisReceiver } from '@angular/compiler';
   styleUrls: ['../styles/create.style.scss'],
 })
 export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
+  formvisibility: boolean;
   purchaseTableColumn = [
     'product',
     'expiredate',
@@ -855,6 +645,7 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
       .afterClosed()
       .subscribe((value) => {
         if (value && value.product) {
+          this.formvisibility = true;
           this.selectedProducts.unshift({
             quantity: 1,
             product: value,
