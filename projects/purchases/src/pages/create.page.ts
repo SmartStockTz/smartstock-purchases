@@ -165,7 +165,7 @@ import { ThisReceiver } from '@angular/compiler';
                   style="margin-bottom: 16px; display: flex; flex-direction: row; flex-wrap: wrap"
                 >
                   <button
-                    (click)="addProductToTable($event)"
+                    (click)="addProduct($event)"
                     mat-button
                     color="primary"
                   >
@@ -177,6 +177,7 @@ import { ThisReceiver } from '@angular/compiler';
                 <app-product-details
                   [formvisibility]="formvisibility"
                   [productdetails]="productdetails"
+                  (product)="addProductToTable($event)"
                 ></app-product-details>
 
                 <table mat-table [dataSource]="purchaseDatasource">
@@ -642,9 +643,38 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
       });
   }
 
-  addProductToTable($event: MouseEvent): void {
+  addProduct($event): void {
+    console.log($event);
     this.formvisibility = false;
     $event.preventDefault();
+    this.dialog
+      .open(ProductSearchDialogComponent)
+      .afterClosed()
+      .subscribe((value) => {
+        if (value && value.product) {
+          this.formvisibility = true;
+          this.productdetails = value;
+          this.selectedProducts.unshift({
+            quantity: 1,
+            product: value,
+            expire: toSqlDate(new Date()),
+            purchaseprice: 0,
+            retailprice: 0,
+            wholesaleprice: 0,
+            wholesalequantity: 0,
+            Amount: 0,
+          });
+          this.purchaseDatasource = new MatTableDataSource<any>(
+            this.selectedProducts
+          );
+          this.updateTotalCost();
+        }
+      });
+  }
+
+  addProductToTable($event): void {
+    console.log($event);
+    this.formvisibility = false;
     this.dialog
       .open(ProductSearchDialogComponent)
       .afterClosed()

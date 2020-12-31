@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { StockModel } from './../models/stock.model';
 
@@ -7,17 +7,13 @@ import { StockModel } from './../models/stock.model';
   template: `
     <form
       [formGroup]="productdetailsform"
-      (ngSubmit)="record()"
+      (ngSubmit)="record(quantity.value, purchaseprice.value)"
       *ngIf="formvisibility"
     >
       <h3>
         Name:
         <strong> {{ productdetails.product }} </strong>
       </h3>
-      <h3>{{ productdetails.purchase }}</h3>
-      <h3>{{ productdetails.retailPrice }}</h3>
-      <h3>{{ productdetails.wholesalePrice }}</h3>
-      <h3>{{ productdetails.wholesaleQuantity }}</h3>
 
       <div class="row">
         <div class="col-lg-3 col-md-3">
@@ -52,7 +48,6 @@ import { StockModel } from './../models/stock.model';
                 type="number"
                 required
                 #quantity
-                [ngModel]="productdetails.purchase"
               />
               <mat-error>product quantity required</mat-error>
             </mat-form-field>
@@ -69,7 +64,7 @@ import { StockModel } from './../models/stock.model';
                 type="number"
                 required
                 #purchaseprice
-                [value]="productdetails.purchase"
+                [(ngModel)]="productdetails.purchase"
               />
               <mat-error>purchase price required</mat-error>
             </mat-form-field>
@@ -87,7 +82,7 @@ import { StockModel } from './../models/stock.model';
                 formControlName="retailprice"
                 type="number"
                 required
-                [value]="productdetails.retailPrice"
+                [(ngModel)]="productdetails.retailPrice"
               />
               <mat-error>retail price required</mat-error>
             </mat-form-field>
@@ -103,7 +98,7 @@ import { StockModel } from './../models/stock.model';
                 formControlName="wholesaleprice"
                 type="number"
                 required
-                [value]="productdetails.wholesalePrice"
+                [(ngModel)]="productdetails.wholesalePrice"
               />
               <mat-error>wholesale price required</mat-error>
             </mat-form-field>
@@ -119,7 +114,7 @@ import { StockModel } from './../models/stock.model';
                 formControlName="wholesalequantity"
                 type="number"
                 required
-                [value]="productdetails.wholesaleQuantity"
+                [(ngModel)]="productdetails.wholesaleQuantity"
               />
               <mat-error>wholesale quantity required</mat-error>
             </mat-form-field>
@@ -128,8 +123,11 @@ import { StockModel } from './../models/stock.model';
       </div>
       <div class="row">
         <div class="col-lg-4 col-md-4">
-          <h2 class="producttotal">
-            Product amount: {{ quantity.value * purchaseprice.value | number }}
+          <h2>
+            Product amount:
+            <strong>
+              {{ quantity.value * purchaseprice.value | number }}</strong
+            >
           </h2>
         </div>
         <div class="col-lg-3 col-md-3">
@@ -152,6 +150,7 @@ import { StockModel } from './../models/stock.model';
 export class ProductDetailComponent implements OnInit {
   @Input() formvisibility: boolean;
   @Input() productdetails: StockModel;
+  @Output() product = new EventEmitter<StockModel>();
 
   productdetailsform: FormGroup;
   Todaysdate: Date = new Date();
@@ -166,10 +165,13 @@ export class ProductDetailComponent implements OnInit {
       retailprice: ['', [Validators.required, Validators.min(1)]],
       wholesaleprice: ['', [Validators.required, Validators.min(1)]],
       wholesalequantity: ['', [Validators.required, Validators.min(1)]],
+      amount: [''],
     });
   }
 
-  record(): void {
-    this.formvisibility = false;
+  record(quantity, purchaseprice): void {
+    const amount = quantity * purchaseprice;
+    this.productdetailsform.get('amount').setValue(amount);
+    this.product.emit(this.productdetailsform.value);
   }
 }
