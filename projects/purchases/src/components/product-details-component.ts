@@ -7,7 +7,7 @@ import { StockModel } from './../models/stock.model';
   template: `
     <form
       [formGroup]="productdetailsform"
-      (ngSubmit)="record(quantity.value, purchaseprice.value)"
+      (ngSubmit)="record(quantity.value, purchaseprice.value, $event)"
       *ngIf="formvisibility"
     >
       <h3>
@@ -23,7 +23,7 @@ import { StockModel } from './../models/stock.model';
               matInput
               [matDatepicker]="picker1"
               [min]="Todaysdate"
-              formControlName="expiredate"
+              formControlName="expire"
             />
             <mat-error> pick a date</mat-error>
             <mat-datepicker-toggle
@@ -159,19 +159,24 @@ export class ProductDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.productdetailsform = this.fb.group({
-      expiredate: ['', Validators.required],
+      product: [''],
+      expire: ['', Validators.required],
       quantity: ['', [Validators.required, Validators.min(1)]],
       purchaseprice: ['', [Validators.required, Validators.min(1)]],
       retailprice: ['', [Validators.required, Validators.min(1)]],
       wholesaleprice: ['', [Validators.required, Validators.min(1)]],
       wholesalequantity: ['', [Validators.required, Validators.min(1)]],
-      amount: [''],
+      Amount: [''],
     });
   }
 
-  record(quantity, purchaseprice): void {
+  record(quantity, purchaseprice, $event): void {
+    $event.preventDefault();
+    const product = this.productdetails.product;
+    this.productdetailsform.get('product').setValue(product);
     const amount = quantity * purchaseprice;
-    this.productdetailsform.get('amount').setValue(amount);
+    this.productdetailsform.get('Amount').setValue(amount);
     this.product.emit(this.productdetailsform.value);
+    console.log(this.productdetailsform.value);
   }
 }

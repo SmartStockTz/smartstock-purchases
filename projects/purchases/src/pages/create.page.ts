@@ -644,7 +644,6 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
   }
 
   addProduct($event): void {
-    console.log($event);
     this.formvisibility = false;
     $event.preventDefault();
     this.dialog
@@ -654,25 +653,12 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
         if (value && value.product) {
           this.formvisibility = true;
           this.productdetails = value;
-          this.selectedProducts.unshift({
-            quantity: 1,
-            product: value,
-            expire: toSqlDate(new Date()),
-            purchaseprice: 0,
-            retailprice: 0,
-            wholesaleprice: 0,
-            wholesalequantity: 0,
-            Amount: 0,
-          });
-          this.purchaseDatasource = new MatTableDataSource<any>(
-            this.selectedProducts
-          );
-          this.updateTotalCost();
         }
       });
   }
 
-  addProductToTable($event): void {
+  addProductToTable($event: any): void {
+    const product = $event;
     console.log($event);
     this.formvisibility = false;
     this.dialog
@@ -683,14 +669,14 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
           this.formvisibility = true;
           this.productdetails = value;
           this.selectedProducts.unshift({
-            quantity: 1,
-            product: value,
-            expire: toSqlDate(new Date()),
-            purchaseprice: 0,
-            retailprice: 0,
-            wholesaleprice: 0,
-            wholesalequantity: 0,
-            Amount: 0,
+            quantity: product.quantity,
+            product: product.product,
+            expire: product.expire,
+            purchaseprice: product.purchase,
+            retailprice: product.retailPrice,
+            wholesaleprice: product.wholesalePrice,
+            wholesalequantity: product.wholesaleQuantity,
+            Amount: product.amount,
           });
           this.purchaseDatasource = new MatTableDataSource<any>(
             this.selectedProducts
