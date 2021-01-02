@@ -49,7 +49,7 @@ import { ThisReceiver } from '@angular/compiler';
         >
         </smartstock-toolbar>
         <div style="margin-top: 16px" class="container">
-          <form [formGroup]="invoiceForm" (ngSubmit)="saveInvoice()">
+          <form [formGroup]="invoiceForm" (ngSubmit)="saveInvoice($event)">
             <div class="row d-flex justify-content-center align-items-center">
               <div class="col-12 col-xl-12 col-lg-12">
                 <h2>Receipt information</h2>
@@ -470,7 +470,8 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
     this.stockstate.getAllStock();
   }
 
-  saveInvoice(): void {
+  saveInvoice(event: MouseEvent): void {
+    event.preventDefault();
     this.invoiceForm.get('items').setValue(this.purchaseDatasource.data);
     console.log(this.invoiceForm.value);
     console.log(this.purchaseDatasource.data);
