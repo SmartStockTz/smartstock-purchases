@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import {
   AbstractControl,
   FormArray,
@@ -180,158 +180,121 @@ import { ThisReceiver } from '@angular/compiler';
                   (product)="addProductToTable($event)"
                 ></app-product-details>
 
-                <table mat-table [dataSource]="purchaseDatasource">
-                  <ng-container cdkColumnDef="product">
-                    <th mat-header-cell *cdkHeaderCellDef>Product</th>
-                    <td mat-cell *cdkCellDef="let element">
-                      {{ element.product.product }}
-                    </td>
-                    <td mat-footer-cell *cdkFooterCellDef>
-                      <h2 style="margin: 0; padding: 5px">TOTAL</h2>
-                    </td>
-                  </ng-container>
-                  <ng-container cdkColumnDef="expiredate">
-                    <th mat-header-cell *cdkHeaderCellDef>Expire Date</th>
-                    <td mat-cell *cdkCellDef="let element">
-                      <!-- <input
-                          class="quantity-input"
-                          type="number"
-                          min="1"
-                          [value]="element.quantity"
-                        /> -->
-                      <input
-                        matInput
-                        [matDatepicker]="picker2"
-                        class="quantity-input"
-                        (dateChange)="updateColumn(element, $event, 'expire')"
-                        #expiredate
-                        (keyup)="(0)"
-                      />
-                      <mat-datepicker-toggle
-                        matSuffix
-                        [for]="picker2"
-                      ></mat-datepicker-toggle>
-                      <mat-datepicker #picker2 color="primary"></mat-datepicker>
-                    </td>
-                    <td mat-footer-cell *cdkFooterCellDef></td>
-                  </ng-container>
-                  <ng-container cdkColumnDef="quantity">
-                    <th mat-header-cell *cdkHeaderCellDef>Quantity</th>
-                    <td mat-cell *cdkCellDef="let element">
-                      <input
-                        class="quantity-input"
-                        (change)="updateQuantity(element, $event)"
-                        type="number"
-                        min="1"
-                        #quantity
-                        (keyup)="(0)"
-                        [value]="element.quantity"
-                      />
-                    </td>
-                    <td mat-footer-cell *cdkFooterCellDef></td>
-                  </ng-container>
-                  <ng-container cdkColumnDef="purchaseprice">
-                    <th mat-header-cell *cdkHeaderCellDef>Purchase price</th>
-                    <td mat-cell *cdkCellDef="let element">
-                      <input
-                        class="quantity-input"
-                        (change)="updateQuantity(element, $event)"
-                        type="number"
-                        min="1"
-                        #purchaseprice
-                        (keyup)="(0)"
-                        [value]="element.product.purchase"
-                      />
-                    </td>
-                    <td mat-footer-cell *cdkFooterCellDef></td>
-                  </ng-container>
-                  <ng-container cdkColumnDef="retailprice">
-                    <th mat-header-cell *cdkHeaderCellDef>Retail price</th>
-                    <td mat-cell *cdkCellDef="let element">
-                      <input
-                        matInput
-                        class="quantity-input"
-                        type="number"
-                        min="1"
-                        [value]="element.product.retailPrice"
-                        #retailprice
-                        (keyup)="(0)"
-                      />
-                    </td>
-                    <td mat-footer-cell *cdkFooterCellDef></td>
-                  </ng-container>
-                  <ng-container cdkColumnDef="wholesaleprice">
-                    <th mat-header-cell *cdkHeaderCellDef>Wholesale price</th>
-                    <td mat-cell *cdkCellDef="let element">
-                      <input
-                        matInput
-                        class="quantity-input"
-                        type="number"
-                        min="1"
-                        [value]="element.product.wholesalePrice"
-                        #wholesalePrice
-                        (keyup)="(0)"
-                      />
-                    </td>
-                    <td mat-footer-cell *cdkFooterCellDef></td>
-                  </ng-container>
-                  <ng-container cdkColumnDef="wholesalequantity">
-                    <th mat-header-cell *cdkHeaderCellDef>
-                      Wholesale quantity
-                    </th>
-                    <td mat-cell *cdkCellDef="let element">
-                      <input
-                        matInput
-                        class="quantity-input"
-                        (change)="
-                          updateColumn(element, $event, 'wholesalequantity')
-                        "
-                        type="number"
-                        min="1"
-                        #wholesalequantity
-                        (keyup)="(0)"
-                      />
-                    </td>
-                    <td mat-footer-cell *cdkFooterCellDef></td>
-                  </ng-container>
-                  <ng-container cdkColumnDef="Amount">
-                    <th mat-header-cell *cdkHeaderCellDef>Amount</th>
-                    <td mat-cell *cdkCellDef="let element">
-                      {{ element.quantity * element.product.purchase | number }}
-                    </td>
-                    <td mat-footer-cell *cdkFooterCellDef>
-                      <h1 style="margin: 0; padding: 5px">
-                        {{ totalCost | number }}
-                      </h1>
-                    </td>
-                  </ng-container>
-                  <ng-container cdkColumnDef="action">
-                    <th mat-header-cell *cdkHeaderCellDef>Action</th>
-                    <td mat-cell *cdkCellDef="let element">
-                      <button
-                        (click)="removeItem($event, element)"
-                        mat-icon-button
-                        color="warn"
-                      >
-                        <mat-icon>delete</mat-icon>
-                      </button>
-                    </td>
-                    <td mat-footer-cell *cdkFooterCellDef></td>
-                  </ng-container>
+                <mat-card class="mat-elevation-z3">
+                  <h2>Purchased products list</h2>
+                  <table mat-table [dataSource]="purchaseDatasource">
+                    <ng-container cdkColumnDef="product">
+                      <th mat-header-cell *cdkHeaderCellDef>Product</th>
+                      <td mat-cell *cdkCellDef="let element">
+                        {{ element.product }}
+                      </td>
+                      <td mat-footer-cell *cdkFooterCellDef>
+                        <h2 style="margin: 0; padding: 5px">TOTAL</h2>
+                      </td>
+                    </ng-container>
 
-                  <tr
-                    mat-header-row
-                    *cdkHeaderRowDef="purchaseTableColumn"
-                  ></tr>
-                  <tr
-                    mat-row
-                    *matRowDef="let row; columns: purchaseTableColumn"
-                  ></tr>
-                  <tr
-                    mat-footer-row
-                    *cdkFooterRowDef="purchaseTableColumn"
-                  ></tr>
-                </table>
+                    <ng-container cdkColumnDef="expiredate">
+                      <th mat-header-cell *cdkHeaderCellDef>Expire Date</th>
+                      <td mat-cell *cdkCellDef="let element">
+                        {{ element.expire | date }}
+                      </td>
+                      <td mat-footer-cell *cdkFooterCellDef></td>
+                    </ng-container>
+
+                    <ng-container cdkColumnDef="quantity">
+                      <th mat-header-cell *cdkHeaderCellDef>Quantity</th>
+                      <td mat-cell *cdkCellDef="let element">
+                        {{ element.quantity }}
+                      </td>
+                      <td mat-footer-cell *cdkFooterCellDef></td>
+                    </ng-container>
+
+                    <ng-container cdkColumnDef="purchaseprice">
+                      <th mat-header-cell *cdkHeaderCellDef>Purchase price</th>
+                      <td mat-cell *cdkCellDef="let element">
+                        {{ element.purchaseprice }}
+                      </td>
+
+                      <td mat-footer-cell *cdkFooterCellDef></td>
+                    </ng-container>
+
+                    <ng-container cdkColumnDef="retailprice">
+                      <th mat-header-cell *cdkHeaderCellDef>Retail price</th>
+                      <td mat-cell *cdkCellDef="let element">
+                        {{ element.retailprice }}
+                      </td>
+                      <td mat-footer-cell *cdkFooterCellDef></td>
+                    </ng-container>
+
+                    <ng-container cdkColumnDef="wholesaleprice">
+                      <th mat-header-cell *cdkHeaderCellDef>Wholesale price</th>
+                      <td mat-cell *cdkCellDef="let element">
+                        {{ element.wholesaleprice }}
+                      </td>
+                      <td mat-footer-cell *cdkFooterCellDef></td>
+                    </ng-container>
+
+                    <ng-container cdkColumnDef="wholesalequantity">
+                      <th mat-header-cell *cdkHeaderCellDef>
+                        Wholesale quantity
+                      </th>
+                      <td mat-cell *cdkCellDef="let element">
+                        {{ element.wholesalequantity }}
+                      </td>
+                      <td mat-footer-cell *cdkFooterCellDef></td>
+                    </ng-container>
+
+                    <ng-container cdkColumnDef="Amount">
+                      <th mat-header-cell *cdkHeaderCellDef>Amount</th>
+                      <td mat-cell *cdkCellDef="let element">
+                        {{ element.Amount }}
+                      </td>
+                      <td mat-footer-cell *cdkFooterCellDef>
+                        <h1 style="margin: 0; padding: 5px">
+                          {{ totalCost | number }}
+                        </h1>
+                      </td>
+                    </ng-container>
+
+                    <ng-container cdkColumnDef="action">
+                      <th mat-header-cell *cdkHeaderCellDef>Action</th>
+                      <td mat-cell *cdkCellDef="let element">
+                        <button
+                          (click)="removeItem($event, element)"
+                          mat-icon-button
+                          color="primary"
+                          matTooltip="Edit product info"
+                          matTooltipPosition="above"
+                        >
+                          <mat-icon>edit</mat-icon>
+                        </button>
+                        <button
+                          (click)="removeItem($event, element)"
+                          mat-icon-button
+                          color="warn"
+                          matTooltip="Remove product from list"
+                          matTooltipPosition="above"
+                        >
+                          <mat-icon>delete</mat-icon>
+                        </button>
+                      </td>
+                      <td mat-footer-cell *cdkFooterCellDef></td>
+                    </ng-container>
+
+                    <tr
+                      mat-header-row
+                      *cdkHeaderRowDef="purchaseTableColumn"
+                    ></tr>
+                    <tr
+                      mat-row
+                      *matRowDef="let row; columns: purchaseTableColumn"
+                    ></tr>
+                    <tr
+                      mat-footer-row
+                      *cdkFooterRowDef="purchaseTableColumn"
+                    ></tr>
+                  </table>
+                </mat-card>
               </div>
 
               <div class="col-12 col-xl-9 col-lg-9 status">
@@ -360,6 +323,7 @@ import { ThisReceiver } from '@angular/compiler';
     </mat-sidenav-container>
   `,
   styleUrls: ['../styles/create.style.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
   formvisibility: boolean;
@@ -538,7 +502,8 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
   ): void {
     $event.preventDefault();
     this.selectedProducts = this.selectedProducts.filter(
-      (x) => x.product.id !== element.product.id
+      // (x) => x.product.id !== element.product.id
+      (x) => x.product !== element.product
     );
     this.purchaseDatasource = new MatTableDataSource<any>(
       this.selectedProducts
@@ -660,31 +625,22 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
 
   addProductToTable($event: any): void {
     const product = $event;
-    console.log($event);
-    this.formvisibility = false;
-    this.dialog
-      .open(ProductSearchDialogComponent)
-      .afterClosed()
-      .subscribe((value) => {
-        if (value && value.product) {
-          this.formvisibility = true;
-          this.productdetails = value;
-          this.selectedProducts.unshift({
-            quantity: product.quantity,
-            product: product.product,
-            expire: product.expire,
-            purchaseprice: product.purchase,
-            retailprice: product.retailPrice,
-            wholesaleprice: product.wholesalePrice,
-            wholesalequantity: product.wholesaleQuantity,
-            Amount: product.amount,
-          });
-          this.purchaseDatasource = new MatTableDataSource<any>(
-            this.selectedProducts
-          );
-          this.updateTotalCost();
-        }
+    if (product) {
+      this.selectedProducts.unshift({
+        quantity: product.quantity,
+        product: product.product,
+        expire: product.expire,
+        purchaseprice: product.purchaseprice,
+        retailprice: product.retailprice,
+        wholesaleprice: product.wholesaleprice,
+        wholesalequantity: product.wholesalequantity,
+        Amount: product.Amount,
       });
+      this.purchaseDatasource = new MatTableDataSource<any>(
+        this.selectedProducts
+      );
+      this.updateTotalCost();
+    }
   }
 
   getTotalAmountOfInvoice(): void {

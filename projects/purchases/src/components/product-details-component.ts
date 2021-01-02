@@ -136,7 +136,7 @@ import { StockModel } from './../models/stock.model';
             mat-raised-button
             [disabled]="!productdetailsform.valid"
           >
-            Record
+            Add to list
           </button>
         </div>
       </div>
@@ -177,6 +177,5 @@ export class ProductDetailComponent implements OnInit {
     const amount = quantity * purchaseprice;
     this.productdetailsform.get('Amount').setValue(amount);
     this.product.emit(this.productdetailsform.value);
-    console.log(this.productdetailsform.value);
   }
 }

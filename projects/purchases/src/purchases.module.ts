@@ -25,7 +25,6 @@ import { PurchaseDetailsComponent } from './components/details.component';
 import { CreatePageComponent } from './pages/create.page';
 import { LibModule } from '@smartstocktz/core-libs';
 import { ScrollingModule } from '@angular/cdk/scrolling';
-
 import {
   DialogDeleteComponent,
   StockDetailsComponent,
