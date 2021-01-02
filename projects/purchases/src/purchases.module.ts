@@ -44,6 +44,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { ProductDetailComponent } from './components/product-details-component';
 import { ProductSearchDialogComponent } from './components/product-search-dialog.component';
 import { CdkTableModule } from '@angular/cdk/table';
+import { EditproductComponent } from './components/editproduct.component';
 
 const routes: Routes = [
   { path: '', component: IndexPage },
@@ -65,6 +66,7 @@ const routes: Routes = [
     DialogSupplierDeleteComponent,
     VerifyEMailDialogComponent,
     IndexPage,
+    EditproductComponent,
   ],
   imports: [
     CommonModule,

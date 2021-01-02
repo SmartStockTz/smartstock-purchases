@@ -1,3 +1,4 @@
+import { element } from 'protractor';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import {
   AbstractControl,
@@ -20,6 +21,7 @@ import { StorageService } from '@smartstocktz/core-libs';
 import { StockState } from '../states/stock.state';
 import { ProductSearchDialogComponent } from '../components/product-search-dialog.component';
 import { MatTableDataSource } from '@angular/material/table';
+import { EditproductComponent } from './../components/editproduct.component';
 
 import { StockService } from '../services/stock.service';
 import { ThisReceiver } from '@angular/compiler';
@@ -260,7 +262,7 @@ import { ThisReceiver } from '@angular/compiler';
                       <th mat-header-cell *cdkHeaderCellDef>Action</th>
                       <td mat-cell *cdkCellDef="let element">
                         <button
-                          (click)="removeItem($event, element)"
+                          (click)="editproduct($event, element)"
                           mat-icon-button
                           color="primary"
                           matTooltip="Edit product info"
@@ -438,8 +440,6 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
     event.preventDefault();
     this.invoiceForm.get('items').setValue(this.purchaseDatasource.data);
     this.invoiceForm.get('amount').setValue(this.totalCost);
-    console.log(this.invoiceForm.value);
-    console.log(this.purchaseDatasource.data);
 
     if (!this.invoiceForm.valid) {
       this.snack.open('Please fill all required information', 'Ok', {
@@ -526,6 +526,42 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
           this.getSuppliers();
         }
       });
+  }
+  editproduct($event: MouseEvent, element): void {
+    // {
+    //   data: {
+    //     value: message;
+    //   }
+    // }
+    $event.preventDefault();
+    this.dialog
+      .open(EditproductComponent, { data: element })
+      .afterClosed()
+      .subscribe((value) => {
+        console.log(value);
+
+        if (value) {
+          this.selectedProducts.unshift({
+            quantity: value.quantity,
+            product: value.product,
+            expire: value.expire,
+            purchase: value.purchase,
+            retailPrice: value.retailPrice,
+            wholesalePrice: value.wholesalePrice,
+            wholesaleQuantity: value.wholesaleQuantity,
+            amount: value.quantity * value.purchase,
+          });
+
+          this.purchaseDatasource = new MatTableDataSource<any>(
+            this.selectedProducts
+          );
+
+          this.updateTotalCost();
+        }
+      });
+    // console.log($event);
+    // console.log(element);
+    this.snack.open('Edited product information', 'Ok', { duration: 2000 });
   }
 
   // updateQuantity(
@@ -656,7 +692,6 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
       );
 
       this.updateTotalCost();
-      console.log(this.purchaseDatasource.data);
     }
   }
 
