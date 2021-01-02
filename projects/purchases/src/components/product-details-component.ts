@@ -7,7 +7,7 @@ import { StockModel } from './../models/stock.model';
   template: `
     <form
       [formGroup]="productdetailsform"
-      (ngSubmit)="record(quantity.value, purchaseprice.value, $event)"
+      (ngSubmit)="addtolist(quantity.value, purchaseprice.value, $event)"
       *ngIf="formvisibility"
     >
       <h3>
@@ -170,9 +170,9 @@ export class ProductDetailComponent implements OnInit {
     });
   }
 
-  record(quantity, purchaseprice, $event): void {
+  addtolist(quantity, purchaseprice, $event): void {
     $event.preventDefault();
-    const product = this.productdetails.product;
+    const product = this.productdetails;
     this.productdetailsform.get('product').setValue(product);
     const amount = quantity * purchaseprice;
     this.productdetailsform.get('Amount').setValue(amount);

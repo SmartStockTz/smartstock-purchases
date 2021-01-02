@@ -186,7 +186,7 @@ import { ThisReceiver } from '@angular/compiler';
                     <ng-container cdkColumnDef="product">
                       <th mat-header-cell *cdkHeaderCellDef>Product</th>
                       <td mat-cell *cdkCellDef="let element">
-                        {{ element.product }}
+                        {{ element.product.product }}
                       </td>
                       <td mat-footer-cell *cdkFooterCellDef>
                         <h2 style="margin: 0; padding: 5px">TOTAL</h2>
@@ -527,28 +527,28 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
       });
   }
 
-  updateQuantity(
-    element: { quantity: number; product: StockModel },
-    $event: Event
-  ): void {
-    // @ts-ignore
-    const newQuantity = Number($event.target.value);
-    // console.log(element);
-    // console.log(newQuantity);
-    // console.log(this.selectedProducts);
-    // if (newQuantity <= 0) {
-    //   newQuantity = 1;
-    // }
-    this.selectedProducts.map((x) => {
-      if (x.product.id === element.product.id) {
-        x.quantity = newQuantity;
-      }
-      return x;
-    });
+  // updateQuantity(
+  //   element: { quantity: number; product: StockModel },
+  //   $event: Event
+  // ): void {
+  //   // @ts-ignore
+  //   const newQuantity = Number($event.target.value);
+  //   // console.log(element);
+  //   // console.log(newQuantity);
+  //   // console.log(this.selectedProducts);
+  //   // if (newQuantity <= 0) {
+  //   //   newQuantity = 1;
+  //   // }
+  //   this.selectedProducts.map((x) => {
+  //     if (x.product.id === element.product.id) {
+  //       x.quantity = newQuantity;
+  //     }
+  //     return x;
+  //   });
 
-    this.purchaseDatasource = new MatTableDataSource(this.selectedProducts);
-    this.updateTotalCost();
-  }
+  //   this.purchaseDatasource = new MatTableDataSource(this.selectedProducts);
+  //   this.updateTotalCost();
+  // }
 
   // updateWholeSaleQuantity(element: any, $event: Event): void {
   //   // @ts-ignore
@@ -566,27 +566,28 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
   //   this.updateTotalCost();
   // }
 
-  updateColumn(element: any, $event: Event, columnName: string): void {
-    // @ts-ignore
-    const newValueForColumn = Number($event.target.value);
-    console.log(newValueForColumn);
+  // updateColumn(element: any, $event: Event, columnName: string): void {
+  //   // @ts-ignore
+  //   const newValueForColumn = Number($event.target.value);
+  //   console.log(newValueForColumn);
 
-    this.selectedProducts.map((x) => {
-      if (x.product.id === element.product.id) {
-        x[columnName] = newValueForColumn;
-      }
-      return x;
-    });
+  //   this.selectedProducts.map((x) => {
+  //     if (x.product.id === element.product.id) {
+  //       x[columnName] = newValueForColumn;
+  //     }
+  //     return x;
+  //   });
 
-    this.purchaseDatasource = new MatTableDataSource(this.selectedProducts);
-    this.updateTotalCost();
-  }
+  //   this.purchaseDatasource = new MatTableDataSource(this.selectedProducts);
+  //   this.updateTotalCost();
+  // }
 
   updateTotalCost(): void {
     this.totalCost = this.purchaseDatasource.data
-      .map((x) => x.quantity * x.product.purchase)
+      .map((x) => x.Amount)
       .reduce((a, b) => a + b, 0);
   }
+
   refreshSuppliers($event: MouseEvent): void {
     $event.preventDefault();
     $event.stopPropagation();
@@ -625,7 +626,19 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
 
   addProductToTable($event: any): void {
     const product = $event;
-    if (product) {
+    let repetition = false;
+    if (this.purchaseDatasource.data.length >= 1) {
+      this.purchaseDatasource.data.find((val) => {
+        if (val.product === product.product) {
+          repetition = true;
+          this.snack.open('Product already added to list', 'cancel', {
+            duration: 2000,
+          });
+        }
+      });
+    }
+
+    if (!repetition) {
       this.selectedProducts.unshift({
         quantity: product.quantity,
         product: product.product,
@@ -636,9 +649,11 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
         wholesalequantity: product.wholesalequantity,
         Amount: product.Amount,
       });
+
       this.purchaseDatasource = new MatTableDataSource<any>(
         this.selectedProducts
       );
+
       this.updateTotalCost();
     }
   }
