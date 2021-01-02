@@ -212,7 +212,7 @@ import { ThisReceiver } from '@angular/compiler';
                     <ng-container cdkColumnDef="purchaseprice">
                       <th mat-header-cell *cdkHeaderCellDef>Purchase price</th>
                       <td mat-cell *cdkCellDef="let element">
-                        {{ element.purchaseprice }}
+                        {{ element.purchase }}
                       </td>
 
                       <td mat-footer-cell *cdkFooterCellDef></td>
@@ -221,7 +221,7 @@ import { ThisReceiver } from '@angular/compiler';
                     <ng-container cdkColumnDef="retailprice">
                       <th mat-header-cell *cdkHeaderCellDef>Retail price</th>
                       <td mat-cell *cdkCellDef="let element">
-                        {{ element.retailprice }}
+                        {{ element.retailPrice }}
                       </td>
                       <td mat-footer-cell *cdkFooterCellDef></td>
                     </ng-container>
@@ -229,7 +229,7 @@ import { ThisReceiver } from '@angular/compiler';
                     <ng-container cdkColumnDef="wholesaleprice">
                       <th mat-header-cell *cdkHeaderCellDef>Wholesale price</th>
                       <td mat-cell *cdkCellDef="let element">
-                        {{ element.wholesaleprice }}
+                        {{ element.wholesalePrice }}
                       </td>
                       <td mat-footer-cell *cdkFooterCellDef></td>
                     </ng-container>
@@ -239,7 +239,7 @@ import { ThisReceiver } from '@angular/compiler';
                         Wholesale quantity
                       </th>
                       <td mat-cell *cdkCellDef="let element">
-                        {{ element.wholesalequantity }}
+                        {{ element.wholesaleQuantity }}
                       </td>
                       <td mat-footer-cell *cdkFooterCellDef></td>
                     </ng-container>
@@ -247,7 +247,7 @@ import { ThisReceiver } from '@angular/compiler';
                     <ng-container cdkColumnDef="Amount">
                       <th mat-header-cell *cdkHeaderCellDef>Amount</th>
                       <td mat-cell *cdkCellDef="let element">
-                        {{ element.Amount }}
+                        {{ element.amount }}
                       </td>
                       <td mat-footer-cell *cdkFooterCellDef>
                         <h1 style="margin: 0; padding: 5px">
@@ -383,8 +383,8 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
       due: [''],
       paid: [false],
       draft: [false],
-      amount: [0, [Validators.nullValidator, Validators.required]],
-      items: [[], [Validators.nullValidator, Validators.required]],
+      amount: [0, Validators.required],
+      items: [[], Validators.required],
     });
     this.getSuppliers();
     this.searchProductFormControl.valueChanges
@@ -437,6 +437,7 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
   saveInvoice(event: MouseEvent): void {
     event.preventDefault();
     this.invoiceForm.get('items').setValue(this.purchaseDatasource.data);
+    this.invoiceForm.get('amount').setValue(this.totalCost);
     console.log(this.invoiceForm.value);
     console.log(this.purchaseDatasource.data);
 
@@ -460,16 +461,16 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
       this.invoiceForm.value.type = 'receipt';
       this.invoiceForm.value.paid = false;
     }
-    const items = this.invoiceForm.get('items') as FormArray;
-    if (items.controls.length === 0) {
-      this.snack.open('Must add at least one item', 'Ok', {
-        duration: 3000,
-      });
-      // console.log(items.controls);
-      // console.log(this.invoiceForm.value);
-      // console.log(this.invoiceItems.value);
-      return;
-    }
+    // const items = this.invoiceForm.get('items');
+    // if (!items) {
+    //   this.snack.open('Must add at least one item', 'Cancel', {
+    //     duration: 2000,
+    //   });
+    //   // console.log(items.controls);
+    //   // console.log(this.invoiceForm.value);
+    //   // console.log(this.invoiceItems.value);
+    //   return;
+    // }
     // console.log(this.invoiceForm.value);
     this.saveInvoiceProgress = true;
     this.purchaseState
@@ -584,7 +585,7 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
 
   updateTotalCost(): void {
     this.totalCost = this.purchaseDatasource.data
-      .map((x) => x.Amount)
+      .map((x) => x.amount)
       .reduce((a, b) => a + b, 0);
   }
 
@@ -626,10 +627,10 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
 
   addProductToTable($event: any): void {
     const product = $event;
-    let repetition = false;
+    let repetition: boolean;
     if (this.purchaseDatasource.data.length >= 1) {
       this.purchaseDatasource.data.find((val) => {
-        if (val.product === product.product) {
+        if (val.product.product === product.product.product) {
           repetition = true;
           this.snack.open('Product already added to list', 'cancel', {
             duration: 2000,
@@ -643,11 +644,11 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
         quantity: product.quantity,
         product: product.product,
         expire: product.expire,
-        purchaseprice: product.purchaseprice,
-        retailprice: product.retailprice,
-        wholesaleprice: product.wholesaleprice,
-        wholesalequantity: product.wholesalequantity,
-        Amount: product.Amount,
+        purchase: product.purchase,
+        retailPrice: product.retailPrice,
+        wholesalePrice: product.wholesalePrice,
+        wholesaleQuantity: product.wholesaleQuantity,
+        amount: product.amount,
       });
 
       this.purchaseDatasource = new MatTableDataSource<any>(
@@ -655,6 +656,7 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
       );
 
       this.updateTotalCost();
+      console.log(this.purchaseDatasource.data);
     }
   }
 

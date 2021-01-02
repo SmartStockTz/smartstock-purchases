@@ -60,7 +60,7 @@ import { StockModel } from './../models/stock.model';
               <input
                 matInput
                 placeholder="purchase price"
-                formControlName="purchaseprice"
+                formControlName="purchase"
                 type="number"
                 required
                 #purchaseprice
@@ -79,7 +79,7 @@ import { StockModel } from './../models/stock.model';
               <input
                 matInput
                 placeholder="retail price"
-                formControlName="retailprice"
+                formControlName="retailPrice"
                 type="number"
                 required
                 [(ngModel)]="productdetails.retailPrice"
@@ -95,7 +95,7 @@ import { StockModel } from './../models/stock.model';
               <input
                 matInput
                 placeholder="wholesale price"
-                formControlName="wholesaleprice"
+                formControlName="wholesalePrice"
                 type="number"
                 required
                 [(ngModel)]="productdetails.wholesalePrice"
@@ -111,7 +111,7 @@ import { StockModel } from './../models/stock.model';
               <input
                 matInput
                 placeholder="wholesale quantity"
-                formControlName="wholesalequantity"
+                formControlName="wholesaleQuantity"
                 type="number"
                 required
                 [(ngModel)]="productdetails.wholesaleQuantity"
@@ -140,9 +140,6 @@ import { StockModel } from './../models/stock.model';
           </button>
         </div>
       </div>
-      <div *ngIf="productdetailsform.valid">
-        {{ productdetailsform.value | json }}
-      </div>
     </form>
   `,
   styleUrls: ['../styles/productdetails.style.scss'],
@@ -162,11 +159,11 @@ export class ProductDetailComponent implements OnInit {
       product: [''],
       expire: ['', Validators.required],
       quantity: ['', [Validators.required, Validators.min(1)]],
-      purchaseprice: ['', [Validators.required, Validators.min(1)]],
-      retailprice: ['', [Validators.required, Validators.min(1)]],
-      wholesaleprice: ['', [Validators.required, Validators.min(1)]],
-      wholesalequantity: ['', [Validators.required, Validators.min(1)]],
-      Amount: [''],
+      purchase: ['', [Validators.required, Validators.min(1)]],
+      retailPrice: ['', [Validators.required, Validators.min(1)]],
+      wholesalePrice: ['', [Validators.required, Validators.min(1)]],
+      wholesaleQuantity: ['', [Validators.required, Validators.min(1)]],
+      amount: [''],
     });
   }
 
@@ -175,7 +172,7 @@ export class ProductDetailComponent implements OnInit {
     const product = this.productdetails;
     this.productdetailsform.get('product').setValue(product);
     const amount = quantity * purchaseprice;
-    this.productdetailsform.get('Amount').setValue(amount);
+    this.productdetailsform.get('amount').setValue(amount);
     this.product.emit(this.productdetailsform.value);
   }
 }
