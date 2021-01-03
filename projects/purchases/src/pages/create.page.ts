@@ -23,9 +23,6 @@ import { ProductSearchDialogComponent } from '../components/product-search-dialo
 import { MatTableDataSource } from '@angular/material/table';
 import { EditproductComponent } from './../components/editproduct.component';
 
-import { StockService } from '../services/stock.service';
-import { ThisReceiver } from '@angular/compiler';
-
 @Component({
   selector: 'smartstock-purchase-create',
   template: `
@@ -416,13 +413,10 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
               value.product.toLowerCase().indexOf(productName.toLowerCase()) !==
               -1
           );
-          // const dataArray = JSON.parse(JSON.stringify(stocks));
           this.products = of(dataArray);
           this.searchProductProgress = false;
         })
         .catch((reason) => {
-          // console.log(reason);
-          // this.snack.open('Failed to get stocks', 'Ok', {duration: 3000});
           this.snack.open(
             reason && reason.message ? reason.message : reason.toString()
           );
@@ -461,17 +455,6 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
       this.invoiceForm.value.type = 'receipt';
       this.invoiceForm.value.paid = false;
     }
-    // const items = this.invoiceForm.get('items');
-    // if (!items) {
-    //   this.snack.open('Must add at least one item', 'Cancel', {
-    //     duration: 2000,
-    //   });
-    //   // console.log(items.controls);
-    //   // console.log(this.invoiceForm.value);
-    //   // console.log(this.invoiceItems.value);
-    //   return;
-    // }
-    // console.log(this.invoiceForm.value);
     this.saveInvoiceProgress = true;
     this.purchaseState
       .addPurchase(this.invoiceForm.value)
@@ -503,7 +486,6 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
   ): void {
     $event.preventDefault();
     this.selectedProducts = this.selectedProducts.filter(
-      // (x) => x.product.id !== element.product.id
       (x) => x.product !== element.product
     );
     this.purchaseDatasource = new MatTableDataSource<any>(
@@ -528,107 +510,38 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
       });
   }
   editproduct($event: MouseEvent, element): void {
-    // {
-    //   data: {
-    //     value: message;
-    //   }
-    // }
     $event.preventDefault();
     this.dialog
       .open(EditproductComponent, { data: element })
       .afterClosed()
       .subscribe((value) => {
-        console.log(value);
-
         if (value) {
-          //  this.purchaseDatasource.data.find(val=> {
-          //    if( val.product.product === value.product.product) {
-
-          //    }
-          //  })
-
           const index = this.purchaseDatasource.data.findIndex(
             (val) => val.product.product === value.product.product
           );
-          console.log(index);
           this.purchaseDatasource.data.splice(index, 1);
-          // this.selectedProducts.unshift({
-          //   quantity: value.quantity,
-          //   product: value.product,
-          //   expire: value.expire,
-          //   purchase: value.purchase,
-          //   retailPrice: value.retailPrice,
-          //   wholesalePrice: value.wholesalePrice,
-          //   wholesaleQuantity: value.wholesaleQuantity,
-          //   amount: value.quantity * value.purchase,
-          // });
+          this.selectedProducts.unshift({
+            quantity: value.quantity,
+            product: value.product,
+            expire: value.expire,
+            purchase: value.purchase,
+            retailPrice: value.retailPrice,
+            wholesalePrice: value.wholesalePrice,
+            wholesaleQuantity: value.wholesaleQuantity,
+            amount: value.quantity * value.purchase,
+          });
 
-          // this.purchaseDatasource = new MatTableDataSource<any>(
-          //   this.selectedProducts
-          // );
+          this.purchaseDatasource = new MatTableDataSource<any>(
+            this.selectedProducts
+          );
 
           this.updateTotalCost();
+          this.snack.open('Edited product information', 'Ok', {
+            duration: 2000,
+          });
         }
       });
-    // console.log($event);
-    // console.log(element);
-    this.snack.open('Edited product information', 'Ok', { duration: 2000 });
   }
-
-  // updateQuantity(
-  //   element: { quantity: number; product: StockModel },
-  //   $event: Event
-  // ): void {
-  //   // @ts-ignore
-  //   const newQuantity = Number($event.target.value);
-  //   // console.log(element);
-  //   // console.log(newQuantity);
-  //   // console.log(this.selectedProducts);
-  //   // if (newQuantity <= 0) {
-  //   //   newQuantity = 1;
-  //   // }
-  //   this.selectedProducts.map((x) => {
-  //     if (x.product.id === element.product.id) {
-  //       x.quantity = newQuantity;
-  //     }
-  //     return x;
-  //   });
-
-  //   this.purchaseDatasource = new MatTableDataSource(this.selectedProducts);
-  //   this.updateTotalCost();
-  // }
-
-  // updateWholeSaleQuantity(element: any, $event: Event): void {
-  //   // @ts-ignore
-  //   const newWholeSaleQuantity = Number($event.target.value);
-  //   console.log(newWholeSaleQuantity);
-
-  //   this.selectedProducts.map((x) => {
-  //     if (x.product.id === element.product.id) {
-  //       x.wholesalequantity = newWholeSaleQuantity;
-  //     }
-  //     return x;
-  //   });
-
-  //   this.purchaseDatasource = new MatTableDataSource(this.selectedProducts);
-  //   this.updateTotalCost();
-  // }
-
-  // updateColumn(element: any, $event: Event, columnName: string): void {
-  //   // @ts-ignore
-  //   const newValueForColumn = Number($event.target.value);
-  //   console.log(newValueForColumn);
-
-  //   this.selectedProducts.map((x) => {
-  //     if (x.product.id === element.product.id) {
-  //       x[columnName] = newValueForColumn;
-  //     }
-  //     return x;
-  //   });
-
-  //   this.purchaseDatasource = new MatTableDataSource(this.selectedProducts);
-  //   this.updateTotalCost();
-  // }
 
   updateTotalCost(): void {
     this.totalCost = this.purchaseDatasource.data
@@ -652,7 +565,6 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
         this.supplierFetching = false;
       })
       .catch((reason) => {
-        // console.log(reason);
         this.suppliers = of([{ name: 'Default Supplier' }]);
         this.supplierFetching = false;
       });
@@ -703,77 +615,6 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
       );
 
       this.updateTotalCost();
-    }
-  }
-
-  getTotalAmountOfInvoice(): void {
-    // reduce((a, b) => a + b, 0)
-    const itemsValues: any[] = this.invoiceItems.value;
-    const sum = itemsValues.reduce((a, b) => a + b.amount, 0);
-    // console.log(sum);
-    this.invoiceForm.get('amount').setValue(sum);
-  }
-
-  addItem($event): void {
-    $event.preventDefault();
-    if (!this.searchProductFormControl.valid) {
-      this.snack.open('To add item, search and select a product', 'Ok', {
-        duration: 3000,
-      });
-      return;
-    }
-    this.invoiceItems.push(
-      this.formBuilder.group({
-        product: this.formBuilder.group(this.selectedProduct, [
-          Validators.nullValidator,
-          Validators.required,
-        ]),
-        expire: [this.selectedProduct.expire],
-        purchase: [
-          this.selectedProduct.purchase,
-          [Validators.nullValidator, Validators.required],
-        ],
-        retailPrice: [
-          this.selectedProduct.retailPrice,
-          [Validators.nullValidator, Validators.required],
-        ],
-        wholesalePrice: [
-          this.selectedProduct.wholesalePrice,
-          [Validators.nullValidator, Validators.required],
-        ],
-        wholesaleQuantity: [
-          this.selectedProduct.wholesaleQuantity,
-          [Validators.nullValidator, Validators.required],
-        ],
-        quantity: [1, [Validators.nullValidator, Validators.required]],
-        amount: [
-          this.selectedProduct.purchase,
-          [Validators.nullValidator, Validators.required],
-        ],
-      })
-    );
-    this.searchProductFormControl.reset();
-    this.selectedProduct = null;
-    this.getTotalAmountOfInvoice();
-  }
-
-  updateAmount(formGroup: AbstractControl): void {
-    formGroup = formGroup as FormGroup;
-    formGroup
-      .get('amount')
-      .setValue(formGroup.value.quantity * formGroup.value.purchase);
-    this.getTotalAmountOfInvoice();
-  }
-
-  // removeItem(index, $event): void {
-  //   $event.preventDefault();
-  //   this.invoiceItems.removeAt(index);
-  //   this.getTotalAmountOfInvoice();
-  // }
-
-  checkKey($event: KeyboardEvent): void {
-    if ($event.code === 'Enter') {
-      $event.preventDefault();
     }
   }
 }
