@@ -541,20 +541,31 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
         console.log(value);
 
         if (value) {
-          this.selectedProducts.unshift({
-            quantity: value.quantity,
-            product: value.product,
-            expire: value.expire,
-            purchase: value.purchase,
-            retailPrice: value.retailPrice,
-            wholesalePrice: value.wholesalePrice,
-            wholesaleQuantity: value.wholesaleQuantity,
-            amount: value.quantity * value.purchase,
-          });
+          //  this.purchaseDatasource.data.find(val=> {
+          //    if( val.product.product === value.product.product) {
 
-          this.purchaseDatasource = new MatTableDataSource<any>(
-            this.selectedProducts
+          //    }
+          //  })
+
+          const index = this.purchaseDatasource.data.findIndex(
+            (val) => val.product.product === value.product.product
           );
+          console.log(index);
+          this.purchaseDatasource.data.splice(index, 1);
+          // this.selectedProducts.unshift({
+          //   quantity: value.quantity,
+          //   product: value.product,
+          //   expire: value.expire,
+          //   purchase: value.purchase,
+          //   retailPrice: value.retailPrice,
+          //   wholesalePrice: value.wholesalePrice,
+          //   wholesaleQuantity: value.wholesaleQuantity,
+          //   amount: value.quantity * value.purchase,
+          // });
+
+          // this.purchaseDatasource = new MatTableDataSource<any>(
+          //   this.selectedProducts
+          // );
 
           this.updateTotalCost();
         }
