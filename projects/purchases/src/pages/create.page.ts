@@ -47,7 +47,7 @@ import { EditproductComponent } from './../components/editproduct.component';
           [backLink]="'/purchase'"
         >
         </smartstock-toolbar>
-        <div style="margin-top: 16px" class="container">
+        <div class="container">
           <form [formGroup]="invoiceForm" (ngSubmit)="saveInvoice($event)">
             <div class="row d-flex justify-content-center align-items-center">
               <div class="col-12 col-xl-12 col-lg-12">
@@ -179,7 +179,7 @@ import { EditproductComponent } from './../components/editproduct.component';
                   (product)="addProductToTable($event)"
                 ></app-product-details>
 
-                <mat-card class="mat-elevation-z3">
+                <mat-card class="mat-elevation-z3 productlistable">
                   <h2>Purchased products list</h2>
                   <table mat-table [dataSource]="purchaseDatasource">
                     <ng-container cdkColumnDef="product">
@@ -296,14 +296,14 @@ import { EditproductComponent } from './../components/editproduct.component';
                 </mat-card>
               </div>
 
-              <div class="col-12 col-xl-9 col-lg-9 status">
+              <div class="status">
                 <button
                   [disabled]="saveInvoiceProgress"
                   class="btn-block ft-button"
                   mat-flat-button
                   color="primary"
                 >
-                  Save And Record
+                  Record purchase
                   <mat-progress-spinner
                     style="display: inline-block"
                     *ngIf="saveInvoiceProgress"
