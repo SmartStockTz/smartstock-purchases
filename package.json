@@ -4,6 +4,7 @@
     "scripts": {
         "ng": "ng",
         "start": "ng serve purchases-mock",
+        "release": "ng build --prod purchases && npm publish dist/purchases",
         "build": "ng build",
         "test": "ng test",
         "lint": "ng lint",

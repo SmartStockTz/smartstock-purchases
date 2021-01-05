@@ -25,7 +25,6 @@ import { DeviceInfoUtil } from '@smartstocktz/core-libs';
         <smartstock-toolbar
           [heading]="'Purchases'"
           (searchCallback)="handleSearch($event)"
-          [showSearch]="true"
           searchPlaceholder="Search purchase"
           [sidenav]="sidenav"
           [showProgress]="false"

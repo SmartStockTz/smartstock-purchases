@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { StockModel } from './../models/stock.model';
 
+// @dynamic
 @Component({
   selector: 'app-editproduct',
   template: `

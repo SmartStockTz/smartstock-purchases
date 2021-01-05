@@ -37,7 +37,6 @@ import { EditproductComponent } from './../components/editproduct.component';
       <mat-sidenav-content>
         <smartstock-toolbar
           [heading]="'Add Purchase'"
-          [showSearch]="true"
           searchPlaceholder="Search product"
           [sidenav]="sidenav"
           [showProgress]="false"
