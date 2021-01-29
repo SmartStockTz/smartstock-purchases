@@ -450,7 +450,7 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
       this.invoiceForm.value.paid = false;
     } else {
       this.invoiceForm.value.type = 'receipt';
-      this.invoiceForm.value.paid = false;
+      this.invoiceForm.value.paid = true;
     }
     this.saveInvoiceProgress = true;
     this.purchaseState
