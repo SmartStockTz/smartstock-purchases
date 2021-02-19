@@ -16,7 +16,7 @@ import { DeviceInfoUtil } from '@smartstocktz/core-libs';
       <mat-sidenav-content style="min-height: 100vh">
         <smartstock-toolbar
           searchPlaceholder="Filter product"
-          [heading]="'Stocks'"
+          [heading]="'Purchases'"
           [sidenav]="sidenav"
         ></smartstock-toolbar>
         <div
