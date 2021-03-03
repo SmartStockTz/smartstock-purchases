@@ -157,7 +157,7 @@ export class ProductDetailComponent implements OnInit {
   ngOnInit(): void {
     this.productdetailsform = this.fb.group({
       product: [''],
-      expire: ['', Validators.required],
+      expire: [''],
       quantity: ['', [Validators.required, Validators.min(1)]],
       purchase: ['', [Validators.required, Validators.min(1)]],
       retailPrice: ['', [Validators.required, Validators.min(1)]],

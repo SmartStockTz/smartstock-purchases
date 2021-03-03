@@ -158,4 +158,67 @@ export class PurchaseState {
 
   updatePurchase(id: string, callback: (value: any) => void): void {
   }
+
+  async addReturn(id: string, value: any): Promise<[PurchaseModel]> {
+    const shop = await this.storageService.getActiveShop();
+    const purchase: PurchaseModel = await BFast.database(shop.projectId)
+      .collection('purchases')
+      .get(id);
+
+    if (purchase && purchase.returns && Array.isArray(purchase.returns) ) {
+      purchase.returns.push(value);
+    } else {
+      purchase.returns = [value];
+    }
+    delete purchase.updatedAt;
+
+    return await BFast.database(shop.projectId)
+      .collection('purchases')
+      .query()
+      .byId(id)
+      .updateBuilder()
+      .doc(purchase)
+      .update();
+  }
+
+  calculateTotalReturns(returns: [any]){
+    if (returns && Array.isArray(returns)){
+      return returns.map(a => a.amount).reduce((a, b, i) => {
+        return a + b;
+      });
+    } else {
+      return 0.0;
+    }
+  }
+
+  async fetchSync(size= 20, skip = 0): Promise<PurchaseModel[]>{
+    return await this.getPurchases({
+      skip,
+      size
+    });
+  }
+
+  async getPurchases(pagination: { size: number, skip: number }): Promise<PurchaseModel[]> {
+    const shop = await this.storageService.getActiveShop();
+    return await BFast.database(shop.projectId)
+      .collection('purchases')
+      .query()
+      .orderBy('_created_at', -1)
+      .size(pagination.size)
+      .skip(pagination.skip)
+      .find();
+  }
+
+  async countAll(): Promise<any> {
+    return this.invoicesCount();
+  }
+
+  async invoicesCount(): Promise<number> {
+    const shop = await this.storageService.getActiveShop();
+    return await BFast.database(shop.projectId)
+      .collection('purchases')
+      .query()
+      .count(true)
+      .find();
+  }
 }

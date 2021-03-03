@@ -10,6 +10,8 @@ export interface PurchaseModel {
   due: any;
   refNumber: string;
   amount: number;
+  // amountPaid?: number;
+  returns?: [any];
   paid: boolean;
   draft?: boolean;
   supplier: SupplierModel;

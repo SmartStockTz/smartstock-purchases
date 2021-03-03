@@ -59,116 +59,117 @@ import { DeviceInfoUtil } from '@smartstocktz/core-libs';
                   </mat-menu>
                 </mat-card-title>
                 <mat-card-content>
-                  <table
-                    mat-table
-                    [dataSource]="purchasesDatasource"
-                    *ngIf="
-                      !getPurchaseProgress &&
-                      purchasesDatasource &&
-                      purchasesDatasource.data.length > 0
-                    "
-                  >
-                    <ng-container matColumnDef="refNumber">
-                      <th mat-header-cell *matHeaderCellDef>Ref#</th>
-                      <td mat-cell *matCellDef="let purchase">
-                        {{ purchase.refNumber }}
-                      </td>
-                    </ng-container>
-                    <ng-container matColumnDef="channel">
-                      <th mat-header-cell *matHeaderCellDef>Channel</th>
-                      <td mat-cell *matCellDef="let purchase">
-                        {{ purchase.type }}
-                      </td>
-                    </ng-container>
-                    <ng-container matColumnDef="amount">
-                      <th mat-header-cell *matHeaderCellDef>Amount ( TZS )</th>
-                      <td mat-cell *matCellDef="let purchase">
-                        {{ purchase.amount | number }}
-                      </td>
-                    </ng-container>
-                    <ng-container matColumnDef="status">
-                      <th mat-header-cell *matHeaderCellDef>Status</th>
-                      <td mat-cell *matCellDef="let purchase">
-                        {{ purchase.paid ? 'Paid' : 'Not Paid' }}
-                      </td>
-                    </ng-container>
-                    <ng-container matColumnDef="actions">
-                      <th mat-header-cell *matHeaderCellDef>
-                        <div class="d-flex justify-content-end align-items-end">
-                          <span>Actions</span>
-                        </div>
-                      </th>
-                      <td mat-cell *matCellDef="let purchase">
-                        <div class="d-flex justify-content-end align-items-end">
-                          <button
-                            [matMenuTriggerFor]="opts"
-                            color="primary"
-                            mat-icon-button
-                          >
-                            <mat-icon>more_vert</mat-icon>
-                          </button>
-                          <mat-menu #opts>
-                            <button
-                              (click)="showPurchaseDetails(purchase)"
-                              mat-menu-item
-                            >
-                              View
-                            </button>
-                            <button
-                              (click)="recordPayment(purchase)"
-                              mat-menu-item
-                              *ngIf="!purchase.paid"
-                            >
-                              Record Payment
-                            </button>
-                          </mat-menu>
-                        </div>
-                      </td>
-                    </ng-container>
+                  <smartstock-incomplete-purchases></smartstock-incomplete-purchases>
+                  <!--<table-->
+                    <!--mat-table-->
+                    <!--[dataSource]="purchasesDatasource"-->
+                    <!--*ngIf="-->
+                      <!--!getPurchaseProgress &&-->
+                      <!--purchasesDatasource &&-->
+                      <!--purchasesDatasource.data.length > 0-->
+                    <!--"-->
+                  <!--&gt;-->
+                    <!--<ng-container matColumnDef="refNumber">-->
+                      <!--<th mat-header-cell *matHeaderCellDef>Ref#</th>-->
+                      <!--<td mat-cell *matCellDef="let purchase">-->
+                        <!--{{ purchase.refNumber }}-->
+                      <!--</td>-->
+                    <!--</ng-container>-->
+                    <!--<ng-container matColumnDef="channel">-->
+                      <!--<th mat-header-cell *matHeaderCellDef>Channel</th>-->
+                      <!--<td mat-cell *matCellDef="let purchase">-->
+                        <!--{{ purchase.type }}-->
+                      <!--</td>-->
+                    <!--</ng-container>-->
+                    <!--<ng-container matColumnDef="amount">-->
+                      <!--<th mat-header-cell *matHeaderCellDef>Amount ( TZS )</th>-->
+                      <!--<td mat-cell *matCellDef="let purchase">-->
+                        <!--{{ purchase.amount | number }}-->
+                      <!--</td>-->
+                    <!--</ng-container>-->
+                    <!--<ng-container matColumnDef="status">-->
+                      <!--<th mat-header-cell *matHeaderCellDef>Status</th>-->
+                      <!--<td mat-cell *matCellDef="let purchase">-->
+                        <!--{{ purchase.paid ? 'Paid' : 'Not Paid' }}-->
+                      <!--</td>-->
+                    <!--</ng-container>-->
+                    <!--<ng-container matColumnDef="actions">-->
+                      <!--<th mat-header-cell *matHeaderCellDef>-->
+                        <!--<div class="d-flex justify-content-end align-items-end">-->
+                          <!--<span>Actions</span>-->
+                        <!--</div>-->
+                      <!--</th>-->
+                      <!--<td mat-cell *matCellDef="let purchase">-->
+                        <!--<div class="d-flex justify-content-end align-items-end">-->
+                          <!--<button-->
+                            <!--[matMenuTriggerFor]="opts"-->
+                            <!--color="primary"-->
+                            <!--mat-icon-button-->
+                          <!--&gt;-->
+                            <!--<mat-icon>more_vert</mat-icon>-->
+                          <!--</button>-->
+                          <!--<mat-menu #opts>-->
+                            <!--<button-->
+                              <!--(click)="showPurchaseDetails(purchase)"-->
+                              <!--mat-menu-item-->
+                            <!--&gt;-->
+                              <!--View-->
+                            <!--</button>-->
+                            <!--<button-->
+                              <!--(click)="recordPayment(purchase)"-->
+                              <!--mat-menu-item-->
+                              <!--*ngIf="!purchase.paid"-->
+                            <!--&gt;-->
+                              <!--Record Payment-->
+                            <!--</button>-->
+                          <!--</mat-menu>-->
+                        <!--</div>-->
+                      <!--</td>-->
+                    <!--</ng-container>-->
 
-                    <tr
-                      mat-header-row
-                      *matHeaderRowDef="purchaseTableColumns"
-                    ></tr>
-                    <tr
-                      mat-row
-                      *matRowDef="let row; columns: purchaseTableColumns"
-                    ></tr>
-                  </table>
+                    <!--<tr-->
+                      <!--mat-header-row-->
+                      <!--*matHeaderRowDef="purchaseTableColumns"-->
+                    <!--&gt;</tr>-->
+                    <!--<tr-->
+                      <!--mat-row-->
+                      <!--*matRowDef="let row; columns: purchaseTableColumns"-->
+                    <!--&gt;</tr>-->
+                  <!--</table>-->
 
-                  <mat-card-title
-                    style="margin-top: 8px"
-                    *ngIf="
-                      !getPurchaseProgress &&
-                      purchasesDatasource &&
-                      purchasesDatasource.data.length > 0
-                    "
-                  >
-                    <button
-                      [disabled]="loadMoreProgress"
-                      (click)="loadMore()"
-                      mat-button
-                      color="primary"
-                    >
-                      Load More
-                      <mat-progress-spinner
-                        style="display: inline-block"
-                        [diameter]="20"
-                        mode="indeterminate"
-                        *ngIf="loadMoreProgress"
-                        matTooltip="'Load more data'"
-                        color="primary"
-                      ></mat-progress-spinner>
-                    </button>
-                  </mat-card-title>
+                  <!--<mat-card-title-->
+                    <!--style="margin-top: 8px"-->
+                    <!--*ngIf="-->
+                      <!--!getPurchaseProgress &&-->
+                      <!--purchasesDatasource &&-->
+                      <!--purchasesDatasource.data.length > 0-->
+                    <!--"-->
+                  <!--&gt;-->
+                    <!--<button-->
+                      <!--[disabled]="loadMoreProgress"-->
+                      <!--(click)="loadMore()"-->
+                      <!--mat-button-->
+                      <!--color="primary"-->
+                    <!--&gt;-->
+                      <!--Load More-->
+                      <!--<mat-progress-spinner-->
+                        <!--style="display: inline-block"-->
+                        <!--[diameter]="20"-->
+                        <!--mode="indeterminate"-->
+                        <!--*ngIf="loadMoreProgress"-->
+                        <!--matTooltip="'Load more data'"-->
+                        <!--color="primary"-->
+                      <!--&gt;</mat-progress-spinner>-->
+                    <!--</button>-->
+                  <!--</mat-card-title>-->
 
-                  <mat-progress-spinner
-                    [diameter]="30"
-                    mode="indeterminate"
-                    color="primary"
-                    *ngIf="getPurchaseProgress"
-                    matTooltip="'Fetching all purchases'"
-                  ></mat-progress-spinner>
+                  <!--<mat-progress-spinner-->
+                    <!--[diameter]="30"-->
+                    <!--mode="indeterminate"-->
+                    <!--color="primary"-->
+                    <!--*ngIf="getPurchaseProgress"-->
+                    <!--matTooltip="'Fetching all purchases'"-->
+                  <!--&gt;</mat-progress-spinner>-->
                 </mat-card-content>
               </mat-card>
             </mat-tab>
