@@ -203,7 +203,8 @@ export class PurchaseState {
     return await BFast.database(shop.projectId)
       .collection('purchases')
       .query()
-      .orderBy('_created_at', -1)
+      .orderBy('_updated_at', -1)
+      // .orderBy('channel', 1)
       .size(pagination.size)
       .skip(pagination.skip)
       .find();

@@ -22,7 +22,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { EditproductComponent } from './../components/editproduct.component';
 
 @Component({
-  selector: 'smartstock-purchase-create',
+  selector: 'app-purchase-create',
   template: `
     <mat-sidenav-container class="match-parent">
       <mat-sidenav
@@ -31,11 +31,11 @@ import { EditproductComponent } from './../components/editproduct.component';
         [mode]="enoughWidth() ? 'side' : 'over'"
         [opened]="enoughWidth()"
       >
-        <smartstock-drawer></smartstock-drawer>
+        <app-drawer></app-drawer>
       </mat-sidenav>
 
       <mat-sidenav-content>
-        <smartstock-toolbar
+        <app-toolbar
           [heading]="'Add Purchase'"
           searchPlaceholder="Search product"
           [sidenav]="sidenav"
@@ -43,7 +43,7 @@ import { EditproductComponent } from './../components/editproduct.component';
           [hasBackRoute]="true"
           [backLink]="'/purchase'"
         >
-        </smartstock-toolbar>
+        </app-toolbar>
         <div class="container">
           <form [formGroup]="invoiceForm" (ngSubmit)="saveInvoice($event)">
             <div class="row d-flex justify-content-center align-items-center">

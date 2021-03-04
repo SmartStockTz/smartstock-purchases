@@ -4,7 +4,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {StockModel} from '../models/stock.model';
 
 @Component({
-  selector: 'smartstock-purchase-details',
+  selector: 'app-purchase-details',
   template: `
     <div>
       <img style="max-width: 400px; height: auto" [src]="data.image" alt="">
@@ -41,7 +41,7 @@ export class StockDetailsComponent {
 }
 
 @Component({
-  selector: 'smartstock-dialog-delete',
+  selector: 'app-dialog-delete',
   template: `
     <div class="container">
       <div class="row">

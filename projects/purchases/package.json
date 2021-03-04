@@ -1,21 +1,15 @@
 {
-    "name": "@smartstocktz/purchases",
-    "version": "0.0.9",
-    "publishConfig": {
-        "registry": "https://npm.pkg.github.com/smartstocktz"
-    },
-    "repository": {
-        "url": "git://github.com/smartstocktz/smartstock-purchases.git"
-    },
-    "peerDependencies": {
-        "@angular/common": "^10.1.5",
-        "@angular/core": "^10.1.5",
-        "@smartstocktz/core-libs": "^0.0.25",
-        "@angular/cdk": "^10.2.4",
-        "@angular/material": "^10.2.4",
-        "bfastjs": "^4.0.8"
-    },
-    "dependencies": {
-        "tslib": "^2.0.0"
-    }
+  "name": "@smartstocktz/purchases",
+  "version": "0.0.12",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/smartstocktz"
+  },
+  "repository": {
+    "url": "git://github.com/smartstocktz/smartstock-purchases.git"
+  },
+  "peerDependencies": {
+  },
+  "dependencies": {
+    "tslib": "^2.0.0"
+  }
 }

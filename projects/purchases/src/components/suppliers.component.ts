@@ -19,7 +19,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
-  selector: 'smartstock-suppliers',
+  selector: 'app-suppliers',
   template: `
     <mat-card class="mat-elevation-z3">
       <mat-card-title class="d-flex flex-row">
@@ -427,7 +427,7 @@ export class SuppliersComponent implements OnInit {
 }
 
 @Component({
-  selector: 'smartstock-dialog-delete',
+  selector: 'app-dialog-delete',
   template: `
     <div class="container">
       <div class="row">
@@ -503,7 +503,7 @@ export class DialogSupplierDeleteComponent {
 }
 
 @Component({
-  selector: 'smartstock-new-supplier',
+  selector: 'app-new-supplier',
   template: `
     <div style="min-width: 300px">
       <div mat-dialog-title>Create Supplier</div>

@@ -3,7 +3,7 @@ import {MatBottomSheetRef, MAT_BOTTOM_SHEET_DATA} from '@angular/material/bottom
 import {MatTableDataSource} from '@angular/material/table';
 
 @Component({
-  selector: 'smartstock-invoice-details',
+  selector: 'app-invoice-details',
   template: `
     <div class="w-100 m-0 p-0">
       <div class="row header text-white align-items-center p-3">

@@ -23,9 +23,9 @@ import {PurchaseDetailsModalComponent} from './purchase-details.component';
       </div>
     </div>
 
-    <div class="mat-elevation-z8">
+    <div>
       <mat-progress-bar *ngIf="fetchingPurchases" mode="indeterminate" color="primary"></mat-progress-bar>
-      <smartstock-data-not-ready *ngIf="noData"></smartstock-data-not-ready>
+      <app-data-not-ready *ngIf="noData"></app-data-not-ready>
       <table mat-table *ngIf="!noData" [dataSource]="dataSource" matSort>
         <ng-container matColumnDef="Purchase Id">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Purchase Id</th>
@@ -60,21 +60,22 @@ import {PurchaseDetailsModalComponent} from './purchase-details.component';
         <ng-container matColumnDef="Actions">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Actions</th>
           <td mat-cell *matCellDef="let row">
-            <button mat-raised-button [disabled]="row.paid || row.type !== 'invoice'" color="warn" (click)="clickRow(row, 'button', $event)">Add
+            <button mat-flat-button [disabled]="row.paid || row.type !== 'invoice'" color="primary"
+                    (click)="clickRow(row, 'button', $event)">Add
               Returns
             </button>
           </td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row class="table-data-row" (click)="clickRow(row, 'purchase')"
+        <tr mat-row class="table-data-row" (click)="clickRow(row, 'purchase', $event)"
             *matRowDef="let row; columns: displayedColumns;"></tr>
 
       </table>
-      <mat-paginator *ngIf="!noData" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+      <mat-paginator *ngIf="!noData" [pageSizeOptions]="[10, 25, 100]"></mat-paginator>
     </div>
   `,
-  selector: 'smartstock-incomplete-purchases',
+  selector: 'app-incomplete-purchases',
   animations: [
     trigger('detailExpand', [
       state('collapsed', style({height: '0px', minHeight: '0'})),
@@ -116,7 +117,6 @@ export class IncompletePurchasesTableComponent implements OnInit, AfterViewInit 
     this.fetchingPurchases = true;
     try {
       let purchases = await this.purchaseState.fetchSync(await this.purchaseState.countAll(), 0);
-      // console.log(purchases);
       purchases = purchases.map(((value: PurchaseModel, index) => {
         return {
           ...value,

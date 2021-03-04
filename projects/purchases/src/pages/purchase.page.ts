@@ -9,7 +9,7 @@ import { PurchaseState } from '../states/purchase.state';
 import { DeviceInfoUtil } from '@smartstocktz/core-libs';
 
 @Component({
-  selector: 'smartstock-purchase',
+  selector: 'app-purchase',
   template: `
     <mat-sidenav-container class="match-parent">
       <mat-sidenav
@@ -18,18 +18,18 @@ import { DeviceInfoUtil } from '@smartstocktz/core-libs';
         [mode]="enoughWidth() ? 'side' : 'over'"
         [opened]="enoughWidth()"
       >
-        <smartstock-drawer></smartstock-drawer>
+        <app-drawer></app-drawer>
       </mat-sidenav>
 
       <mat-sidenav-content (swiperight)="openDrawer(sidenav)">
-        <smartstock-toolbar
+        <app-toolbar
           [heading]="'Purchases'"
           (searchCallback)="handleSearch($event)"
           searchPlaceholder="Search purchase"
           [sidenav]="sidenav"
           [showProgress]="false"
         >
-        </smartstock-toolbar>
+        </app-toolbar>
 
         <div *ngIf="!isMobile" style="margin-top: 16px" class="container">
           <mat-tab-group color="primary">
@@ -59,7 +59,7 @@ import { DeviceInfoUtil } from '@smartstocktz/core-libs';
                   </mat-menu>
                 </mat-card-title>
                 <mat-card-content>
-                  <smartstock-incomplete-purchases></smartstock-incomplete-purchases>
+                  <app-incomplete-purchases></app-incomplete-purchases>
                   <!--<table-->
                     <!--mat-table-->
                     <!--[dataSource]="purchasesDatasource"-->
@@ -176,13 +176,13 @@ import { DeviceInfoUtil } from '@smartstocktz/core-libs';
           </mat-tab-group>
         </div>
         <!--
-        <smartstock-purchase-mobile
+        <app-purchase-mobile
           *ngIf="isMobile"
-        ></smartstock-purchase-mobile> -->
+        ></app-purchase-mobile> -->
 
-        <smartstock-bottom-bar
+        <app-bottom-bar
           *ngIf="isMobile && !enoughWidth()"
-        ></smartstock-bottom-bar>
+        ></app-bottom-bar>
       </mat-sidenav-content>
     </mat-sidenav-container>
   `,
