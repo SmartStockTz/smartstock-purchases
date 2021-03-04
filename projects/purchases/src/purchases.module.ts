@@ -49,6 +49,7 @@ import {PurchaseDetailsModalComponent} from './components/purchase-details.compo
 import {IncompletePurchasesTableComponent} from './components/incomplete-purchases-list.component';
 import {AddReturnSheetComponent} from './components/add-returns-sheet.component';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
+import {MatSortModule} from '@angular/material/sort';
 
 const routes: Routes = [
   { path: '', component: IndexPage },
@@ -120,7 +121,8 @@ const routes: Routes = [
     MatNativeDateModule,
     MatDialogModule,
     MatRippleModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatSortModule
   ],
 })
 export class PurchasesModule {}

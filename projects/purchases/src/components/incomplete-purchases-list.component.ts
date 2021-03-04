@@ -28,37 +28,37 @@ import {PurchaseDetailsModalComponent} from './purchase-details.component';
       <smartstock-data-not-ready *ngIf="noData"></smartstock-data-not-ready>
       <table mat-table *ngIf="!noData" [dataSource]="dataSource" matSort>
         <ng-container matColumnDef="Purchase Id">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Purchase Id</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Purchase Id</th>
           <td mat-cell *matCellDef="let row"> {{row.refNumber}} </td>
         </ng-container>
 
         <ng-container matColumnDef="Supplier">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Supplier</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Supplier</th>
           <td mat-cell *matCellDef="let row"> {{row.supplierName}} </td>
         </ng-container>
 
         <ng-container matColumnDef="Amount Due">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Amount Due</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Amount Due</th>
           <td mat-cell *matCellDef="let row"> {{row.type === 'invoice' ? row.amountDue : 0}} </td>
         </ng-container>
 
         <ng-container matColumnDef="Amount Paid">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Amount Paid</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Amount Paid</th>
           <td mat-cell *matCellDef="let row"> {{row.type === 'invoice' ? row.amountPaid : row.amount}} </td>
         </ng-container>
 
         <ng-container matColumnDef="Due Date">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Due Date</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Due Date</th>
           <td mat-cell *matCellDef="let row"> {{row.type === 'invoice' ? row.dueDate : row.date}} </td>
         </ng-container>
 
         <ng-container matColumnDef="Date of Sale">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Date of Sale</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Date of Sale</th>
           <td mat-cell *matCellDef="let row"> {{row.date}} </td>
         </ng-container>
 
         <ng-container matColumnDef="Actions">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Actions</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Actions</th>
           <td mat-cell *matCellDef="let row">
             <button mat-raised-button [disabled]="row.paid || row.type !== 'invoice'" color="warn" (click)="clickRow(row, 'button', $event)">Add
               Returns
@@ -144,6 +144,7 @@ export class IncompletePurchasesTableComponent implements OnInit, AfterViewInit 
     this.dataSource = new MatTableDataSource(purchases);
     this.dataSource.sort = this.sort;
     this.dataSource.sortingDataAccessor = (purchase: PurchaseModel, sortHeaderId: string) => {
+      // console.log(sortHeaderId, this.keysMap[sortHeaderId]);
       return purchase[this.keysMap[sortHeaderId]];
     };
     this.dataSource.paginator = this.paginator;
