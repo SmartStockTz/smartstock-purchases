@@ -20,7 +20,7 @@ import {MatTableDataSource} from '@angular/material/table';
       <div class="row px-3 pt-4 m-0 justify-content-between">
        <div>
          <p class="mb-0">Invoice No.</p>
-         <p>{{data.id}}</p>
+         <p>{{data.refNumber}}</p>
        </div>
        <div>
          <p class="mb-0">Supplier</p>

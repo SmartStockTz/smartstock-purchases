@@ -178,6 +178,7 @@ export class IncompletePurchasesTableComponent implements OnInit, AfterViewInit 
     this.invoiceDetails.open(PurchaseDetailsModalComponent, {
       data: {
         id: purchaseDetailsData.id,
+        refNumber: purchaseDetailsData.refNumber,
         date: purchaseDetailsData.date,
         amount: purchaseDetailsData.amount,
         // businessName: purchaseDetailsData.sellerObject.businessName,
@@ -196,6 +197,7 @@ export class IncompletePurchasesTableComponent implements OnInit, AfterViewInit 
     const addReturnSheetRef = this.addReturnsSheet.open(AddReturnSheetComponent, {
       data: {
         id: purchase.id,
+        refNumber: purchase.refNumber,
         date: purchase.date,
         amount: purchase.amount,
         supplierName: purchase.supplier.name,
