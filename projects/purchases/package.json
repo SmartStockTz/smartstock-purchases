@@ -7,8 +7,7 @@
   "repository": {
     "url": "git://github.com/smartstocktz/smartstock-purchases.git"
   },
-  "peerDependencies": {
-  },
+  "peerDependencies": {},
   "dependencies": {
     "tslib": "^2.0.0"
   }
