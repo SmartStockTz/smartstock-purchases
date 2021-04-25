@@ -369,6 +369,7 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
     private readonly dialog: MatDialog
   ) {
     super();
+    document.title = 'SmartStock - Purchase Create';
   }
 
   ngOnInit(): void {

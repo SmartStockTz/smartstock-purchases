@@ -60,6 +60,7 @@ export class IndexPage extends DeviceInfoUtil implements OnInit {
 
   constructor() {
     super();
+    document.title = 'SmartStock - Purchases';
   }
 
   ngOnInit(): void {}

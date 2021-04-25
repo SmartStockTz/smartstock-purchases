@@ -211,6 +211,7 @@ export class PurchasePageComponent extends DeviceInfoUtil implements OnInit {
     private readonly snack: MatSnackBar
   ) {
     super();
+    document.title = 'SmartStock - Purchase';
   }
 
   ngOnInit(): void {

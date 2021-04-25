@@ -23,7 +23,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { PurchasePageComponent } from './pages/purchase.page';
 import { PurchaseDetailsComponent } from './components/details.component';
 import { CreatePageComponent } from './pages/create.page';
-import { LibModule } from '@smartstocktz/core-libs';
+import {ConfigsService, LibModule} from '@smartstocktz/core-libs';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import {
   DialogDeleteComponent,
@@ -52,7 +52,7 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatSortModule} from '@angular/material/sort';
 
 const routes: Routes = [
-  { path: '', component: IndexPage },
+  { path: '', component: PurchasePageComponent },
   { path: 'reference', component: PurchasePageComponent },
   { path: 'create', component: CreatePageComponent },
 ];
@@ -125,4 +125,21 @@ const routes: Routes = [
     MatSortModule
   ],
 })
-export class PurchasesModule {}
+export class PurchasesModule {
+  constructor(private readonly configs: ConfigsService) {
+    this.configs.addMenu({
+      name: 'Purchase',
+      icon: 'receipt',
+      roles: ['admin', 'manager'],
+      link: '/purchase',
+      pages: [
+        {
+          name: 'receipts & invoices',
+          link: '/purchase/reference',
+          roles: ['admin', 'manager']
+        }
+      ]
+    });
+    this.configs.selectedModuleName = 'purchase';
+  }
+}
