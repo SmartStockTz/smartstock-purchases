@@ -25,6 +25,6 @@ export class PurchaseNavigationService {
   }
 
   selected(): void {
-    this.configs.selectedModuleName = 'Expense';
+    this.configs.selectedModuleName = 'Purchase';
   }
 }
