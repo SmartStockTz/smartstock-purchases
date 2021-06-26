@@ -1,8 +1,8 @@
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {PurchaseState} from '../states/purchase.state';
 import {MatSort} from '@angular/material/sort';
-import {MatPaginator} from '@angular/material/paginator';
+import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatBottomSheet} from '@angular/material/bottom-sheet';
 import {AddReturnSheetComponent} from './add-returns-sheet.component';
@@ -10,15 +10,18 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import * as moment from 'moment';
 import {PurchaseModel} from '../models/purchase.model';
 import {PurchaseDetailsModalComponent} from './purchase-details.component';
+import {FormControl} from '@angular/forms';
+import {Subject} from 'rxjs';
+import {debounceTime, takeUntil} from 'rxjs/operators';
+import {DeviceState} from "@smartstocktz/core-libs";
 
 @Component({
   template: `
-    <!--<mat-card-title>Purchases</mat-card-title>-->
     <div class="row justify-content-end">
-      <div class="col-2" style="margin-right: 9em">
-        <mat-form-field>
+      <div class="col-12">
+        <mat-form-field class="btn-block">
           <mat-label>Filter</mat-label>
-          <input matInput (keyup)="applyFilter($event)" placeholder="Ex. John" #input>
+          <input matInput [formControl]="filterControll" placeholder="Receipt/invoice id" #input>
         </mat-form-field>
       </div>
     </div>
@@ -28,8 +31,19 @@ import {PurchaseDetailsModalComponent} from './purchase-details.component';
       <app-data-not-ready *ngIf="noData"></app-data-not-ready>
       <table mat-table *ngIf="!noData" [dataSource]="dataSource" matSort>
         <ng-container matColumnDef="Purchase Id">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Purchase Id</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Id</th>
           <td mat-cell *matCellDef="let row"> {{row.refNumber}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="details">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Details</th>
+          <td mat-cell *matCellDef="let row">
+            <p><b>{{row.refNumber}}</b></p>
+            <p>Amount Due: {{(row.type === 'invoice' ? row.amountDue : 0)| currency:' '}}</p>
+            <p>Amount Paid: {{(row.type === 'invoice' ? row.amountPaid : row.amount)|currency: ' '}}</p>
+            <p>Due Date: {{row.dueDate}}</p>
+            <p>Purchase Date: {{row.date}}</p>
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="Supplier">
@@ -39,21 +53,22 @@ import {PurchaseDetailsModalComponent} from './purchase-details.component';
 
         <ng-container matColumnDef="Amount Due">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Amount Due</th>
-          <td mat-cell *matCellDef="let row"> {{row.type === 'invoice' ? row.amountDue : 0}} </td>
+          <td mat-cell *matCellDef="let row"> {{(row.type === 'invoice' ? row.amountDue : 0)| currency:' '}} </td>
         </ng-container>
 
         <ng-container matColumnDef="Amount Paid">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Amount Paid</th>
-          <td mat-cell *matCellDef="let row"> {{row.type === 'invoice' ? row.amountPaid : row.amount}} </td>
+          <td mat-cell
+              *matCellDef="let row"> {{(row.type === 'invoice' ? row.amountPaid : row.amount)|currency: ' '}} </td>
         </ng-container>
 
         <ng-container matColumnDef="Due Date">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Due Date</th>
-          <td mat-cell *matCellDef="let row"> {{row.type === 'invoice' ? row.dueDate : row.date}} </td>
+          <td mat-cell *matCellDef="let row"> {{row.dueDate}} </td>
         </ng-container>
 
         <ng-container matColumnDef="Date of Sale">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Date of Sale</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
           <td mat-cell *matCellDef="let row"> {{row.date}} </td>
         </ng-container>
 
@@ -67,12 +82,14 @@ import {PurchaseDetailsModalComponent} from './purchase-details.component';
           </td>
         </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-header-row
+            *matHeaderRowDef="(deviceState.isSmallScreen | async)===true?displayedColumnsMobile:displayedColumns"></tr>
         <tr mat-row class="table-data-row" (click)="clickRow(row, 'purchase', $event)"
-            *matRowDef="let row; columns: displayedColumns;"></tr>
+            *matRowDef="let row; columns: (deviceState.isSmallScreen | async)===true?displayedColumnsMobile:displayedColumns;"></tr>
 
       </table>
-      <mat-paginator *ngIf="!noData" [pageSizeOptions]="[10, 25, 100]"></mat-paginator>
+      <mat-paginator *ngIf="!noData" [length]="total" (page)="pagination($event)"
+                     [pageSizeOptions]="[size]"></mat-paginator>
     </div>
   `,
   selector: 'app-incomplete-purchases',
@@ -85,82 +102,81 @@ import {PurchaseDetailsModalComponent} from './purchase-details.component';
   ],
   styleUrls: ['../styles/incomplete-purchases.style.css']
 })
-export class IncompletePurchasesTableComponent implements OnInit, AfterViewInit {
-  dataSource: MatTableDataSource<PurchaseModel>;
+export class IncompletePurchasesTableComponent implements OnInit, OnDestroy, AfterViewInit {
+  dataSource: MatTableDataSource<PurchaseModel> = new MatTableDataSource([]);
   fetchingPurchases = false;
   noData = false;
-  displayedColumns = ['Purchase Id', 'Supplier', 'Amount Due', 'Amount Paid', 'Due Date', 'Date of Sale', 'Actions'];
-  keysMap = {
-    'Purchase Id': 'refNumber',
-    Supplier: 'supplierName',
-    'Amount Due': 'amountDue',
-    'Amount Paid': 'amountPaid',
-    'Due Date': 'due',
-    'Date of Sale': 'date',
-    Actions: 'paid'
-  };
+  displayedColumns = ['Purchase Id', 'Amount Due', 'Amount Paid', 'Due Date', 'Date of Sale', 'Actions'];
+  displayedColumnsMobile = ['details', 'Actions'];
+  size = 10;
+  skip = 0;
+  total = 0;
+  irid = '';
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+  filterControll = new FormControl('');
+  fd = new Subject();
 
-  constructor(private purchaseState: PurchaseState,
-              private invoiceDetails: MatBottomSheet,
-              private addReturnsSheet: MatBottomSheet,
-              private snack: MatSnackBar) {
+  constructor(public readonly purchaseState: PurchaseState,
+              public readonly invoiceDetails: MatBottomSheet,
+              public readonly addReturnsSheet: MatBottomSheet,
+              public readonly deviceState: DeviceState,
+              public readonly snack: MatSnackBar) {
   }
 
-  ngOnInit(): void {
-    this.fetchPurchases();
+  ngOnDestroy(): void {
+    this.fd.next('done');
   }
 
-  async fetchPurchases() {
+  async ngOnInit(): Promise<void> {
+    this.filterControll.valueChanges.pipe(
+      takeUntil(this.fd),
+      debounceTime(400)
+    ).subscribe(value => {
+      if (value) {
+        this.irid = value;
+        this.fetchPurchases(this.skip, this.size, this.irid).catch(console.log);
+      } else {
+        this.irid = '';
+        this.fetchPurchases(this.skip, this.size, this.irid).catch(console.log);
+      }
+      this.purchaseState.countAll(this.irid).then(value1 => {
+        this.total = value1;
+      }).catch(console.log);
+    });
+    this.total = await this.purchaseState.countAll(this.irid);
+    await this.fetchPurchases(this.skip, this.size, this.irid);
+  }
+
+  async fetchPurchases(skip: number, size: number, id: string) {
     this.fetchingPurchases = true;
     try {
-      let purchases = await this.purchaseState.fetchSync(await this.purchaseState.countAll(), 0);
+      let purchases = await this.purchaseState.fetchSync(size, skip, id);
       purchases = purchases.map(((value: PurchaseModel, index) => {
         return {
           ...value,
           date: moment(value.date).format('YYYY-MM-DD'),
-          dueDate: moment(value.due).format('YYYY-MM-DD'),
+          dueDate: moment(value.due ? value.due : value.date).format('YYYY-MM-DD'),
           supplierName: value.supplier.name,
           amountDue: value.amount - this.purchaseState.calculateTotalReturns(value.returns),
           amountPaid: this.purchaseState.calculateTotalReturns(value.returns),
           paid: value.amount <= this.purchaseState.calculateTotalReturns(value.returns)
         };
       }));
-      this.configureDataSource(purchases);
+      this.dataSource.data = purchases;
     } catch (e) {
       this.noData = true;
       this.snack.open('An Error occurred fetching the purchases please reload.', 'OK', {
         duration: 3000
       });
     }
-
     this.fetchingPurchases = false;
-
-  }
-
-  configureDataSource(purchases) {
-    this.dataSource = new MatTableDataSource(purchases);
-    this.dataSource.sort = this.sort;
-    this.dataSource.sortingDataAccessor = (purchase: PurchaseModel, sortHeaderId: string) => {
-      // console.log(sortHeaderId, this.keysMap[sortHeaderId]);
-      return purchase[this.keysMap[sortHeaderId]];
-    };
-    this.dataSource.paginator = this.paginator;
-  }
-
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
   }
 
   ngAfterViewInit(): void {
-
+    this.dataSource.sort = this.sort;
+    // this.dataSource.paginator = this.paginator;
   }
 
   clickRow(data, route, e) {
@@ -181,14 +197,9 @@ export class IncompletePurchasesTableComponent implements OnInit, AfterViewInit 
         refNumber: purchaseDetailsData.refNumber,
         date: purchaseDetailsData.date,
         amount: purchaseDetailsData.amount,
-        // businessName: purchaseDetailsData.sellerObject.businessName,
-        // sellerFirstName: purchaseDetailsData.sellerObject.firstname,
-        // sellerLastName: purchaseDetailsData.sellerObject.lastname,
-        // region: purchaseDetailsData.sellerObject.region,
         items: purchaseDetailsData.items,
         returns: purchaseDetailsData.returns,
         supplierName: purchaseDetailsData.supplierName,
-        // customerCompany: purchaseDetailsData.customerCompany
       }
     });
   }
@@ -202,9 +213,6 @@ export class IncompletePurchasesTableComponent implements OnInit, AfterViewInit 
         amount: purchase.amount,
         supplierName: purchase.supplier.name,
         amountDue: purchase.amount - this.purchaseState.calculateTotalReturns(purchase.returns),
-        // sellerFirstName: purchase.sellerObject.firstname,
-        // sellerLastName: purchase.sellerObject.lastname,
-        // region: purchase.sellerObject.region,
         items: purchase.returns
       }
     });
@@ -231,6 +239,12 @@ export class IncompletePurchasesTableComponent implements OnInit, AfterViewInit 
         });
       }
     });
+  }
+
+  async pagination(pageEvent: PageEvent) {
+    console.log(pageEvent);
+    this.skip = pageEvent.pageIndex * pageEvent.pageSize;
+    await this.fetchPurchases(this.skip, this.size, this.irid);
   }
 }
 

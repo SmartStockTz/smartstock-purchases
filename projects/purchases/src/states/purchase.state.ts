@@ -165,7 +165,7 @@ export class PurchaseState {
       .collection('purchases')
       .get(id);
 
-    if (purchase && purchase.returns && Array.isArray(purchase.returns) ) {
+    if (purchase && purchase.returns && Array.isArray(purchase.returns)) {
       purchase.returns.push(value);
     } else {
       purchase.returns = [value];
@@ -181,8 +181,8 @@ export class PurchaseState {
       .update();
   }
 
-  calculateTotalReturns(returns: [any]){
-    if (returns && Array.isArray(returns)){
+  calculateTotalReturns(returns: [any]) {
+    if (returns && Array.isArray(returns)) {
       return returns.map(a => a.amount).reduce((a, b, i) => {
         return a + b;
       });
@@ -191,14 +191,15 @@ export class PurchaseState {
     }
   }
 
-  async fetchSync(size= 20, skip = 0): Promise<PurchaseModel[]>{
+  async fetchSync(size: number, skip: number, id: string): Promise<PurchaseModel[]> {
     return await this.getPurchases({
       skip,
-      size
+      size,
+      id
     });
   }
 
-  async getPurchases(pagination: { size: number, skip: number }): Promise<PurchaseModel[]> {
+  async getPurchases(pagination: { size: number, skip: number, id: string }): Promise<PurchaseModel[]> {
     const shop = await this.storageService.getActiveShop();
     return await BFast.database(shop.projectId)
       .collection('purchases')
@@ -207,18 +208,20 @@ export class PurchaseState {
       // .orderBy('channel', 1)
       .size(pagination.size)
       .skip(pagination.skip)
+      .searchByRegex('refNumber', pagination.id)
       .find();
   }
 
-  async countAll(): Promise<any> {
-    return this.invoicesCount();
+  async countAll(ref: string): Promise<any> {
+    return this.invoicesCount(ref);
   }
 
-  async invoicesCount(): Promise<number> {
+  async invoicesCount(ref: string): Promise<number> {
     const shop = await this.storageService.getActiveShop();
     return await BFast.database(shop.projectId)
       .collection('purchases')
       .query()
+      .searchByRegex('refNumber', ref)
       .count(true)
       .find();
   }

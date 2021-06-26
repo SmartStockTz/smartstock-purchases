@@ -1,23 +1,28 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-import { BFast } from 'bfastjs';
-import { environment } from '../environments/environment';
+import {BrowserModule} from '@angular/platform-browser';
+import {NgModule} from '@angular/core';
+import {BFast} from 'bfastjs';
+import {environment} from '../environments/environment';
 
-import { AppComponent } from './app.component';
-import { PurchasesModule } from '../../../purchases/src/public-api';
-import { RouterModule, Routes } from '@angular/router';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { LoginPageComponent } from './pages/login.page';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { ReactiveFormsModule } from '@angular/forms';
-import { MatCardModule } from '@angular/material/card';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { AuthGuard } from './guards/auth.guard';
+import {AppComponent} from './app.component';
+import {RouterModule, Routes} from '@angular/router';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {LoginPageComponent} from './pages/login.page';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {ReactiveFormsModule} from '@angular/forms';
+import {MatCardModule} from '@angular/material/card';
+import {MatInputModule} from '@angular/material/input';
+import {MatButtonModule} from '@angular/material/button';
+import {AuthGuard} from './guards/auth.guard';
+import {WelcomePage} from './pages/welcome.page';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {HttpClientModule} from '@angular/common/http';
+import {MatDialogModule} from '@angular/material/dialog';
+import {MatBottomSheetModule} from '@angular/material/bottom-sheet';
 
 const routes: Routes = [
-  { path: 'login', component: LoginPageComponent },
+  {path: '', component: WelcomePage},
+  {path: 'login', component: LoginPageComponent},
   {
     path: 'purchase',
     canActivate: [AuthGuard],
@@ -29,11 +34,14 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [AppComponent, LoginPageComponent],
+  declarations: [
+    AppComponent,
+    WelcomePage,
+    LoginPageComponent
+  ],
   imports: [
     BrowserModule,
-    RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' }),
-    PurchasesModule,
+    RouterModule.forRoot(routes),
     BrowserAnimationsModule,
     MatProgressSpinnerModule,
     MatFormFieldModule,
@@ -41,6 +49,10 @@ const routes: Routes = [
     MatCardModule,
     MatInputModule,
     MatButtonModule,
+    MatSnackBarModule,
+    HttpClientModule,
+    MatDialogModule,
+    MatBottomSheetModule
   ],
   providers: [],
   bootstrap: [AppComponent],

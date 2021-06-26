@@ -1,6 +1,6 @@
 {
   "name": "smartstock-purchases",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "scripts": {
     "ng": "ng",
     "start": "ng serve purchases-mock",
@@ -24,9 +24,10 @@
     "@angular/platform-browser": "~11.0.0",
     "@angular/platform-browser-dynamic": "~11.0.0",
     "@angular/router": "~11.0.0",
-    "@smartstocktz/core-libs": "0.2.0",
-    "bfastjs": "^4.2.5",
+    "@smartstocktz/core-libs": "~0.2.13",
+    "bfastjs": "~4.2.9",
     "moment": "^2.29.1",
+    "ngx-bottom-nav": "^11.0.0",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.2"
