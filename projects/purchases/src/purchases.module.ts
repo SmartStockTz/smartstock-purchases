@@ -23,7 +23,7 @@ import {ReactiveFormsModule} from '@angular/forms';
 import {PurchasePageComponent} from './pages/purchase.page';
 import {PurchaseDetailsComponent} from './components/details.component';
 import {CreatePageComponent} from './pages/create.page';
-import {ConfigsService, LibModule} from '@smartstocktz/core-libs';
+import {LibModule} from '@smartstocktz/core-libs';
 import {ScrollingModule} from '@angular/cdk/scrolling';
 import {DialogDeleteComponent, StockDetailsComponent,} from './components/stock.component';
 import {
@@ -48,6 +48,7 @@ import {AddReturnSheetComponent} from './components/add-returns-sheet.component'
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatSortModule} from '@angular/material/sort';
 import {MatListModule} from "@angular/material/list";
+import {PurchaseNavigationService} from "./services/purchase-navigation.service";
 
 const routes: Routes = [
   {path: '', component: IndexPage},
@@ -120,20 +121,8 @@ const routes: Routes = [
   ],
 })
 export class PurchasesModule {
-  constructor(private readonly configs: ConfigsService) {
-    this.configs.addMenu({
-      name: 'Purchase',
-      icon: 'receipt',
-      roles: ['admin', 'manager'],
-      link: '/purchase',
-      pages: [
-        {
-          name: 'receipts & invoices',
-          link: '/purchase/reference',
-          roles: ['admin', 'manager']
-        }
-      ]
-    });
-    this.configs.selectedModuleName = 'purchase';
+  constructor(private readonly purchaseNavigation: PurchaseNavigationService) {
+    this.purchaseNavigation.init();
+    this.purchaseNavigation.selected();
   }
 }

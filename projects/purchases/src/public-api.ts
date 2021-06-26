@@ -3,3 +3,4 @@
  */
 
 export * from './purchases.module';
+export * from './services/purchase-navigation.service';
