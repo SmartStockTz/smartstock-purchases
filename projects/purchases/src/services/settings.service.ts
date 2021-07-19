@@ -31,10 +31,10 @@ export class SettingsService {
         // console.log('no user records found');
         throw new Error('no user records found');
       }
-      if (user && user.sessionToken && activeShop && activeShop.applicationId) {
+      if (user && user.token && activeShop && activeShop.applicationId) {
         return {
           'X-Parse-Application-Id': 'smartstock',
-          'X-Parse-Session-Token': user.sessionToken,
+          'X-Parse-Session-Token': user.token,
           'Content-Type': 'application/json',
         };
       } else {
@@ -63,7 +63,7 @@ export class SettingsService {
       if (!activeShop) {
         throw new Error('No user in local storage');
       }
-      return activeShop.projectUrlId;
+      return `https://${activeShop.projectId}-daas.bfast.fahamutech.com`;
     } catch (reason) {
       throw { message: 'Fails to get user', reason: reason.toString() };
     }
@@ -181,6 +181,7 @@ export class SettingsService {
           allowWholesale: true,
         };
       }
+      // @ts-ignore
       return activeShop.settings;
     } catch (e) {
       throw { message: 'Fails to get settings', reason: e.toString() };

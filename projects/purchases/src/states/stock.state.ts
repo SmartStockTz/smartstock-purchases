@@ -214,6 +214,7 @@ export class StockState {
     const stocks: StockModel[] = await BFast.database(shop.projectId)
       .collection<StockModel>('stocks')
       .getAll<StockModel>();
+      // @ts-ignore
     await this._storage.saveStocks(stocks);
     // stocks.sort((a, b) => {
     //   return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
@@ -231,6 +232,7 @@ export class StockState {
           Array.isArray(localStocks) &&
           localStocks.length > 0
         ) {
+          // @ts-ignore
           this.stocks.next(localStocks);
         } else {
           return this.stockService.getAllStock();
@@ -426,6 +428,7 @@ export class StockState {
             .toLowerCase()
             .includes(query.toString().toLowerCase())
         );
+        // @ts-ignore
         this.stocks.next(results);
       } else {
         this.getStocks();

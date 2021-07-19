@@ -63,6 +63,7 @@ export class UserService {
     username: string;
     password: string;
   }): Promise<UserModel> {
+    // @ts-ignore
     const authUser = await BFast.auth().logIn<UserModel>(
       user.username,
       user.password
@@ -136,9 +137,10 @@ export class UserService {
         (value) => value.applicationId !== shop.applicationId
       );
       user.applicationId = shop.applicationId;
-      user.projectUrlId = shop.projectUrlId;
+      // user.projectUrlId = shop.projectUrlId;
       user.projectId = shop.projectId;
       user.businessName = shop.businessName;
+      // @ts-ignore
       user.settings = shop.settings;
       user.shops = shops1;
       this.httpClient
@@ -171,7 +173,7 @@ export class UserService {
         businessName: user.businessName,
         projectId: user.projectId,
         applicationId: user.applicationId,
-        projectUrlId: user.projectUrlId,
+        // projectUrlId: user.projectUrlId,
         settings: user.settings,
         street: user.street,
         country: user.country,
@@ -189,8 +191,8 @@ export class UserService {
       if (
         activeShop &&
         activeShop.projectId &&
-        activeShop.applicationId &&
-        activeShop.projectUrlId
+        activeShop.applicationId
+        // activeShop.projectUrlId
       ) {
         return activeShop as any;
       } else {
@@ -204,6 +206,7 @@ export class UserService {
   async saveCurrentShop(shop: ShopModel): Promise<ShopModel> {
     try {
       await this.storageService.saveCurrentProjectId(shop.projectId);
+      // @ts-ignore
       return await this.storageService.saveActiveShop(shop);
     } catch (e) {
       throw e;

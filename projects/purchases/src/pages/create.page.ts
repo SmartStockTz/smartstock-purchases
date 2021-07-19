@@ -170,7 +170,7 @@ import { EditproductComponent } from './../components/editproduct.component';
                   </button>
                 </div>
 
-                <app-product-details
+                <app-product-details *ngIf="formvisibility"
                   [formvisibility]="formvisibility"
                   [productdetails]="productdetails"
                   (product)="addProductToTable($event)"
@@ -612,6 +612,7 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
         this.selectedProducts
       );
 
+      this.formvisibility = false;
       this.updateTotalCost();
     }
   }

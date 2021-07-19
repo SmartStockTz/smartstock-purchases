@@ -5,19 +5,19 @@ import { StockModel } from './../models/stock.model';
 @Component({
   selector: 'app-product-details',
   template: `
+  <mat-card>
     <form
       [formGroup]="productdetailsform"
       (ngSubmit)="addtolist(quantity.value, purchaseprice.value, $event)"
-      *ngIf="formvisibility"
-    >
+      *ngIf="formvisibility">
       <h3>
         Name:
         <strong> {{ productdetails.product }} </strong>
       </h3>
 
       <div class="row">
-        <div class="col-lg-3 col-md-3">
-          <mat-form-field color="primary" appearance="outline">
+        <div class="form-f">
+          <mat-form-field color="primary" *ngIf="productdetails && productdetails.canExpire" appearance="outline">
             <mat-label>Expiry date</mat-label>
             <input
               matInput
@@ -37,7 +37,7 @@ import { StockModel } from './../models/stock.model';
             ></mat-datepicker>
           </mat-form-field>
         </div>
-        <div class="col-lg-3 col-md-3">
+        <div class="form-f">
           <p>
             <mat-form-field appearance="outline">
               <mat-label>Product quantity</mat-label>
@@ -46,14 +46,13 @@ import { StockModel } from './../models/stock.model';
                 placeholder="quantity"
                 formControlName="quantity"
                 type="number"
-                required
                 #quantity
               />
               <mat-error>product quantity required</mat-error>
             </mat-form-field>
           </p>
         </div>
-        <div class="col-lg-3 col-md-3">
+        <div class="form-f">
           <p>
             <mat-form-field appearance="outline">
               <mat-label>Purchase price</mat-label>
@@ -62,17 +61,15 @@ import { StockModel } from './../models/stock.model';
                 placeholder="purchase price"
                 formControlName="purchase"
                 type="number"
-                required
                 #purchaseprice
-                [(ngModel)]="productdetails.purchase"
               />
               <mat-error>purchase price required</mat-error>
             </mat-form-field>
           </p>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-lg-3 col-md-3">
+      <!-- </div>
+      <div class="row"> -->
+        <div class="form-f">
           <p>
             <mat-form-field appearance="outline">
               <mat-label>Retail price</mat-label>
@@ -81,14 +78,12 @@ import { StockModel } from './../models/stock.model';
                 placeholder="retail price"
                 formControlName="retailPrice"
                 type="number"
-                required
-                [(ngModel)]="productdetails.retailPrice"
               />
               <mat-error>retail price required</mat-error>
             </mat-form-field>
           </p>
         </div>
-        <div class="col-lg-3 col-md-3">
+        <div class="form-f">
           <p>
             <mat-form-field appearance="outline">
               <mat-label>Wholesale price </mat-label>
@@ -97,32 +92,14 @@ import { StockModel } from './../models/stock.model';
                 placeholder="wholesale price"
                 formControlName="wholesalePrice"
                 type="number"
-                required
-                [(ngModel)]="productdetails.wholesalePrice"
               />
               <mat-error>wholesale price required</mat-error>
             </mat-form-field>
           </p>
         </div>
-        <div class="col-lg-3 col-md-3">
-          <p>
-            <mat-form-field appearance="outline">
-              <mat-label>wholesale quantity</mat-label>
-              <input
-                matInput
-                placeholder="wholesale quantity"
-                formControlName="wholesaleQuantity"
-                type="number"
-                required
-                [(ngModel)]="productdetails.wholesaleQuantity"
-              />
-              <mat-error>wholesale quantity required</mat-error>
-            </mat-form-field>
-          </p>
-        </div>
       </div>
       <div class="row">
-        <div class="col-lg-4 col-md-4">
+        <div class="form-f">
           <h2>
             Product amount:
             <strong>
@@ -130,17 +107,24 @@ import { StockModel } from './../models/stock.model';
             >
           </h2>
         </div>
-        <div class="col-lg-3 col-md-3">
+        <div class="">
           <button
             type="submit"
             mat-raised-button
-            [disabled]="!productdetailsform.valid"
-          >
+            [disabled]="!productdetailsform.valid">
             Add to list
           </button>
+          <!-- <button
+            type="submit"
+            color="warn"
+            mat-raised-button
+            [disabled]="!productdetailsform.valid">
+            Cancel
+          </button> -->
         </div>
       </div>
     </form>
+  </mat-card>
   `,
   styleUrls: ['../styles/productdetails.style.scss'],
 })
@@ -155,14 +139,15 @@ export class ProductDetailComponent implements OnInit {
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
+    // console.log(this.productdetails);
     this.productdetailsform = this.fb.group({
-      product: [''],
+      product: [this.productdetails?.product],
       expire: [''],
-      quantity: ['', [Validators.required, Validators.min(1)]],
-      purchase: ['', [Validators.required, Validators.min(1)]],
-      retailPrice: ['', [Validators.required, Validators.min(1)]],
-      wholesalePrice: ['', [Validators.required, Validators.min(1)]],
-      wholesaleQuantity: ['', [Validators.required, Validators.min(1)]],
+      quantity: [1, [Validators.required, Validators.min(1)]],
+      purchase: [this.productdetails?.purchase, [Validators.required, Validators.min(1)]],
+      retailPrice: [this.productdetails?.retailPrice, [Validators.required, Validators.min(1)]],
+      wholesalePrice: [this.productdetails?.wholesalePrice, [Validators.required, Validators.min(1)]],
+      wholesaleQuantity: [this.productdetails?.wholesaleQuantity, [Validators.required, Validators.min(1)]],
       amount: [''],
     });
   }
