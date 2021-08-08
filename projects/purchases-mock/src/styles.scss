@@ -1,25 +1,25 @@
 // Custom Theming for Angular Material
+@use '~@angular/material' as mat;
 // For more information: https://material.angular.io/guide/theming
-@import '~@angular/material/theming';
 // Plus imports for other components in your app.
 
 // Include the common styles for Angular Material. We include this here so that you only
 // have to load a single css file for Angular Material in your app.
 // Be sure that you only ever include this mixin once!
-@include mat-core();
+@include mat.core();
 
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$purchases-mock-primary: mat-palette($mat-green, 900);
-$purchases-mock-accent: mat-palette($mat-green, A200, A100, A400);
+$purchases-mock-primary: mat.define-palette(mat.$green-palette, 900);
+$purchases-mock-accent: mat.define-palette(mat.$green-palette, A200, A100, A400);
 
 // The warn palette is optional (defaults to red).
-$purchases-mock-warn: mat-palette($mat-red);
+$purchases-mock-warn: mat.define-palette(mat.$red-palette);
 
 // Create the theme object. A theme consists of configurations for individual
 // theming systems such as "color" or "typography".
-$purchases-mock-theme: mat-light-theme((
+$purchases-mock-theme: mat.define-light-theme((
   color: (
     primary: $purchases-mock-primary,
     accent: $purchases-mock-accent,
@@ -30,7 +30,7 @@ $purchases-mock-theme: mat-light-theme((
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
-@include angular-material-theme($purchases-mock-theme);
+@include mat.all-component-themes($purchases-mock-theme);
 
 /* You can add global styles to this file, and also import other style files */
 
