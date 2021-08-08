@@ -25,12 +25,8 @@ import {PurchaseDetailsComponent} from './components/details.component';
 import {CreatePageComponent} from './pages/create.page';
 import {LibModule} from '@smartstocktz/core-libs';
 import {ScrollingModule} from '@angular/cdk/scrolling';
-import {DialogDeleteComponent, StockDetailsComponent,} from './components/stock.component';
-import {
-  DialogSupplierDeleteComponent,
-  DialogSupplierNewComponent,
-  SuppliersComponent,
-} from './components/suppliers.component';
+import {DialogDeleteComponent, StockDetailsComponent} from './components/stock.component';
+import {DialogSupplierDeleteComponent, DialogSupplierNewComponent, SuppliersComponent} from './components/suppliers.component';
 import {VerifyEMailDialogComponent} from './components/verify-dialog.component';
 import {RouterModule, ROUTES, Routes} from '@angular/router';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
@@ -41,14 +37,13 @@ import {MatDialogModule} from '@angular/material/dialog';
 import {ProductDetailComponent} from './components/product-details-component';
 import {ProductSearchDialogComponent} from './components/product-search-dialog.component';
 import {CdkTableModule} from '@angular/cdk/table';
-import {EditproductComponent} from './components/editproduct.component';
 import {PurchaseDetailsModalComponent} from './components/purchase-details.component';
 import {IncompletePurchasesTableComponent} from './components/incomplete-purchases-list.component';
 import {AddReturnSheetComponent} from './components/add-returns-sheet.component';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatSortModule} from '@angular/material/sort';
-import {MatListModule} from "@angular/material/list";
-import {PurchaseNavigationService} from "./services/purchase-navigation.service";
+import {MatListModule} from '@angular/material/list';
+import {PurchaseNavigationService} from './services/purchase-navigation.service';
 
 const routes: Routes = [
   {path: '', component: IndexPage},
@@ -73,7 +68,6 @@ const routes: Routes = [
     DialogSupplierDeleteComponent,
     VerifyEMailDialogComponent,
     IndexPage,
-    EditproductComponent,
   ],
   imports: [
     CommonModule,

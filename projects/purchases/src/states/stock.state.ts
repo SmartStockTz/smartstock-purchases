@@ -1,187 +1,43 @@
-import { Injectable } from '@angular/core';
-import { UnitsModel } from '../models/units.model';
-import { HttpClient } from '@angular/common/http';
-import { SupplierModel } from '../models/supplier.model';
-import { UserService } from '../services/user.service';
-import { SettingsService } from '../services/settings.service';
-import { CategoryModel } from '../models/category.model';
-import { BFast } from 'bfastjs';
-// import {StorageService} from '../../lib/services/storage.service';
-import { StockModel } from '../models/stock.model';
-import { MessageService, StorageService } from '@smartstocktz/core-libs';
-import { BehaviorSubject } from 'rxjs';
-import { StockService } from './../services/stock.service';
+import {Injectable} from '@angular/core';
+import {UnitsModel} from '../models/units.model';
+import {SupplierModel} from '../models/supplier.model';
+import {UserService} from '../services/user.service';
+import bfast, {BFast} from 'bfastjs';
+import {StockModel} from '../models/stock.model';
+import {MessageService} from '@smartstocktz/core-libs';
+import {BehaviorSubject} from 'rxjs';
+import {StockService} from '../services/stock.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class StockState {
   stocks: BehaviorSubject<StockModel[]> = new BehaviorSubject<StockModel[]>([]);
-  selectedStock: BehaviorSubject<StockModel> = new BehaviorSubject<StockModel>(
-    null
-  );
   isFetchStocks: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  isExportToExcel: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
-    false
-  );
-  isImportProducts: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
-    false
-  );
-  isDeleteStocks: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
-    false
-  );
+
   constructor(
-    private readonly _httpClient: HttpClient,
-    private readonly _user: UserService,
-    private readonly _storage: StorageService,
-    private readonly _settings: SettingsService,
-
+    private readonly userService: UserService,
     private readonly stockService: StockService,
-    private readonly messageService: MessageService,
-    private readonly storageService: StorageService
-  ) {}
-
-  async exportToExcel(): Promise<any> {
-    const user = await this._user.currentUser();
-    const projectId = await this._settings.getCustomerProjectId();
-    const email = encodeURIComponent(user.email);
-    return BFast.functions()
-      .request(
-        this._settings.ssmFunctionsURL +
-          '/functions/stocks/export/' +
-          projectId +
-          '/' +
-          email
-      )
-      .get({});
-  }
-
-  addAllCategory(
-    categories: CategoryModel[],
-    callback?: (value: any) => void
-  ) {}
-
-  async importStocks(stocks: StockModel[]): Promise<any> {
-    const shop = await this._storage.getActiveShop();
-    return BFast.functions()
-      .request(
-        this._settings.ssmFunctionsURL +
-          '/functions/stocks/import/' +
-          shop.projectId
-      )
-      .post(stocks, {
-        headers: this._settings.ssmFunctionsHeader,
-      });
-  }
-
-  addAllSupplier(suppliers: SupplierModel[], callback: (value: any) => void) {}
-
-  async addCategory(category: CategoryModel): Promise<any> {
-    const shop = await this._storage.getActiveShop();
-    return BFast.database(shop.projectId)
-      .collection<CategoryModel>('categories')
-      .save(category);
+    private readonly messageService: MessageService
+  ) {
   }
 
   async addUnit(unit: UnitsModel): Promise<any> {
-    const shop = await this._storage.getActiveShop();
+    const shop = await this.userService.getCurrentShop();
     return BFast.database(shop.projectId)
       .collection<UnitsModel>('units')
       .save(unit);
   }
 
-  async getAllUnit(pagination: {
-    size?: number;
-    skip?: number;
-  }): Promise<UnitsModel[]> {
-    const shop = await this._storage.getActiveShop();
-    const units = await BFast.database(shop.projectId)
-      .collection('units')
-      .getAll<UnitsModel>();
-    units.sort((a, b) => {
-      return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
-    });
-    return units;
-  }
-
-  async addStock(
-    stock: StockModel,
-    progress: (d: any, name: string) => void,
-    inUpdateMode = false
-  ): Promise<StockModel> {
-    const shop = await this._storage.getActiveShop();
-    if (stock.downloads && stock.downloads.length > 0) {
-      for (const value of stock.downloads) {
-        if (value && value.url instanceof File) {
-          value.url = await BFast.storage(shop?.projectId).save(
-            value.url as any,
-            (progress1) => {
-              progress(
-                (Number(progress1.loaded) / Number(progress1.total)) * 100,
-                value.name
-              );
-            }
-          );
-        }
-      }
-    }
-    if (inUpdateMode) {
-      const stockId = stock._id ? stock._id : stock.id;
-      delete stock.id;
-      delete stock._id;
-      delete stock.updatedAt;
-      delete stock.createdAt;
-      return BFast.database(shop.projectId)
-        .collection('stocks')
-        .query()
-        .byId(stockId)
-        .updateBuilder()
-        .doc(stock)
-        .update();
-    } else {
-      return BFast.database(shop.projectId).collection('stocks').save(stock);
-    }
-  }
-
   async addSupplier(supplier: SupplierModel): Promise<any> {
-    const shop = await this._storage.getActiveShop();
+    const shop = await this.userService.getCurrentShop();
     return BFast.database(shop.projectId)
       .collection('suppliers')
       .save(supplier);
   }
 
-  deleteAllCategory(
-    categories: CategoryModel[],
-    callback: (value: any) => void
-  ) {}
-
-  deleteAllStock(stocks: StockModel[], callback?: (value: any) => void) {}
-
-  deleteAllSupplier(
-    suppliers: SupplierModel[],
-    callback?: (value: any) => void
-  ) {}
-
-  async deleteCategory(category: CategoryModel): Promise<any> {
-    const shop = await this._storage.getActiveShop();
-    return BFast.database(shop.projectId)
-      .collection('categories')
-      .query()
-      .byId(category.id)
-      .delete();
-  }
-
-  async deleteStock(stock: StockModel): Promise<any> {
-    const shop = await this._storage.getActiveShop();
-    return BFast.database(shop.projectId)
-      .collection('stocks')
-      .query()
-      .byId(stock._id ? stock._id : stock.id)
-      .delete();
-  }
-
   async deleteSupplier(id: string): Promise<any> {
-    const shop = await this._storage.getActiveShop();
+    const shop = await this.userService.getCurrentShop();
     return BFast.database(shop.projectId)
       .collection('suppliers')
       .query()
@@ -189,24 +45,8 @@ export class StockState {
       .delete();
   }
 
-  async getAllCategory(pagination: {
-    size?: number;
-    skip?: number;
-  }): Promise<CategoryModel[]> {
-    const shop = await this._storage.getActiveShop();
-    return BFast.database(shop.projectId)
-      .collection('categories')
-      .getAll(null, {
-        cacheEnable: true,
-        dtl: 7,
-        freshDataCallback: (value) => {
-          // console.log(value);
-        },
-      });
-  }
-
   async getAllStock(): Promise<StockModel[]> {
-    const shop = await this._storage.getActiveShop();
+    const shop = await this.userService.getCurrentShop();
     // const totalStock = await BFast.database(shop.projectId)
     //   .collection('stocks')
     //   .query()
@@ -214,26 +54,27 @@ export class StockState {
     const stocks: StockModel[] = await BFast.database(shop.projectId)
       .collection<StockModel>('stocks')
       .getAll<StockModel>();
-      // @ts-ignore
-    await this._storage.saveStocks(stocks);
+    // @ts-ignore
+    await this.storageService1.saveStocks(stocks);
     // stocks.sort((a, b) => {
     //   return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
     // });
     return stocks;
   }
 
-  getStocks(): void {
+  async getStocks(): Promise<void> {
     this.isFetchStocks.next(true);
-    this.storageService
-      .getStocks()
+    const shop = await this.userService.getCurrentShop();
+    bfast
+      .cache({database: 'stocks', collection: 'stocks'}, shop.projectId)
+      .get('all')
       .then((localStocks) => {
         if (
           localStocks &&
-          Array.isArray(localStocks) &&
-          localStocks.length > 0
+          Array.isArray(Object.values(localStocks)) &&
+          Object.values(localStocks).length > 0
         ) {
-          // @ts-ignore
-          this.stocks.next(localStocks);
+          this.stocks.next(Object.values(localStocks));
         } else {
           return this.stockService.getAllStock();
         }
@@ -245,7 +86,13 @@ export class StockState {
           remoteStocks.length > 0
         ) {
           this.stocks.next(remoteStocks);
-          return this.storageService.saveStock(remoteStocks as any);
+          const hashStocks = remoteStocks.reduce((a, b) => {
+            a[b.id] = b;
+            return a;
+          }, {});
+          return bfast
+            .cache({database: 'stocks', collection: 'stocks'}, shop.projectId)
+            .set('all', hashStocks);
         }
       })
       .catch((reason) => {
@@ -264,7 +111,7 @@ export class StockState {
     size?: number;
     skip?: number;
   }): Promise<SupplierModel[]> {
-    const shop = await this._storage.getActiveShop();
+    const shop = await this.userService.getCurrentShop();
     const suppliers: SupplierModel[] = await BFast.database(shop.projectId)
       .collection<SupplierModel>('suppliers')
       .getAll<SupplierModel>();
@@ -274,65 +121,20 @@ export class StockState {
     return suppliers;
   }
 
-  getCategory(id: string, callback: (category: CategoryModel) => void) {}
-
-  async getStock(id: string, callback: (stock: StockModel) => void) {
-    const shop = await this._storage.getActiveShop();
-    return BFast.database(shop.projectId).collection('stocks').get(id);
-  }
-
-  getSupplier(id: string, callback: (supplier: SupplierModel) => void) {}
-
-  updateAllCategory(
-    categories: CategoryModel[],
-    callback?: (value: any) => void
-  ) {}
-
-  updateAllStock(stocks: StockModel[], callback?: (value: any) => void) {}
-
-  updateAllSupplier(callback?: (value: any) => void) {}
-
-  async updateCategory(category: {
-    id: string;
-    value: string;
-    field: string;
-  }): Promise<any> {
-    const shop = await this._storage.getActiveShop();
-    const categoryId = category.id;
-    const data = {};
-    data[category.field] = category.value;
-    delete category.id;
-    const response = await BFast.database(shop.projectId)
-      .collection('categories')
-      .query()
-      .byId(categoryId)
-      .updateBuilder()
-      .update(data);
-    response.id = categoryId;
-    return response;
-  }
-
-  async updateCategoryMobile(
-    category: CategoryModel,
-    categoryId
-  ): Promise<any> {
-    const activeShop = await this._storage.getActiveShop();
-    return BFast.database(activeShop.projectId)
-      .collection('categories')
-      .query()
-      .byId(categoryId)
-      .updateBuilder()
-      .doc(category)
-      .update();
-  }
-
   getStocksFromRemote(): void {
     this.isFetchStocks.next(true);
     this.stockService
       .getAllStock()
-      .then((remoteStocks) => {
+      .then(async (remoteStocks) => {
         this.stocks.next(remoteStocks);
-        return this.storageService.saveStock(remoteStocks as any);
+        const hashStocks = remoteStocks.reduce((a, b) => {
+          a[b.id] = b;
+          return a;
+        }, {});
+        const shop = await this.userService.getCurrentShop();
+        return bfast
+          .cache({database: 'stocks', collection: 'stocks'}, shop.projectId)
+          .set('all', hashStocks);
       })
       .catch((reason) => {
         this.messageService.showMobileInfoMessage(
@@ -346,34 +148,12 @@ export class StockState {
       });
   }
 
-  // async updateStock(stock: StockModel, progress: (d) => void): Promise<StockModel> {
-  //   const shop = await this._storage.getActiveShop();
-  //   const stockId = stock._id ? stock._id : stock.id;
-  //   delete stock.id;
-  //   if (stock.image && !stock.image.toString().startsWith('http') && stock.image instanceof File) {
-  //     stock.image = await BFast.storage(shop.projectId).save(stock.image, progress);
-  //   }
-  //   if (stock.downloads && stock.downloads.length > 0) {
-  //     for (const value of stock.downloads) {
-  //       if (value && value.url instanceof File) {
-  //         value.url = await BFast.storage(shop.projectId).save(value.url as any, progress);
-  //       }
-  //     }
-  //   }
-  //   return BFast.database(shop.projectId).collection('stocks')
-  //     .query()
-  //     .byId(stockId.trim())
-  //     .updateBuilder()
-  //     .doc(stock)
-  //     .update();
-  // }
-
   async updateSupplier(value: {
     id: string;
     field: string;
     value: string;
   }): Promise<any> {
-    const shop = await this._storage.getActiveShop();
+    const shop = await this.userService.getCurrentShop();
     const supplierId = value.id;
     const data = {};
     data[value.field] = value.value;
@@ -389,41 +169,14 @@ export class StockState {
     return response;
   }
 
-  async updateUnit(unit: {
-    id: string;
-    value: string;
-    field: string;
-  }): Promise<any> {
-    const shop = await this._storage.getActiveShop();
-    const unitId = unit.id;
-    const data = {};
-    data[unit.field] = unit.value;
-
-    delete unit.id;
-    const response = await BFast.database(shop.projectId)
-      .collection('units')
-      .query()
-      .byId(unitId)
-      .updateBuilder()
-      .set(unit.field, unit.value)
-      .update();
-    response.id = unitId;
-    return response;
-  }
-
-  async deleteUnit(unit: UnitsModel): Promise<any> {
-    const shop = await this._storage.getActiveShop();
-    return BFast.database(shop.projectId)
-      .collection('units')
-      .query()
-      .byId(unit.id)
-      .delete();
-  }
-
   filter(query: string): void {
-    this.storageService.getStocks().then((stocks) => {
+    this.userService.getCurrentShop().then(shop => {
+      return bfast
+        .cache({database: 'stocks', collection: 'stocks'}, shop.projectId)
+        .get('all');
+    }).then((stocks: {[id: string]: object}) => {
       if (query) {
-        const results = stocks.filter((x) =>
+        const results = Object.values(stocks).filter((x) =>
           JSON.stringify(x)
             .toLowerCase()
             .includes(query.toString().toLowerCase())
@@ -431,7 +184,7 @@ export class StockState {
         // @ts-ignore
         this.stocks.next(results);
       } else {
-        this.getStocks();
+        this.getStocks().catch(console.log);
       }
     });
   }

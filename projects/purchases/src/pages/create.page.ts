@@ -1,25 +1,17 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import {
-  FormArray,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
-import { Observable, of } from 'rxjs';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { Router } from '@angular/router';
-import { DialogSupplierNewComponent } from '../components/suppliers.component';
-import { StockModel } from '../models/stock.model';
-import { PurchaseState } from '../states/purchase.state';
-import { DeviceInfoUtil, toSqlDate } from '@smartstocktz/core-libs';
-import { StorageService } from '@smartstocktz/core-libs';
-import { StockState } from '../states/stock.state';
-import { ProductSearchDialogComponent } from '../components/product-search-dialog.component';
-import { MatTableDataSource } from '@angular/material/table';
-import { EditproductComponent } from './../components/editproduct.component';
+import {Component, OnInit, ViewEncapsulation} from '@angular/core';
+import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {Observable, of} from 'rxjs';
+import {MatDialog} from '@angular/material/dialog';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
+import {Router} from '@angular/router';
+import {DialogSupplierNewComponent} from '../components/suppliers.component';
+import {StockModel} from '../models/stock.model';
+import {PurchaseState} from '../states/purchase.state';
+import {DeviceInfoUtil, StorageService} from '@smartstocktz/core-libs';
+import {StockState} from '../states/stock.state';
+import {ProductSearchDialogComponent} from '../components/product-search-dialog.component';
+import {MatTableDataSource} from '@angular/material/table';
 
 @Component({
   selector: 'app-purchase-create',
@@ -41,8 +33,7 @@ import { EditproductComponent } from './../components/editproduct.component';
           [sidenav]="sidenav"
           [showProgress]="false"
           [hasBackRoute]="true"
-          [backLink]="'/purchase'"
-        >
+          [backLink]="'/purchase'">
         </app-toolbar>
         <div class="container">
           <form [formGroup]="invoiceForm" (ngSubmit)="saveInvoice($event)">
@@ -56,18 +47,17 @@ import { EditproductComponent } from './../components/editproduct.component';
                       color="primary"
                       labelPosition="after"
                       [formControl]="isInvoiceFormControl"
-                      label="Invoice purchase"
-                    >
+                      label="Invoice purchase">
                       Invoice purchase
                     </mat-slide-toggle>
                     <div class="row">
                       <div class="col-md-3 col-lg-3">
                         <mat-form-field appearance="outline" class="my-input">
                           <mat-label>ref #</mat-label>
-                          <input matInput formControlName="refNumber" />
+                          <input matInput formControlName="refNumber"/>
                           <mat-error
-                            >Purchase reference number required</mat-error
-                          >
+                          >Purchase reference number required
+                          </mat-error>
                         </mat-form-field>
                       </div>
                       <div class="col-md-3 col-lg-3">
@@ -76,8 +66,7 @@ import { EditproductComponent } from './../components/editproduct.component';
                           <mat-select formControlName="supplier">
                             <mat-option
                               *ngFor="let supplier of suppliers | async"
-                              [value]="supplier"
-                            >
+                              [value]="supplier">
                               {{ supplier.name }}
                             </mat-option>
                           </mat-select>
@@ -87,24 +76,21 @@ import { EditproductComponent } from './../components/editproduct.component';
                             matSuffix
                             color="accent"
                             mode="indeterminate"
-                            [diameter]="20"
-                          ></mat-progress-spinner>
+                            [diameter]="20"></mat-progress-spinner>
                           <mat-error>Supplier required</mat-error>
                           <div matSuffix class="d-flex flex-row">
                             <button
                               (click)="refreshSuppliers($event)"
                               mat-icon-button
                               matTooltip="refresh suppliers"
-                              *ngIf="!supplierFetching"
-                            >
+                              *ngIf="!supplierFetching">
                               <mat-icon>refresh</mat-icon>
                             </button>
                             <button
                               (click)="addNewSupplier($event)"
                               mat-icon-button
                               matTooltip="add new supplier"
-                              *ngIf="!supplierFetching"
-                            >
+                              *ngIf="!supplierFetching">
                               <mat-icon>add</mat-icon>
                             </button>
                           </div>
@@ -121,8 +107,7 @@ import { EditproductComponent } from './../components/editproduct.component';
                           />
                           <mat-datepicker-toggle
                             matSuffix
-                            [for]="picker"
-                          ></mat-datepicker-toggle>
+                            [for]="picker"></mat-datepicker-toggle>
                           <mat-datepicker
                             [touchUi]="true"
                             #picker
@@ -133,22 +118,18 @@ import { EditproductComponent } from './../components/editproduct.component';
                         <mat-form-field
                           *ngIf="isInvoiceFormControl.value"
                           appearance="outline"
-                          class="my-input"
-                        >
+                          class="my-input">
                           <mat-label>Due Date</mat-label>
                           <input
                             matInput
                             [matDatepicker]="pickerDue"
-                            formControlName="due"
-                          />
+                            formControlName="due"/>
                           <mat-datepicker-toggle
                             matSuffix
-                            [for]="pickerDue"
-                          ></mat-datepicker-toggle>
+                            [for]="pickerDue"></mat-datepicker-toggle>
                           <mat-datepicker
                             [touchUi]="true"
-                            #pickerDue
-                          ></mat-datepicker>
+                            #pickerDue></mat-datepicker>
                         </mat-form-field>
                       </div>
                     </div>
@@ -171,9 +152,9 @@ import { EditproductComponent } from './../components/editproduct.component';
                 </div>
 
                 <app-product-details *ngIf="formvisibility"
-                  [formvisibility]="formvisibility"
-                  [productdetails]="productdetails"
-                  (product)="addProductToTable($event)"
+                                     [formvisibility]="formvisibility"
+                                     [productdetails]="productdetails"
+                                     (product)="addProductToTable($event)"
                 ></app-product-details>
 
                 <mat-card class="mat-elevation-z3 productlistable">
@@ -255,15 +236,15 @@ import { EditproductComponent } from './../components/editproduct.component';
                     <ng-container cdkColumnDef="action">
                       <th mat-header-cell *cdkHeaderCellDef>Action</th>
                       <td mat-cell *cdkCellDef="let element">
-                        <button
-                          (click)="editproduct($event, element)"
-                          mat-icon-button
-                          color="primary"
-                          matTooltip="Edit product info"
-                          matTooltipPosition="above"
-                        >
-                          <mat-icon>edit</mat-icon>
-                        </button>
+<!--                        <button-->
+<!--                          (click)="editproduct($event, element)"-->
+<!--                          mat-icon-button-->
+<!--                          color="primary"-->
+<!--                          matTooltip="Edit product info"-->
+<!--                          matTooltipPosition="above"-->
+<!--                        >-->
+<!--                          <mat-icon>edit</mat-icon>-->
+<!--                        </button>-->
                         <button
                           (click)="removeItem($event, element)"
                           mat-icon-button
@@ -507,38 +488,39 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
         }
       });
   }
+
   editproduct($event: MouseEvent, element): void {
     $event.preventDefault();
-    this.dialog
-      .open(EditproductComponent, { data: element })
-      .afterClosed()
-      .subscribe((value) => {
-        if (value) {
-          const index = this.purchaseDatasource.data.findIndex(
-            (val) => val.product.product === value.product.product
-          );
-          this.purchaseDatasource.data.splice(index, 1);
-          this.selectedProducts.unshift({
-            quantity: value.quantity,
-            product: value.product,
-            expire: value.expire,
-            purchase: value.purchase,
-            retailPrice: value.retailPrice,
-            wholesalePrice: value.wholesalePrice,
-            wholesaleQuantity: value.wholesaleQuantity,
-            amount: value.quantity * value.purchase,
-          });
-
-          this.purchaseDatasource = new MatTableDataSource<any>(
-            this.selectedProducts
-          );
-
-          this.updateTotalCost();
-          this.snack.open('Edited product information', 'Ok', {
-            duration: 2000,
-          });
-        }
-      });
+    // this.dialog
+    //   .open(EditproductComponent, {data: element})
+    //   .afterClosed()
+    //   .subscribe((value) => {
+    //     if (value) {
+    //       const index = this.purchaseDatasource.data.findIndex(
+    //         (val) => val.product.product === value.product.product
+    //       );
+    //       this.purchaseDatasource.data.splice(index, 1);
+    //       this.selectedProducts.unshift({
+    //         quantity: value.quantity,
+    //         product: value.product,
+    //         expire: value.expire,
+    //         purchase: value.purchase,
+    //         retailPrice: value.retailPrice,
+    //         wholesalePrice: value.wholesalePrice,
+    //         wholesaleQuantity: value.wholesaleQuantity,
+    //         amount: value.quantity * value.purchase,
+    //       });
+    //
+    //       this.purchaseDatasource = new MatTableDataSource<any>(
+    //         this.selectedProducts
+    //       );
+    //
+    //       this.updateTotalCost();
+    //       this.snack.open('Edited product information', 'Ok', {
+    //         duration: 2000,
+    //       });
+    //     }
+    //   });
   }
 
   updateTotalCost(): void {
@@ -556,14 +538,14 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
   getSuppliers(): void {
     this.supplierFetching = true;
     this.purchaseState
-      .getAllSupplier({ size: 200 })
+      .getAllSupplier({size: 200})
       .then((data) => {
         const dataArray = JSON.parse(JSON.stringify(data));
         this.suppliers = of(dataArray);
         this.supplierFetching = false;
       })
       .catch((reason) => {
-        this.suppliers = of([{ name: 'Default Supplier' }]);
+        this.suppliers = of([{name: 'Default Supplier'}]);
         this.supplierFetching = false;
       });
   }

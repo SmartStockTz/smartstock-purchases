@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
-import { StockState } from '../states/stock.state';
-import { FormControl } from '@angular/forms';
-import { StockModel } from '../models/stock.model';
-import { debounceTime } from 'rxjs/operators';
+import {Component, OnInit} from '@angular/core';
+import {MatDialogRef} from '@angular/material/dialog';
+import {StockState} from '../states/stock.state';
+import {FormControl} from '@angular/forms';
+import {StockModel} from '../models/stock.model';
+import {debounceTime} from 'rxjs/operators';
 
 @Component({
   selector: 'app-stock-products-search-dialog',
@@ -26,7 +26,8 @@ import { debounceTime } from 'rxjs/operators';
             style="flex-grow: 0"
           >
             <mat-icon *ngIf="(stockState.isFetchStocks | async) === false"
-              >refresh</mat-icon
+            >refresh
+            </mat-icon
             >
             <mat-progress-spinner
               *ngIf="(stockState.isFetchStocks | async) === true"
@@ -71,10 +72,9 @@ import { debounceTime } from 'rxjs/operators';
 export class ProductSearchDialogComponent implements OnInit {
   searchFormControl = new FormControl('');
 
-  constructor(
-    public readonly dialogRef: MatDialogRef<ProductSearchDialogComponent>,
-    public readonly stockState: StockState
-  ) {}
+  constructor(public readonly dialogRef: MatDialogRef<ProductSearchDialogComponent>,
+              public readonly stockState: StockState) {
+  }
 
   ngOnInit(): void {
     this.searchFormControl.valueChanges
@@ -82,7 +82,7 @@ export class ProductSearchDialogComponent implements OnInit {
       .subscribe((value) => {
         this.stockState.filter(value);
       });
-    this.stockState.getStocks();
+    this.stockState.getStocks().catch(console.log);
   }
 
   getProducts(): void {
