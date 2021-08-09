@@ -43,8 +43,6 @@ export class PurchaseState {
   }
 
   async addPurchase(purchaseI: PurchaseModel): Promise<any> {
-    console.log(purchaseI);
-    return ;
     const shop = await this.storageService.getActiveShop();
     return BFast.database(shop.projectId)
       .transaction()
