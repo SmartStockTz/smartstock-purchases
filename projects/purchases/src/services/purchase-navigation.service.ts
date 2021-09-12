@@ -18,7 +18,8 @@ export class PurchaseNavigationService {
         {
           name: 'receipts & invoices',
           link: '/purchase/reference',
-          roles: ['admin', 'manager']
+          roles: ['admin', 'manager'],
+          click: null
         }
       ]
     });

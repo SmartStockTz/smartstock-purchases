@@ -1,10 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {MatBottomSheet} from '@angular/material/bottom-sheet';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {MatTableDataSource} from '@angular/material/table';
-import {PurchaseModel} from '../models/purchase.model';
-import {environment} from '../environments/environment';
-import {PurchaseDetailsComponent} from '../components/details.component';
 import {PurchaseState} from '../states/purchase.state';
 import {DeviceState} from '@smartstocktz/core-libs';
 

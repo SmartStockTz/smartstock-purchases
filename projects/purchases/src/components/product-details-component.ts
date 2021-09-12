@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {StockModel} from './../models/stock.model';
+import {StockModel} from '../models/stock.model';
 
 @Component({
   selector: 'app-product-details',
@@ -140,7 +140,6 @@ export class ProductDetailComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // console.log(this.productdetails);
     this.productdetailsform = this.fb.group({
       product: [this.productdetails?.product],
       expire: [''],

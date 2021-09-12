@@ -1,10 +1,8 @@
 import {Injectable} from '@angular/core';
-import {UnitsModel} from '../models/units.model';
 import {SupplierModel} from '../models/supplier.model';
-import {UserService} from '../services/user.service';
-import bfast, {BFast} from 'bfastjs';
+import {cache, database} from 'bfast';
 import {StockModel} from '../models/stock.model';
-import {MessageService} from '@smartstocktz/core-libs';
+import {IpfsService, MessageService, UserService} from '@smartstocktz/core-libs';
 import {BehaviorSubject} from 'rxjs';
 import {StockService} from '../services/stock.service';
 
@@ -22,23 +20,16 @@ export class StockState {
   ) {
   }
 
-  async addUnit(unit: UnitsModel): Promise<any> {
-    const shop = await this.userService.getCurrentShop();
-    return BFast.database(shop.projectId)
-      .collection<UnitsModel>('units')
-      .save(unit);
-  }
-
   async addSupplier(supplier: SupplierModel): Promise<any> {
     const shop = await this.userService.getCurrentShop();
-    return BFast.database(shop.projectId)
+    return database(shop.projectId)
       .collection('suppliers')
       .save(supplier);
   }
 
   async deleteSupplier(id: string): Promise<any> {
     const shop = await this.userService.getCurrentShop();
-    return BFast.database(shop.projectId)
+    return database(shop.projectId)
       .collection('suppliers')
       .query()
       .byId(id)
@@ -47,26 +38,23 @@ export class StockState {
 
   async getAllStock(): Promise<StockModel[]> {
     const shop = await this.userService.getCurrentShop();
-    // const totalStock = await BFast.database(shop.projectId)
-    //   .collection('stocks')
-    //   .query()
-    //   .count({}, {cacheEnable: false, dtl: 0});
-    const stocks: StockModel[] = await BFast.database(shop.projectId)
+    const cids = await database(shop.projectId)
       .collection<StockModel>('stocks')
-      .getAll<StockModel>();
-    // @ts-ignore
-    await this.storageService1.saveStocks(stocks);
-    // stocks.sort((a, b) => {
-    //   return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
-    // });
+      .getAll<string>({
+        cids: true
+      });
+    const stocks = await Promise.all(
+      cids.map(c => {
+        return IpfsService.getDataFromCid(c);
+      })
+    ) as any[];
     return stocks;
   }
 
   async getStocks(): Promise<void> {
     this.isFetchStocks.next(true);
     const shop = await this.userService.getCurrentShop();
-    bfast
-      .cache({database: 'stocks', collection: 'stocks'}, shop.projectId)
+    cache({database: 'stocks', collection: 'stocks'}, shop.projectId)
       .get('all')
       .then((localStocks) => {
         if (
@@ -90,8 +78,7 @@ export class StockState {
             a[b.id] = b;
             return a;
           }, {});
-          return bfast
-            .cache({database: 'stocks', collection: 'stocks'}, shop.projectId)
+          return cache({database: 'stocks', collection: 'stocks'}, shop.projectId)
             .set('all', hashStocks);
         }
       })
@@ -107,18 +94,18 @@ export class StockState {
       });
   }
 
-  async getAllSupplier(pagination: {
-    size?: number;
-    skip?: number;
-  }): Promise<SupplierModel[]> {
+  async getAllSupplier(): Promise<SupplierModel[]> {
     const shop = await this.userService.getCurrentShop();
-    const suppliers: SupplierModel[] = await BFast.database(shop.projectId)
+    const cids = await database(shop.projectId)
       .collection<SupplierModel>('suppliers')
-      .getAll<SupplierModel>();
-    suppliers.sort((a, b) => {
-      return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
-    });
-    return suppliers;
+      .getAll<string>({
+        cids: true
+      });
+    return await Promise.all(
+      cids.map(c => {
+        return IpfsService.getDataFromCid(c);
+      })
+    ) as any[];
   }
 
   getStocksFromRemote(): void {
@@ -132,8 +119,7 @@ export class StockState {
           return a;
         }, {});
         const shop = await this.userService.getCurrentShop();
-        return bfast
-          .cache({database: 'stocks', collection: 'stocks'}, shop.projectId)
+        return cache({database: 'stocks', collection: 'stocks'}, shop.projectId)
           .set('all', hashStocks);
       })
       .catch((reason) => {
@@ -158,7 +144,7 @@ export class StockState {
     const data = {};
     data[value.field] = value.value;
     delete value.id;
-    const response = await BFast.database(shop.projectId)
+    const response = await database(shop.projectId)
       .collection('suppliers')
       .query()
       .byId(supplierId)
@@ -171,10 +157,9 @@ export class StockState {
 
   filter(query: string): void {
     this.userService.getCurrentShop().then(shop => {
-      return bfast
-        .cache({database: 'stocks', collection: 'stocks'}, shop.projectId)
+      return cache({database: 'stocks', collection: 'stocks'}, shop.projectId)
         .get('all');
-    }).then((stocks: {[id: string]: object}) => {
+    }).then((stocks: { [id: string]: object }) => {
       if (query) {
         const results = Object.values(stocks).filter((x) =>
           JSON.stringify(x)

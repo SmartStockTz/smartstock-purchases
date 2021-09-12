@@ -8,7 +8,7 @@ import {Router} from '@angular/router';
 import {DialogSupplierNewComponent} from '../components/suppliers.component';
 import {StockModel} from '../models/stock.model';
 import {PurchaseState} from '../states/purchase.state';
-import {DeviceInfoUtil, StorageService} from '@smartstocktz/core-libs';
+import {DeviceState, StorageService} from '@smartstocktz/core-libs';
 import {StockState} from '../states/stock.state';
 import {ProductSearchDialogComponent} from '../components/product-search-dialog.component';
 import {MatTableDataSource} from '@angular/material/table';
@@ -20,9 +20,8 @@ import {MatTableDataSource} from '@angular/material/table';
       <mat-sidenav
         class="match-parent-side"
         #sidenav
-        [mode]="enoughWidth() ? 'side' : 'over'"
-        [opened]="enoughWidth()"
-      >
+        [mode]="(deviceState.enoughWidth | async)===true ? 'side' : 'over'"
+        [opened]="(deviceState.enoughWidth | async)===true">
         <app-drawer></app-drawer>
       </mat-sidenav>
 
@@ -302,7 +301,7 @@ import {MatTableDataSource} from '@angular/material/table';
   styleUrls: ['../styles/create.style.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
+export class CreatePageComponent implements OnInit {
   formvisibility: boolean;
   productdetails: StockModel;
 
@@ -346,10 +345,10 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
     private readonly matDialog: MatDialog,
     private readonly indexDb: StorageService,
     private readonly purchaseState: PurchaseState,
-    private stockstate: StockState,
+    private readonly stockState: StockState,
+    public readonly deviceState: DeviceState,
     private readonly dialog: MatDialog
   ) {
-    super();
     document.title = 'SmartStock - Purchase Create';
   }
 
@@ -406,7 +405,7 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
   }
 
   getstocks(): void {
-    this.stockstate.getAllStock();
+    this.stockState.getAllStock();
   }
 
   saveInvoice(event: MouseEvent): void {
@@ -538,7 +537,7 @@ export class CreatePageComponent extends DeviceInfoUtil implements OnInit {
   getSuppliers(): void {
     this.supplierFetching = true;
     this.purchaseState
-      .getAllSupplier({size: 200})
+      .getAllSupplier()
       .then((data) => {
         const dataArray = JSON.parse(JSON.stringify(data));
         this.suppliers = of(dataArray);

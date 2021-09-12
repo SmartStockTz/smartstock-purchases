@@ -308,7 +308,7 @@ export class SuppliersComponent implements OnInit {
   getSuppliers(): void {
     this.fetchSuppliersFlag = true;
     this.stockState
-      .getAllSupplier({ size: 100 })
+      .getAllSupplier()
       .then((data) => {
         this.suppliersArray = JSON.parse(JSON.stringify(data));
         this.suppliersDatasource = new MatTableDataSource<SupplierModel>(

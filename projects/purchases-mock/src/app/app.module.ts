@@ -1,6 +1,6 @@
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
-import {BFast} from 'bfastjs';
+import {init} from 'bfast';
 import {environment} from '../environments/environment';
 
 import {AppComponent} from './app.component';
@@ -19,6 +19,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {HttpClientModule} from '@angular/common/http';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatBottomSheetModule} from '@angular/material/bottom-sheet';
+import {IpfsService} from '@smartstocktz/core-libs';
 
 const routes: Routes = [
   {path: '', component: WelcomePage},
@@ -59,7 +60,10 @@ const routes: Routes = [
 })
 export class AppModule {
   constructor() {
-    BFast.init({
+    IpfsService.getVersion().then(value => {
+      console.log('ipfs version : ', value.version);
+    }).catch(console.log);
+    init({
       applicationId: environment.smartstock.applicationId,
       projectId: environment.smartstock.projectId,
       appPassword: environment.smartstock.pass,

@@ -1,26 +1,21 @@
 import {Injectable} from '@angular/core';
 import {PurchaseModel} from '../models/purchase.model';
 import {HttpClient} from '@angular/common/http';
-import {ReceiptModel} from '../models/receipt.model';
-import {SettingsService} from '../services/settings.service';
-import {BFast} from 'bfastjs';
+import {database} from 'bfast';
 import {SupplierModel} from '../models/supplier.model';
-import {StorageService} from '@smartstocktz/core-libs';
+import {IpfsService, UserService} from '@smartstocktz/core-libs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PurchaseState {
-  constructor(
-    private readonly httpClient: HttpClient,
-    private readonly storageService: StorageService,
-    private readonly settingsService: SettingsService
-  ) {
+  constructor(private readonly httpClient: HttpClient,
+              private readonly userService: UserService) {
   }
 
   async recordPayment(id: string): Promise<any> {
-    const activeShop = await this.storageService.getActiveShop();
-    return BFast.database(activeShop.projectId)
+    const activeShop = await this.userService.getCurrentShop();
+    return database(activeShop.projectId)
       .collection('purchases')
       .query()
       .byId(id)
@@ -29,23 +24,10 @@ export class PurchaseState {
       .update();
   }
 
-  addAllInvoices(invoices: ReceiptModel[], callback: (value: any) => void): void {
-  }
-
-  addAllPurchase(purchases: PurchaseModel[], callback: (value: any) => void): void {
-  }
-
-  addAllReceipts(invoices: ReceiptModel[], callback: (value: any) => void): void {
-  }
-
-  addInvoice(invoice: ReceiptModel, callback: (value: any) => void): void {
-    // this.addReceipt(invoice, callback);
-  }
-
   async addPurchase(purchaseI: PurchaseModel): Promise<any> {
-    const shop = await this.storageService.getActiveShop();
-    return BFast.database(shop.projectId)
-      .transaction()
+    const shop = await this.userService.getCurrentShop();
+    return database(shop.projectId)
+      .bulk()
       .create('purchases', purchaseI)
       .update(
         'stocks',
@@ -78,101 +60,51 @@ export class PurchaseState {
       .commit();
   }
 
-  addReceipt(invoice: ReceiptModel, callback: (value: any) => void): void {
-  }
-
-  deleteInvoice(id: string, callback: (value: any) => void): void {
-  }
-
-  deleteReceipts(id: string, callback: (value: any) => void): void {
-  }
-
-  getAllInvoice(callback: (invoices: ReceiptModel[]) => void): void {
-  }
-
-  async deletePurchase(purchase: PurchaseModel): Promise<PurchaseModel> {
-    const activeShop = await this.storageService.getActiveShop();
-    return BFast.database(activeShop.projectId)
-      .collection('purchase')
-      .query()
-      .byId(purchase.id)
-      .delete();
-  }
-
   async getAllPurchase(page: {
     size?: number;
     skip?: number;
   }): Promise<PurchaseModel[]> {
-    const activeShop = await this.storageService.getActiveShop();
-    return BFast.database(activeShop.projectId)
+    const activeShop = await this.userService.getCurrentShop();
+    const cids: string[] = await database(activeShop.projectId)
       .collection('purchases')
       .query()
-      .orderBy('_created_at', -1)
+      .cids(true)
       .size(page.size)
       .skip(page.skip)
       .find();
+    return await Promise.all(
+      cids.map(c => {
+        return IpfsService.getDataFromCid(c);
+      })
+    ) as any[];
   }
 
-  // must be updated and its socket method
-  getAllReceipts(callback: (invoices: ReceiptModel[]) => void): void {
-    // const query = new Parse.Query('purchaseRefs');
-    // const subscription = query.subscribe();
-    // subscription.on('open', () => {
-    //   console.log('purchase refs socket connected');
-    //   this.updateCachedPurchaseRefs();
-    // });
-    // subscription.on('update', value => {
-    //   this.updateCachedPurchaseRefs();
-    // });
-    // subscription.on('delete', value => {
-    //   this.updateCachedPurchaseRefs();
-    // });
-    // subscription.on('create', value => {
-    //   this.updateCachedPurchaseRefs();
-    // });
-    callback(null);
-  }
-
-  getInvoice(id: string, callback: (invoice: ReceiptModel) => void): void {
-  }
-
-  getPurchase(id: string, callback: (purchase: PurchaseModel) => void): void {
-  }
-
-  async getAllSupplier(pagination: {
-    size?: number;
-    skip?: number;
-  }): Promise<SupplierModel[]> {
-    const shop = await this.storageService.getActiveShop();
-    const suppliers: SupplierModel[] = await BFast.database(shop.projectId)
+  async getAllSupplier(): Promise<SupplierModel[]> {
+    const shop = await this.userService.getCurrentShop();
+    const cids = await database(shop.projectId)
       .collection<SupplierModel>('suppliers')
-      .getAll<SupplierModel>();
-    suppliers.sort((a, b) => {
-      return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
-    });
-    return suppliers;
-  }
-
-  getReceipt(id: string, callback: (invoice: ReceiptModel) => void): void {
-  }
-
-  updatePurchase(id: string, callback: (value: any) => void): void {
+      .getAll<string>({
+        cids: true
+      });
+    return await Promise.all(
+      cids.map(c => {
+        return IpfsService.getDataFromCid(c);
+      })
+    ) as any[];
   }
 
   async addReturn(id: string, value: any): Promise<[PurchaseModel]> {
-    const shop = await this.storageService.getActiveShop();
-    const purchase: PurchaseModel = await BFast.database(shop.projectId)
+    const shop = await this.userService.getCurrentShop();
+    const purchase: PurchaseModel = await database(shop.projectId)
       .collection('purchases')
       .get(id);
-
     if (purchase && purchase.returns && Array.isArray(purchase.returns)) {
       purchase.returns.push(value);
     } else {
       purchase.returns = [value];
     }
     delete purchase.updatedAt;
-
-    return await BFast.database(shop.projectId)
+    return await database(shop.projectId)
       .collection('purchases')
       .query()
       .byId(id)
@@ -200,16 +132,20 @@ export class PurchaseState {
   }
 
   async getPurchases(pagination: { size: number, skip: number, id: string }): Promise<PurchaseModel[]> {
-    const shop = await this.storageService.getActiveShop();
-    return await BFast.database(shop.projectId)
+    const shop = await this.userService.getCurrentShop();
+    const cids: string[] = await database(shop.projectId)
       .collection('purchases')
       .query()
-      .orderBy('_updated_at', -1)
-      // .orderBy('channel', 1)
+      .cids(true)
       .size(pagination.size)
       .skip(pagination.skip)
       .searchByRegex('refNumber', pagination.id)
       .find();
+    return await Promise.all(
+      cids.map(c => {
+        return IpfsService.getDataFromCid(c);
+      })
+    ) as any[];
   }
 
   async countAll(ref: string): Promise<any> {
@@ -217,8 +153,8 @@ export class PurchaseState {
   }
 
   async invoicesCount(ref: string): Promise<number> {
-    const shop = await this.storageService.getActiveShop();
-    return await BFast.database(shop.projectId)
+    const shop = await this.userService.getCurrentShop();
+    return await database(shop.projectId)
       .collection('purchases')
       .query()
       .searchByRegex('refNumber', ref)

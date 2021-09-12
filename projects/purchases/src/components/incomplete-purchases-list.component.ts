@@ -13,7 +13,7 @@ import {PurchaseDetailsModalComponent} from './purchase-details.component';
 import {FormControl} from '@angular/forms';
 import {Subject} from 'rxjs';
 import {debounceTime, takeUntil} from 'rxjs/operators';
-import {DeviceState} from "@smartstocktz/core-libs";
+import {DeviceState} from '@smartstocktz/core-libs';
 
 @Component({
   template: `
