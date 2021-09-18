@@ -141,30 +141,30 @@ export class IncompletePurchasesTableComponent implements OnInit, OnDestroy, Aft
         this.irid = '';
         this.fetchPurchases(this.skip, this.size, this.irid).catch(console.log);
       }
-      this.purchaseState.countAll(this.irid).then(value1 => {
-        this.total = value1;
-      }).catch(console.log);
+      // this.purchaseState.countAll(this.irid).then(value1 => {
+      //   this.total = value1;
+      // }).catch(console.log);
     });
-    this.total = await this.purchaseState.countAll(this.irid);
+    // this.total = await this.purchaseState.countAll(this.irid);
     await this.fetchPurchases(this.skip, this.size, this.irid);
   }
 
   async fetchPurchases(skip: number, size: number, id: string) {
     this.fetchingPurchases = true;
     try {
-      let purchases = await this.purchaseState.fetchSync(size, skip, id);
-      purchases = purchases.map(((value: PurchaseModel, index) => {
-        return {
-          ...value,
-          date: moment(value.date).format('YYYY-MM-DD'),
-          dueDate: moment(value.due ? value.due : value.date).format('YYYY-MM-DD'),
-          supplierName: value.supplier.name,
-          amountDue: value.amount - this.purchaseState.calculateTotalReturns(value.returns),
-          amountPaid: this.purchaseState.calculateTotalReturns(value.returns),
-          paid: value.amount <= this.purchaseState.calculateTotalReturns(value.returns)
-        };
-      }));
-      this.dataSource.data = purchases;
+      // let purchases = await this.purchaseState.fetchSync(size, skip, id);
+      // purchases = purchases.map(((value: PurchaseModel, index) => {
+      //   return {
+      //     ...value,
+      //     date: moment(value.date).format('YYYY-MM-DD'),
+      //     dueDate: moment(value.due ? value.due : value.date).format('YYYY-MM-DD'),
+      //     supplierName: value.supplier.name,
+      //     amountDue: value.amount - this.purchaseState.calculateTotalReturns(value.returns),
+      //     amountPaid: this.purchaseState.calculateTotalReturns(value.returns),
+      //     paid: value.amount <= this.purchaseState.calculateTotalReturns(value.returns)
+      //   };
+      // }));
+      // this.dataSource.data = purchases;
     } catch (e) {
       this.noData = true;
       this.snack.open('An Error occurred fetching the purchases please reload.', 'OK', {

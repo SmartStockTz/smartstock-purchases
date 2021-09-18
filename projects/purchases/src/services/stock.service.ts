@@ -18,10 +18,10 @@ export class StockService {
   async getAllStock(): Promise<StockModel[]> {
     const shop = await this.userService.getCurrentShop();
     const cids = await database(shop.projectId)
-      .collection<StockModel>('stocks')
-      .getAll<string>({
-        cids: true
-      });
+      .collection('stocks')
+      .query()
+      .cids(true)
+      .orderBy('createdAt', 'desc') as any[];
     const stocks = await Promise.all(
       cids.map(c => {
         return IpfsService.getDataFromCid(c);

@@ -7,44 +7,30 @@ import {DeviceState} from '@smartstocktz/core-libs';
   selector: 'app-purchase',
   template: `
     <app-layout-sidenav [heading]="'Purchases'"
-                        searchPlaceholder="Search purchase"
+                        searchPlaceholder="Filter by date"
+                        (searchCallback)="searchPurchase($event)"
                         backLink="/purchase"
                         [hasBackRoute]="true"
                         [leftDrawer]="side"
                         [body]="body"
+                        [showSearch]="true"
                         [leftDrawerMode]="(deviceState.enoughWidth | async)===true?'side':'over'"
                         [leftDrawerOpened]="(deviceState.enoughWidth | async)===true"
+                        [visibleMenu]="vOptions"
+                        [hiddenMenu]="hOptions"
                         [showProgress]="false">
+      <ng-template #vOptions>
+
+      </ng-template>
+      <ng-template #hOptions>
+
+      </ng-template>
       <ng-template #side>
         <app-drawer></app-drawer>
       </ng-template>
       <ng-template #body>
-        <div class="container col-12 col-xl-9 col-lg-9 col-md-10 col-sm-10 pt-3" style="min-height: 100vh">
-          <mat-card-title class="d-flex flex-row flex-nowrap">
-            <button
-              routerLink="/purchase/create"
-              mat-flat-button
-              color="primary"
-              class="ft-button">
-              Add Purchase
-            </button>
-            <span class="toolbar-spacer"></span>
-<!--            <button-->
-<!--              [matMenuTriggerFor]="pAoptions"-->
-<!--              color="primary"-->
-<!--              mat-icon-button>-->
-<!--              <mat-icon> more_vert</mat-icon>-->
-<!--            </button>-->
-<!--            <mat-menu #pAoptions>-->
-<!--              <button mat-menu-item (click)="reload()">Reload</button>-->
-<!--            </mat-menu>-->
-          </mat-card-title>
-          <mat-card class="mat-elevation-z2">
-            <mat-card-content>
-              <app-incomplete-purchases></app-incomplete-purchases>
-            </mat-card-content>
-          </mat-card>
-        </div>
+        <app-purchases-desktop *ngIf="(deviceState.isSmallScreen | async) === false"></app-purchases-desktop>
+        <app-purchases-mobile *ngIf="(deviceState.isSmallScreen | async) === true"></app-purchases-mobile>
       </ng-template>
     </app-layout-sidenav>
   `,
@@ -53,12 +39,15 @@ import {DeviceState} from '@smartstocktz/core-libs';
 })
 export class PurchasePageComponent implements OnInit {
 
-  constructor(
-    public readonly deviceState: DeviceState,
-    public readonly snack: MatSnackBar) {
+  constructor(public readonly deviceState: DeviceState,
+              public readonly purchaseState: PurchaseState) {
     document.title = 'SmartStock - Purchase';
   }
 
   ngOnInit(): void {
+  }
+
+  searchPurchase(q: string) {
+    this.purchaseState.filterKeyword.next(q);
   }
 }

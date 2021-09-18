@@ -535,18 +535,18 @@ export class CreatePageComponent implements OnInit {
   }
 
   getSuppliers(): void {
-    this.supplierFetching = true;
-    this.purchaseState
-      .getAllSupplier()
-      .then((data) => {
-        const dataArray = JSON.parse(JSON.stringify(data));
-        this.suppliers = of(dataArray);
-        this.supplierFetching = false;
-      })
-      .catch((reason) => {
-        this.suppliers = of([{name: 'Default Supplier'}]);
-        this.supplierFetching = false;
-      });
+    // this.supplierFetching = true;
+    // this.purchaseState
+    //   .getAllSupplier()
+    //   .then((data) => {
+    //     const dataArray = JSON.parse(JSON.stringify(data));
+    //     this.suppliers = of(dataArray);
+    //     this.supplierFetching = false;
+    //   })
+    //   .catch((reason) => {
+    //     this.suppliers = of([{name: 'Default Supplier'}]);
+    //     this.supplierFetching = false;
+    //   });
   }
 
   addProduct($event): void {

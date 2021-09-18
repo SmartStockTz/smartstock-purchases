@@ -44,6 +44,11 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatSortModule} from '@angular/material/sort';
 import {MatListModule} from '@angular/material/list';
 import {PurchaseNavigationService} from './services/purchase-navigation.service';
+import {PurchasesTableOptionsComponent} from './components/purchases-table-options.component';
+import {PurchasesTableComponent} from "./components/purchases-table.component";
+import {PurchasesListComponent} from "./components/purchases-list.component";
+import {PurchasesDesktopComponent} from "./components/purchases-desktop.component";
+import {PurchasesMobileComponent} from "./components/purchases-mobile.component";
 
 const routes: Routes = [
   {path: '', component: IndexPage},
@@ -68,6 +73,11 @@ const routes: Routes = [
     DialogSupplierDeleteComponent,
     VerifyEMailDialogComponent,
     IndexPage,
+    PurchasesTableOptionsComponent,
+    PurchasesTableComponent,
+    PurchasesListComponent,
+    PurchasesDesktopComponent,
+    PurchasesMobileComponent
   ],
   imports: [
     CommonModule,
