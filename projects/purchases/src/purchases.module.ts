@@ -45,10 +45,17 @@ import {MatSortModule} from '@angular/material/sort';
 import {MatListModule} from '@angular/material/list';
 import {PurchaseNavigationService} from './services/purchase-navigation.service';
 import {PurchasesTableOptionsComponent} from './components/purchases-table-options.component';
-import {PurchasesTableComponent} from "./components/purchases-table.component";
-import {PurchasesListComponent} from "./components/purchases-list.component";
-import {PurchasesDesktopComponent} from "./components/purchases-desktop.component";
-import {PurchasesMobileComponent} from "./components/purchases-mobile.component";
+import {PurchasesTableComponent} from './components/purchases-table.component';
+import {PurchasesListComponent} from './components/purchases-list.component';
+import {PurchasesDesktopComponent} from './components/purchases-desktop.component';
+import {PurchasesMobileComponent} from './components/purchases-mobile.component';
+import {PurchaseCartComponent} from './components/purchase-cart.component';
+import {MatToolbarModule} from '@angular/material/toolbar';
+import {MatBadgeModule} from '@angular/material/badge';
+import {ProductTilesComponent} from './components/product-tiles.component';
+import {ProductListComponent} from './components/product-list.component';
+import {PurchaseCartPreviewComponent} from './components/purchase-cart-preview.component';
+import {ProductComponent} from './components/product.component';
 
 const routes: Routes = [
   {path: '', component: IndexPage},
@@ -77,7 +84,12 @@ const routes: Routes = [
     PurchasesTableComponent,
     PurchasesListComponent,
     PurchasesDesktopComponent,
-    PurchasesMobileComponent
+    PurchasesMobileComponent,
+    PurchaseCartComponent,
+    ProductTilesComponent,
+    ProductListComponent,
+    PurchaseCartPreviewComponent,
+    ProductComponent
   ],
   imports: [
     CommonModule,
@@ -121,7 +133,9 @@ const routes: Routes = [
     MatRippleModule,
     MatProgressBarModule,
     MatSortModule,
-    MatListModule
+    MatListModule,
+    MatToolbarModule,
+    MatBadgeModule
   ],
 })
 export class PurchasesModule {

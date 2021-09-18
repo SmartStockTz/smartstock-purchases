@@ -12,291 +12,41 @@ import {DeviceState, StorageService} from '@smartstocktz/core-libs';
 import {StockState} from '../states/stock.state';
 import {ProductSearchDialogComponent} from '../components/product-search-dialog.component';
 import {MatTableDataSource} from '@angular/material/table';
+import {SupplierState} from '../states/supplier.state';
 
 @Component({
   selector: 'app-purchase-create',
   template: `
-    <mat-sidenav-container class="match-parent">
-      <mat-sidenav
-        class="match-parent-side"
-        #sidenav
-        [mode]="(deviceState.enoughWidth | async)===true ? 'side' : 'over'"
-        [opened]="(deviceState.enoughWidth | async)===true">
+    <app-layout-sidenav
+      [showSearch]="true"
+      searchPlaceholder="Search product..."
+      [hiddenMenu]="hOptions"
+      [visibleMenu]="vOptions"
+      heading="Create purchase"
+      [leftDrawer]="side"
+      [leftDrawerOpened]="(deviceState.enoughWidth | async)===true"
+      [leftDrawerMode]="(deviceState.enoughWidth | async)===true?'side':'over'"
+      [rightDrawer]="right"
+      [rightDrawerMode]="(deviceState.enoughWidth |async)===true?'side':'over'"
+      [rightDrawerOpened]="false"
+      [body]="body">
+      <ng-template #right>
+        <app-purchase-cart></app-purchase-cart>
+      </ng-template>
+      <ng-template #vOptions>
+
+      </ng-template>
+      <ng-template #hOptions>
+
+      </ng-template>
+      <ng-template #side>
         <app-drawer></app-drawer>
-      </mat-sidenav>
-
-      <mat-sidenav-content>
-        <app-toolbar
-          [heading]="'Add Purchase'"
-          searchPlaceholder="Search product"
-          [sidenav]="sidenav"
-          [showProgress]="false"
-          [hasBackRoute]="true"
-          [backLink]="'/purchase'">
-        </app-toolbar>
-        <div class="container">
-          <form [formGroup]="invoiceForm" (ngSubmit)="saveInvoice($event)">
-            <div class="row d-flex justify-content-center align-items-center">
-              <div class="col-12 col-xl-12 col-lg-12">
-                <h2>Receipt information</h2>
-                <mat-card class="mat-elevation-z0">
-                  <mat-card-content class="card-content">
-                    <mat-slide-toggle
-                      style="margin-bottom: 8px; margin-top: 8px"
-                      color="primary"
-                      labelPosition="after"
-                      [formControl]="isInvoiceFormControl"
-                      label="Invoice purchase">
-                      Invoice purchase
-                    </mat-slide-toggle>
-                    <div class="row">
-                      <div class="col-md-3 col-lg-3">
-                        <mat-form-field appearance="outline" class="my-input">
-                          <mat-label>ref #</mat-label>
-                          <input matInput formControlName="refNumber"/>
-                          <mat-error
-                          >Purchase reference number required
-                          </mat-error>
-                        </mat-form-field>
-                      </div>
-                      <div class="col-md-3 col-lg-3">
-                        <mat-form-field appearance="outline" class="my-input">
-                          <mat-label>Supplier</mat-label>
-                          <mat-select formControlName="supplier">
-                            <mat-option
-                              *ngFor="let supplier of suppliers | async"
-                              [value]="supplier">
-                              {{ supplier.name }}
-                            </mat-option>
-                          </mat-select>
-                          <mat-progress-spinner
-                            matTooltip="Fetching suppliers"
-                            *ngIf="supplierFetching"
-                            matSuffix
-                            color="accent"
-                            mode="indeterminate"
-                            [diameter]="20"></mat-progress-spinner>
-                          <mat-error>Supplier required</mat-error>
-                          <div matSuffix class="d-flex flex-row">
-                            <button
-                              (click)="refreshSuppliers($event)"
-                              mat-icon-button
-                              matTooltip="refresh suppliers"
-                              *ngIf="!supplierFetching">
-                              <mat-icon>refresh</mat-icon>
-                            </button>
-                            <button
-                              (click)="addNewSupplier($event)"
-                              mat-icon-button
-                              matTooltip="add new supplier"
-                              *ngIf="!supplierFetching">
-                              <mat-icon>add</mat-icon>
-                            </button>
-                          </div>
-                        </mat-form-field>
-                      </div>
-                      <div class="col-md-3 col-lg-3">
-                        <mat-form-field appearance="outline" class="my-input">
-                          <mat-label>Purchase Date</mat-label>
-                          <input
-                            matInput
-                            [matDatepicker]="picker"
-                            formControlName="date"
-                            required
-                          />
-                          <mat-datepicker-toggle
-                            matSuffix
-                            [for]="picker"></mat-datepicker-toggle>
-                          <mat-datepicker
-                            [touchUi]="true"
-                            #picker
-                          ></mat-datepicker>
-                        </mat-form-field>
-                      </div>
-                      <div class="col-md-3 col-lg-3">
-                        <mat-form-field
-                          *ngIf="isInvoiceFormControl.value"
-                          appearance="outline"
-                          class="my-input">
-                          <mat-label>Due Date</mat-label>
-                          <input
-                            matInput
-                            [matDatepicker]="pickerDue"
-                            formControlName="due"/>
-                          <mat-datepicker-toggle
-                            matSuffix
-                            [for]="pickerDue"></mat-datepicker-toggle>
-                          <mat-datepicker
-                            [touchUi]="true"
-                            #pickerDue></mat-datepicker>
-                        </mat-form-field>
-                      </div>
-                    </div>
-                  </mat-card-content>
-                </mat-card>
-
-                <!-- <h2>Purchased products</h2> -->
-
-                <div
-                  style="margin-bottom: 16px; display: flex; flex-direction: row; flex-wrap: wrap"
-                >
-                  <button
-                    (click)="addProduct($event)"
-                    mat-button
-                    color="primary"
-                  >
-                    <mat-icon matSuffix>add</mat-icon>
-                    Add Product
-                  </button>
-                </div>
-
-                <app-product-details *ngIf="formvisibility"
-                                     [formvisibility]="formvisibility"
-                                     [productdetails]="productdetails"
-                                     (product)="addProductToTable($event)"
-                ></app-product-details>
-
-                <mat-card class="mat-elevation-z3 productlistable">
-                  <h2>Purchased products list</h2>
-                  <table mat-table [dataSource]="purchaseDatasource">
-                    <ng-container cdkColumnDef="product">
-                      <th mat-header-cell *cdkHeaderCellDef>Product</th>
-                      <td mat-cell *cdkCellDef="let element">
-                        {{ element.product.product }}
-                      </td>
-                      <td mat-footer-cell *cdkFooterCellDef>
-                        <h2 style="margin: 0; padding: 5px">TOTAL</h2>
-                      </td>
-                    </ng-container>
-
-                    <ng-container cdkColumnDef="expiredate">
-                      <th mat-header-cell *cdkHeaderCellDef>Expire Date</th>
-                      <td mat-cell *cdkCellDef="let element">
-                        {{ element.expire | date }}
-                      </td>
-                      <td mat-footer-cell *cdkFooterCellDef></td>
-                    </ng-container>
-
-                    <ng-container cdkColumnDef="quantity">
-                      <th mat-header-cell *cdkHeaderCellDef>Quantity</th>
-                      <td mat-cell *cdkCellDef="let element">
-                        {{ element.quantity }}
-                      </td>
-                      <td mat-footer-cell *cdkFooterCellDef></td>
-                    </ng-container>
-
-                    <ng-container cdkColumnDef="purchaseprice">
-                      <th mat-header-cell *cdkHeaderCellDef>Purchase price</th>
-                      <td mat-cell *cdkCellDef="let element">
-                        {{ element.purchase }}
-                      </td>
-
-                      <td mat-footer-cell *cdkFooterCellDef></td>
-                    </ng-container>
-
-                    <ng-container cdkColumnDef="retailprice">
-                      <th mat-header-cell *cdkHeaderCellDef>Retail price</th>
-                      <td mat-cell *cdkCellDef="let element">
-                        {{ element.retailPrice }}
-                      </td>
-                      <td mat-footer-cell *cdkFooterCellDef></td>
-                    </ng-container>
-
-                    <ng-container cdkColumnDef="wholesaleprice">
-                      <th mat-header-cell *cdkHeaderCellDef>Wholesale price</th>
-                      <td mat-cell *cdkCellDef="let element">
-                        {{ element.wholesalePrice }}
-                      </td>
-                      <td mat-footer-cell *cdkFooterCellDef></td>
-                    </ng-container>
-
-                    <ng-container cdkColumnDef="wholesalequantity">
-                      <th mat-header-cell *cdkHeaderCellDef>
-                        Wholesale quantity
-                      </th>
-                      <td mat-cell *cdkCellDef="let element">
-                        {{ element.wholesaleQuantity }}
-                      </td>
-                      <td mat-footer-cell *cdkFooterCellDef></td>
-                    </ng-container>
-
-                    <ng-container cdkColumnDef="Amount">
-                      <th mat-header-cell *cdkHeaderCellDef>Amount</th>
-                      <td mat-cell *cdkCellDef="let element">
-                        {{ element.amount }}
-                      </td>
-                      <td mat-footer-cell *cdkFooterCellDef>
-                        <h1 style="margin: 0; padding: 5px">
-                          {{ totalCost | number }}
-                        </h1>
-                      </td>
-                    </ng-container>
-
-                    <ng-container cdkColumnDef="action">
-                      <th mat-header-cell *cdkHeaderCellDef>Action</th>
-                      <td mat-cell *cdkCellDef="let element">
-<!--                        <button-->
-<!--                          (click)="editproduct($event, element)"-->
-<!--                          mat-icon-button-->
-<!--                          color="primary"-->
-<!--                          matTooltip="Edit product info"-->
-<!--                          matTooltipPosition="above"-->
-<!--                        >-->
-<!--                          <mat-icon>edit</mat-icon>-->
-<!--                        </button>-->
-                        <button
-                          (click)="removeItem($event, element)"
-                          mat-icon-button
-                          color="warn"
-                          matTooltip="Remove product from list"
-                          matTooltipPosition="above"
-                        >
-                          <mat-icon>delete</mat-icon>
-                        </button>
-                      </td>
-                      <td mat-footer-cell *cdkFooterCellDef></td>
-                    </ng-container>
-
-                    <tr
-                      mat-header-row
-                      *cdkHeaderRowDef="purchaseTableColumn"
-                    ></tr>
-                    <tr
-                      mat-row
-                      *matRowDef="let row; columns: purchaseTableColumn"
-                    ></tr>
-                    <tr
-                      mat-footer-row
-                      *cdkFooterRowDef="purchaseTableColumn"
-                    ></tr>
-                  </table>
-                </mat-card>
-              </div>
-
-              <div class="status">
-                <button
-                  [disabled]="saveInvoiceProgress"
-                  class="btn-block ft-button"
-                  mat-flat-button
-                  color="primary"
-                >
-                  Record purchase
-                  <mat-progress-spinner
-                    style="display: inline-block"
-                    *ngIf="saveInvoiceProgress"
-                    mode="indeterminate"
-                    [diameter]="15"
-                    color="accent"
-                  >
-                  </mat-progress-spinner>
-                </button>
-                <div style="margin-bottom: 48px"></div>
-              </div>
-            </div>
-          </form>
-        </div>
-      </mat-sidenav-content>
-    </mat-sidenav-container>
+      </ng-template>
+      <ng-template #body>
+        <app-product-tiles *ngIf="(deviceState.isSmallScreen | async) === false"></app-product-tiles>
+        <app-product-list *ngIf="(deviceState.isSmallScreen | async) === true"></app-product-list>
+      </ng-template>
+    </app-layout-sidenav>
   `,
   styleUrls: ['../styles/create.style.scss'],
   encapsulation: ViewEncapsulation.None,
@@ -346,6 +96,7 @@ export class CreatePageComponent implements OnInit {
     private readonly indexDb: StorageService,
     private readonly purchaseState: PurchaseState,
     private readonly stockState: StockState,
+    private readonly supplierState: SupplierState,
     public readonly deviceState: DeviceState,
     private readonly dialog: MatDialog
   ) {
@@ -353,6 +104,7 @@ export class CreatePageComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.supplierState.fetchSuppliers();
     this.invoiceForm = this.formBuilder.group({
       refNumber: ['', [Validators.nullValidator, Validators.required]],
       supplier: [null, [Validators.nullValidator, Validators.required]],
@@ -364,7 +116,8 @@ export class CreatePageComponent implements OnInit {
       items: [[], Validators.required],
     });
     this.getSuppliers();
-    this.searchProductFormControl.valueChanges
+    this.searchProductFormControl
+      .valueChanges
       .pipe(debounceTime(1000), distinctUntilChanged())
       .subscribe((value) => {
         if (value) {
