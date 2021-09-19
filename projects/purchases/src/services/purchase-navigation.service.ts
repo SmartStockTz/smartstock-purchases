@@ -15,12 +15,12 @@ export class PurchaseNavigationService {
       roles: ['admin', 'manager'],
       link: '/purchase',
       pages: [
-        {
-          name: 'receipts & invoices',
-          link: '/purchase/reference',
-          roles: ['admin', 'manager'],
-          click: null
-        }
+        // {
+        //   name: 'receipts & invoices',
+        //   link: '/purchase/reference',
+        //   roles: ['admin', 'manager'],
+        //   click: null
+        // }
       ]
     });
   }

@@ -1,8 +1,7 @@
-import {StockModel} from './stock.model';
 import {SupplierModel} from './supplier.model';
+import {PurchaseItemModel} from './purchase-item.model';
 
 export interface PurchaseModel {
-  objectId?: string;
   id?: string;
   createdAt?: any;
   updatedAt?: any;
@@ -10,20 +9,16 @@ export interface PurchaseModel {
   due: any;
   refNumber: string;
   amount: number;
-  // amountPaid?: number;
-  returns?: [any];
-  paid: boolean;
+  payment?: {
+    [key: string]: number
+  };
   draft?: boolean;
   supplier: SupplierModel;
+  user: {
+    username: string,
+    firstname: string,
+    lastname: string
+  };
   type: 'invoice' | 'receipt';
-  items: {
-    wholesaleQuantity: number;
-    wholesalePrice: number;
-    retailPrice: number;
-    product: StockModel,
-    amount: number,
-    purchase: number,
-    quantity: number,
-    expire: any
-  }[];
+  items: PurchaseItemModel[];
 }

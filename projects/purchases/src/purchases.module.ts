@@ -32,21 +32,38 @@ import {RouterModule, ROUTES, Routes} from '@angular/router';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {HttpClientModule} from '@angular/common/http';
 import {MatNativeDateModule, MatRippleModule} from '@angular/material/core';
-import {IndexPage} from './pages/index.page';
 import {MatDialogModule} from '@angular/material/dialog';
-import {ProductDetailComponent} from './components/product-details-component';
-import {ProductSearchDialogComponent} from './components/product-search-dialog.component';
 import {CdkTableModule} from '@angular/cdk/table';
 import {PurchaseDetailsModalComponent} from './components/purchase-details.component';
-import {IncompletePurchasesTableComponent} from './components/incomplete-purchases-list.component';
-import {AddReturnSheetComponent} from './components/add-returns-sheet.component';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatSortModule} from '@angular/material/sort';
 import {MatListModule} from '@angular/material/list';
 import {PurchaseNavigationService} from './services/purchase-navigation.service';
+import {PurchasesTableOptionsComponent} from './components/purchases-table-options.component';
+import {PurchasesTableComponent} from './components/purchases-table.component';
+import {PurchasesListComponent} from './components/purchases-list.component';
+import {PurchasesDesktopComponent} from './components/purchases-desktop.component';
+import {PurchasesMobileComponent} from './components/purchases-mobile.component';
+import {PurchaseCartComponent} from './components/purchase-cart.component';
+import {MatToolbarModule} from '@angular/material/toolbar';
+import {MatBadgeModule} from '@angular/material/badge';
+import {ProductTilesComponent} from './components/product-tiles.component';
+import {ProductListComponent} from './components/product-list.component';
+import {PurchaseCartPreviewComponent} from './components/purchase-cart-preview.component';
+import {ProductComponent} from './components/product.component';
+import {AddToCartDialogComponent} from './components/add-to-cart-dialog.component';
+import {SavePurchaseDialogComponent} from './components/save-purchase-dialog.component';
+import {AddPurchasePaymentDialogComponent} from './components/add-purchase-payment-dialog.component';
+import {ProductListItemComponent} from './components/product-list-item.component';
+import {AddToCartFormComponent} from './components/add-to-cart-form.component';
+import {AddToCartSheetComponent} from './components/add-to-cart-sheet.component';
+import {AddPurchasePaymentFormComponent} from './components/add-purchase-payment-form.component';
+import {SavePurchaseFormComponent} from './components/save-purchase-form.component';
+import {SavePurchaseSheetComponent} from './components/save-purchase-sheet.component';
+import {InfiniteScrollModule} from "ngx-infinite-scroll";
 
 const routes: Routes = [
-  {path: '', component: IndexPage},
+  {path: '', component: PurchasePageComponent},
   {path: 'reference', component: PurchasePageComponent},
   {path: 'create', component: CreatePageComponent},
 ];
@@ -54,10 +71,6 @@ const routes: Routes = [
 @NgModule({
   declarations: [
     PurchaseDetailsModalComponent,
-    IncompletePurchasesTableComponent,
-    AddReturnSheetComponent,
-    ProductSearchDialogComponent,
-    ProductDetailComponent,
     PurchasePageComponent,
     PurchaseDetailsComponent,
     CreatePageComponent,
@@ -67,7 +80,25 @@ const routes: Routes = [
     StockDetailsComponent,
     DialogSupplierDeleteComponent,
     VerifyEMailDialogComponent,
-    IndexPage,
+    PurchasesTableOptionsComponent,
+    PurchasesTableComponent,
+    PurchasesListComponent,
+    PurchasesDesktopComponent,
+    PurchasesMobileComponent,
+    PurchaseCartComponent,
+    ProductTilesComponent,
+    ProductListComponent,
+    PurchaseCartPreviewComponent,
+    ProductComponent,
+    AddToCartDialogComponent,
+    AddPurchasePaymentDialogComponent,
+    SavePurchaseDialogComponent,
+    ProductListItemComponent,
+    AddToCartSheetComponent,
+    AddToCartFormComponent,
+    AddPurchasePaymentFormComponent,
+    SavePurchaseFormComponent,
+    SavePurchaseSheetComponent
   ],
   imports: [
     CommonModule,
@@ -111,7 +142,10 @@ const routes: Routes = [
     MatRippleModule,
     MatProgressBarModule,
     MatSortModule,
-    MatListModule
+    MatListModule,
+    MatToolbarModule,
+    MatBadgeModule,
+    InfiniteScrollModule
   ],
 })
 export class PurchasesModule {

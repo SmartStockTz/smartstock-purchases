@@ -1,164 +1,93 @@
 import {Injectable} from '@angular/core';
 import {PurchaseModel} from '../models/purchase.model';
-import {HttpClient} from '@angular/common/http';
-import {database} from 'bfast';
-import {SupplierModel} from '../models/supplier.model';
-import {IpfsService, UserService} from '@smartstocktz/core-libs';
+import {BehaviorSubject} from 'rxjs';
+import {PurchaseService} from '../services/purchase.service';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PurchaseState {
-  constructor(private readonly httpClient: HttpClient,
-              private readonly userService: UserService) {
-  }
+  fetchPurchasesProgress = new BehaviorSubject<boolean>(false);
+  loadMoreProgress = new BehaviorSubject<boolean>(false);
+  addPurchasesProgress = new BehaviorSubject<boolean>(false);
+  addPaymentProgress = new BehaviorSubject<boolean>(false);
+  purchases = new BehaviorSubject<PurchaseModel[]>([]);
+  filterKeyword = new BehaviorSubject<string>(null);
+  totalPurchase = new BehaviorSubject<number>(1000);
+  size = 50;
 
-  async recordPayment(id: string): Promise<any> {
-    const activeShop = await this.userService.getCurrentShop();
-    return database(activeShop.projectId)
-      .collection('purchases')
-      .query()
-      .byId(id)
-      .updateBuilder()
-      .set('paid', true)
-      .update();
+  constructor(private readonly purchaseService: PurchaseService,
+              private readonly matSnackBar: MatSnackBar) {
   }
 
   async addPurchase(purchaseI: PurchaseModel): Promise<any> {
-    const shop = await this.userService.getCurrentShop();
-    return database(shop.projectId)
-      .bulk()
-      .create('purchases', purchaseI)
-      .update(
-        'stocks',
-        purchaseI.items
-          .filter((x) => x.product.purchasable === true)
-          .map((item) => {
-            return {
-              query: {
-                id: item.product.id,
-              },
-              update: {
-                $set: {
-                  expire: item.expire,
-                  purchase: Number(item.purchase),
-                  retailPrice: Number(item.retailPrice),
-                  wholesalePrice: Number(item.wholesalePrice),
-                  wholesaleQuantity: Number(item.wholesaleQuantity),
-                },
-                $currentDate: {
-                  _updated_at: true,
-                },
-                $inc: {
-                  quantity:
-                    item.product.stockable === true ? Number(item.quantity) : 0,
-                },
-              },
-            };
-          })
-      )
-      .commit();
-  }
-
-  async getAllPurchase(page: {
-    size?: number;
-    skip?: number;
-  }): Promise<PurchaseModel[]> {
-    const activeShop = await this.userService.getCurrentShop();
-    const cids: string[] = await database(activeShop.projectId)
-      .collection('purchases')
-      .query()
-      .cids(true)
-      .size(page.size)
-      .skip(page.skip)
-      .find();
-    return await Promise.all(
-      cids.map(c => {
-        return IpfsService.getDataFromCid(c);
+    this.addPurchasesProgress.next(true);
+    return this.purchaseService.addPurchase(purchaseI)
+      .catch(reason => {
+        this.showMessage(reason.message ? reason.message : reason.toString());
       })
-    ) as any[];
-  }
-
-  async getAllSupplier(): Promise<SupplierModel[]> {
-    const shop = await this.userService.getCurrentShop();
-    const cids = await database(shop.projectId)
-      .collection<SupplierModel>('suppliers')
-      .getAll<string>({
-        cids: true
+      .finally(() => {
+        this.addPurchasesProgress.next(false);
       });
-    return await Promise.all(
-      cids.map(c => {
-        return IpfsService.getDataFromCid(c);
-      })
-    ) as any[];
   }
 
-  async addReturn(id: string, value: any): Promise<[PurchaseModel]> {
-    const shop = await this.userService.getCurrentShop();
-    const purchase: PurchaseModel = await database(shop.projectId)
-      .collection('purchases')
-      .get(id);
-    if (purchase && purchase.returns && Array.isArray(purchase.returns)) {
-      purchase.returns.push(value);
-    } else {
-      purchase.returns = [value];
-    }
-    delete purchase.updatedAt;
-    return await database(shop.projectId)
-      .collection('purchases')
-      .query()
-      .byId(id)
-      .updateBuilder()
-      .doc(purchase)
-      .update();
-  }
-
-  calculateTotalReturns(returns: [any]) {
-    if (returns && Array.isArray(returns)) {
-      return returns.map(a => a.amount).reduce((a, b, i) => {
-        return a + b;
-      });
-    } else {
-      return 0.0;
-    }
-  }
-
-  async fetchSync(size: number, skip: number, id: string): Promise<PurchaseModel[]> {
-    return await this.getPurchases({
-      skip,
-      size,
-      id
+  getPurchases(page: number): void {
+    this.fetchPurchasesProgress.next(true);
+    this.purchaseService.countAll(this.filterKeyword.value ? this.filterKeyword.value : '')
+      .then(value => {
+        this.totalPurchase.next(value);
+        return this.purchaseService.fetchPurchases(
+          this.size,
+          this.size * page,
+          this.filterKeyword.value ? this.filterKeyword.value : ''
+        );
+      }).then(value => {
+      if (Array.isArray(value)) {
+        this.purchases.next(value);
+      }
+    }).catch(reason => {
+      this.showMessage(reason.message ? reason.message : reason.toString());
+    }).finally(() => {
+      this.fetchPurchasesProgress.next(false);
     });
   }
 
-  async getPurchases(pagination: { size: number, skip: number, id: string }): Promise<PurchaseModel[]> {
-    const shop = await this.userService.getCurrentShop();
-    const cids: string[] = await database(shop.projectId)
-      .collection('purchases')
-      .query()
-      .cids(true)
-      .size(pagination.size)
-      .skip(pagination.skip)
-      .searchByRegex('refNumber', pagination.id)
-      .find();
-    return await Promise.all(
-      cids.map(c => {
-        return IpfsService.getDataFromCid(c);
-      })
-    ) as any[];
+  async addPayment(purchase: PurchaseModel, payment: { [key: string]: number }): Promise<any> {
+    this.addPaymentProgress.next(true);
+    payment = Object.assign(purchase.payment ? purchase.payment : {}, payment);
+    return this.purchaseService.addPayment(purchase.id, payment).then(value => {
+      const tPu = this.purchases.value.map(x => {
+        if (x.id === value.id) {
+          return value;
+        }
+        return x;
+      });
+      this.purchases.next(tPu);
+      return null;
+    }).catch(reason => {
+      this.showMessage(reason.message ? reason.message : reason.toString());
+    }).finally(() => {
+      this.addPaymentProgress.next(false);
+    });
   }
 
-  async countAll(ref: string): Promise<any> {
-    return this.invoicesCount(ref);
+  private showMessage(message: string) {
+    this.matSnackBar.open(message, 'Ok', {
+      duration: 3000
+    });
   }
 
-  async invoicesCount(ref: string): Promise<number> {
-    const shop = await this.userService.getCurrentShop();
-    return await database(shop.projectId)
-      .collection('purchases')
-      .query()
-      .searchByRegex('refNumber', ref)
-      .count(true)
-      .find();
+  loadMore() {
+    this.loadMoreProgress.next(true);
+    this.purchaseService
+      .fetchPurchases(this.size, this.purchases.value.length, this.filterKeyword.value)
+      .then(value => {
+        this.purchases.next([...this.purchases.value, ...value]);
+      }).catch(reason => {
+      this.showMessage(reason.message ? reason.message : reason.toString());
+    }).finally(() => {
+      this.loadMoreProgress.next(false);
+    });
   }
 }
