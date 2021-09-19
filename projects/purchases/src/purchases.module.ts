@@ -32,9 +32,7 @@ import {RouterModule, ROUTES, Routes} from '@angular/router';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {HttpClientModule} from '@angular/common/http';
 import {MatNativeDateModule, MatRippleModule} from '@angular/material/core';
-import {IndexPage} from './pages/index.page';
 import {MatDialogModule} from '@angular/material/dialog';
-import {ProductDetailComponent} from './components/product-details-component';
 import {CdkTableModule} from '@angular/cdk/table';
 import {PurchaseDetailsModalComponent} from './components/purchase-details.component';
 import {AddReturnSheetComponent} from './components/add-returns-sheet.component';
@@ -55,9 +53,11 @@ import {ProductListComponent} from './components/product-list.component';
 import {PurchaseCartPreviewComponent} from './components/purchase-cart-preview.component';
 import {ProductComponent} from './components/product.component';
 import {AddToCartDialogComponent} from './components/add-to-cart-dialog.component';
+import {SavePurchaseDialogComponent} from './components/save-purchase-dialog.component';
+import {AddPurchasePaymentDialogComponent} from './components/add-purchase-payment-dialog.component';
 
 const routes: Routes = [
-  {path: '', component: IndexPage},
+  {path: '', component: PurchasePageComponent},
   {path: 'reference', component: PurchasePageComponent},
   {path: 'create', component: CreatePageComponent},
 ];
@@ -66,7 +66,6 @@ const routes: Routes = [
   declarations: [
     PurchaseDetailsModalComponent,
     AddReturnSheetComponent,
-    ProductDetailComponent,
     PurchasePageComponent,
     PurchaseDetailsComponent,
     CreatePageComponent,
@@ -76,7 +75,6 @@ const routes: Routes = [
     StockDetailsComponent,
     DialogSupplierDeleteComponent,
     VerifyEMailDialogComponent,
-    IndexPage,
     PurchasesTableOptionsComponent,
     PurchasesTableComponent,
     PurchasesListComponent,
@@ -87,7 +85,9 @@ const routes: Routes = [
     ProductListComponent,
     PurchaseCartPreviewComponent,
     ProductComponent,
-    AddToCartDialogComponent
+    AddToCartDialogComponent,
+    AddPurchasePaymentDialogComponent,
+    SavePurchaseDialogComponent
   ],
   imports: [
     CommonModule,

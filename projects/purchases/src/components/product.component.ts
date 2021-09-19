@@ -1,7 +1,7 @@
 import {Component, Input} from '@angular/core';
 import {StockModel} from '../models/stock.model';
-import {MatDialog} from "@angular/material/dialog";
-import {AddToCartDialogComponent} from "./add-to-cart-dialog.component";
+import {MatDialog} from '@angular/material/dialog';
+import {AddToCartDialogComponent} from './add-to-cart-dialog.component';
 
 @Component({
   selector: 'app-product',

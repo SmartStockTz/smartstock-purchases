@@ -9,8 +9,9 @@ export interface PurchaseModel {
   due: any;
   refNumber: string;
   amount: number;
-  // amountPaid?: number;
-  returns?: any[];
+  payment?: {
+    [key: string]: number
+  };
   draft?: boolean;
   supplier: SupplierModel;
   user: {

@@ -99,11 +99,11 @@ export class AddReturnSheetComponent implements OnInit{
       }
       // this.returnsData.data.push(this.addReturnsFormControl.value);
       this.loading = true;
-      await this.purchaseState.addReturn(this.data.id, this.addReturnsFormControl.value);
+      await this.purchaseState.addPayment(this.data.id, this.addReturnsFormControl.value);
       this.loading = false;
       await this.returnsDetailsSheetRef.dismiss({
         id: this.data.id,
-        returns: this.addReturnsFormControl.value
+        return: this.addReturnsFormControl.value
       });
     } else {
       this.snack.open('Fill Amount before submitting', 'Ok', {

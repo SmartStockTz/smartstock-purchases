@@ -36,7 +36,7 @@ export class PurchaseService {
       .update(
         'stocks',
         purchase.items
-          .filter((x) => x.product.purchasable === true)
+          .filter((x) => x.product.stockable === true)
           .map((item) => {
             return {
               query: {
@@ -48,13 +48,10 @@ export class PurchaseService {
                   purchase: Number(item.purchase),
                   retailPrice: Number(item.retailPrice),
                   wholesalePrice: Number(item.wholesalePrice),
-                },
-                $currentDate: {
-                  _updated_at: true,
+                  updatedAt: new Date()
                 },
                 $inc: {
-                  quantity:
-                    item.product.stockable === true ? Number(item.quantity) : 0,
+                  quantity: Number(item.quantity),
                 },
               },
             };
@@ -71,5 +68,16 @@ export class PurchaseService {
       .searchByRegex('date', date)
       .count(true)
       .find();
+  }
+
+  async addPayment(id: string, payment: {[key: string]: number}): Promise<PurchaseModel> {
+    const shop = await this.userService.getCurrentShop();
+    return  await database(shop.projectId)
+      .collection('purchases')
+      .query()
+      .byId(id)
+      .updateBuilder()
+      .set('payment', payment)
+      .update();
   }
 }

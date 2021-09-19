@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {PurchaseModel} from '../models/purchase.model';
-import {BehaviorSubject, skip} from 'rxjs';
+import {BehaviorSubject} from 'rxjs';
 import {PurchaseService} from '../services/purchase.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 
@@ -8,27 +8,17 @@ import {MatSnackBar} from '@angular/material/snack-bar';
   providedIn: 'root',
 })
 export class PurchaseState {
-  fetchPurchasesProgress: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  addPurchasesProgress: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  purchases: BehaviorSubject<PurchaseModel[]> = new BehaviorSubject<PurchaseModel[]>([]);
-  filterKeyword: BehaviorSubject<string> = new BehaviorSubject<string>(null);
-  totalPurchase: BehaviorSubject<number> = new BehaviorSubject<number>(1000);
+  fetchPurchasesProgress = new BehaviorSubject<boolean>(false);
+  addPurchasesProgress = new BehaviorSubject<boolean>(false);
+  addPaymentProgress = new BehaviorSubject<boolean>(false);
+  purchases = new BehaviorSubject<PurchaseModel[]>([]);
+  filterKeyword = new BehaviorSubject<string>(null);
+  totalPurchase = new BehaviorSubject<number>(1000);
   size = 50;
 
   constructor(private readonly purchaseService: PurchaseService,
               private readonly matSnackBar: MatSnackBar) {
   }
-
-  // async recordPayment(id: string): Promise<any> {
-  //   const activeShop = await this.userService.getCurrentShop();
-  //   return database(activeShop.projectId)
-  //     .collection('purchases')
-  //     .query()
-  //     .byId(id)
-  //     .updateBuilder()
-  //     .set('paid', true)
-  //     .update();
-  // }
 
   async addPurchase(purchaseI: PurchaseModel): Promise<any> {
     this.addPurchasesProgress.next(true);
@@ -62,30 +52,28 @@ export class PurchaseState {
     });
   }
 
-  async addReturn(id: string, value: any): Promise<[PurchaseModel]> {
-    // const shop = await this.userService.getCurrentShop();
-    // const purchase: PurchaseModel = await database(shop.projectId)
-    //   .collection('purchases')
-    //   .get(id);
-    // if (purchase && purchase.returns && Array.isArray(purchase.returns)) {
-    //   purchase.returns.push(value);
-    // } else {
-    //   purchase.returns = [value];
-    // }
-    // delete purchase.updatedAt;
-    // return await database(shop.projectId)
-    //   .collection('purchases')
-    //   .query()
-    //   .byId(id)
-    //   .updateBuilder()
-    //   .doc(purchase)
-    //   .update();
-    return null;
+  async addPayment(purchase: PurchaseModel, payment: { [key: string]: number }): Promise<any> {
+    this.addPaymentProgress.next(true);
+    payment = Object.assign(purchase.payment ? purchase.payment : {}, payment);
+    return this.purchaseService.addPayment(purchase.id, payment).then(value => {
+      const tPu = this.purchases.value.map(x => {
+        if (x.id === value.id) {
+          return value;
+        }
+        return x;
+      });
+      this.purchases.next(tPu);
+      return null;
+    }).catch(reason => {
+      this.showMessage(reason.message ? reason.message : reason.toString());
+    }).finally(() => {
+      this.addPaymentProgress.next(false);
+    });
   }
 
-  calculateTotalReturns(returns: [any]) {
-    if (returns && Array.isArray(returns)) {
-      return returns.map(a => a.amount).reduce((a, b, i) => {
+  calculateTotalReturns(returns: { [key: string]: number }) {
+    if (returns) {
+      return Object.values(returns).reduce((a, b) => {
         return a + b;
       });
     } else {

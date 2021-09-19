@@ -2,7 +2,7 @@ import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {DeviceState} from '@smartstocktz/core-libs';
 import {StockState} from '../states/stock.state';
 import {SupplierState} from '../states/supplier.state';
-import {CartState} from "../states/cart.state";
+import {CartState} from '../states/cart.state';
 
 @Component({
   selector: 'app-purchase-create',

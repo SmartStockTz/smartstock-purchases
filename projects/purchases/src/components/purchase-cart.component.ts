@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormControl, Validators} from '@angular/forms';
 import {MatSidenav} from '@angular/material/sidenav';
 import {CartDrawerState, DeviceState, UserService} from '@smartstocktz/core-libs';
@@ -11,7 +11,8 @@ import {takeUntil} from 'rxjs/operators';
 import {SupplierState} from '../states/supplier.state';
 import {SupplierModel} from '../models/supplier.model';
 import {MatTableDataSource} from '@angular/material/table';
-import {DialogSupplierNewComponent} from './suppliers.component';
+import {SavePurchaseDialogComponent} from './save-purchase-dialog.component';
+import {PurchaseState} from '../states/purchase.state';
 
 @Component({
   selector: 'app-purchase-cart',
@@ -72,30 +73,18 @@ import {DialogSupplierNewComponent} from './suppliers.component';
       <div
         style="padding: 8px 8px 16px 8px;bottom: 0;width: 100%;position: absolute;background-color: white;z-index: 1000;">
         <mat-divider style="margin-bottom: 7px"></mat-divider>
-        <!--        <div class="cart-total">-->
-        <!--          <h6 style="display: flex;">-->
-        <!--            <span style="flex-grow: 1;">Total</span>-->
-        <!--            <span>{{cartState.cartTotal | async}}</span>-->
-        <!--          </h6>-->
-        <!--          <p style="color: #868688;display: flex;">-->
-        <!--            <span style="flex-grow: 1;">Discount( TZS )</span>-->
-        <!--            <input autocomplete="false"-->
-        <!--                   style="border: none; text-align: center;background-color: rgba(0, 170, 7, 0.1);-->
-        <!--              border-radius: 4px;width: 125px; height: 35px;"-->
-        <!--                   type="number" min="0" [formControl]="discountFormControl">-->
-        <!--          </p>-->
-        <!--        </div>-->
         <div class="checkout-container">
-          <button [disabled]="(cartState.checkoutProgress | async)===true" (click)="checkout()"
+          <button [disabled]="(purchaseState.addPurchasesProgress | async)===true"
+                  (click)="checkout()"
                   style="width: 100%;text-align:left;height: 48px;font-size: 18px" color="primary"
                   mat-flat-button>
             <span style="float: left;">{{cartState.cartTotal | async | number }}</span>
-            <mat-progress-spinner *ngIf="(cartState.checkoutProgress | async)===true"
+            <mat-progress-spinner *ngIf="(purchaseState.addPurchasesProgress | async)===true"
                                   mode="indeterminate"
                                   diameter="25"
                                   style="display: inline-block; float: right">
             </mat-progress-spinner>
-            <span style="float: right" *ngIf="(cartState.checkoutProgress | async)===false">Save</span>
+            <span style="float: right" *ngIf="(purchaseState.addPurchasesProgress | async)===false">Save</span>
           </button>
           <!--          <button *ngIf="(cartState.checkoutProgress | async)===false"-->
           <!--                  (click)="openOptions()" mat-icon-button>-->
@@ -123,22 +112,17 @@ export class PurchaseCartComponent implements OnInit, OnDestroy {
               public readonly deviceState: DeviceState,
               public readonly snack: MatSnackBar,
               public readonly cartDrawerState: CartDrawerState,
+              public readonly purchaseState: PurchaseState,
               public readonly sheet: MatBottomSheet,
               private readonly dialog: MatDialog) {
   }
 
   ngOnDestroy(): void {
-    // this.cartState.dispose();
     this.supplierState.suppliers.next([]);
     this.destroyer.next('done');
   }
 
   ngOnInit(): void {
-    // this.customerFormControl.setValue();
-    // this.customerState.fetchCustomers();
-    // this.getUser();
-    // this.cartListener();
-    // this.discountListener();
     this.handleSupplierNameControl();
     this.cartDrawerState.drawer.pipe(
       takeUntil(this.destroyer)
@@ -163,18 +147,18 @@ export class PurchaseCartComponent implements OnInit, OnDestroy {
     });
   }
 
-  addNewSupplier(): void {
-    this.dialog.open(DialogSupplierNewComponent, {
-      // minWidth: '80%',
-      closeOnNavigation: true,
-    })
-      .afterClosed()
-      .subscribe((value) => {
-        if (value) {
-          // this.getSuppliers();
-        }
-      });
-  }
+  // addNewSupplier(): void {
+  //   this.dialog.open(DialogSupplierNewComponent, {
+  //     // minWidth: '80%',
+  //     closeOnNavigation: true,
+  //   })
+  //     .afterClosed()
+  //     .subscribe((value) => {
+  //       if (value) {
+  //         // this.getSuppliers();
+  //       }
+  //     });
+  // }
 
   private getUser(): void {
     this.userService.currentUser()
@@ -197,16 +181,6 @@ export class PurchaseCartComponent implements OnInit, OnDestroy {
       );
   }
 
-  // private cartListener(): void {
-  //   this.cartState.carts.pipe(takeUntil(this.destroyer)).subscribe(_ => {
-  //     if (!_ || (_ && _.length === 0)) {
-  //       this.cartDrawerState.drawer.value.opened = false;
-  //     }
-  //     this.cartState.findTotal(this.discountFormControl.value);
-  //     this.cartState.totalItems();
-  //   });
-  // }
-
   checkout(): void {
     if (!this.cartState.selectedSupplier.value && this.supplierFormControl.value && this.supplierFormControl.value !== '') {
       this.cartState.selectedSupplier.next({
@@ -219,45 +193,13 @@ export class PurchaseCartComponent implements OnInit, OnDestroy {
       });
       return;
     }
-    // this.cartState.savePurchase().then(() => {
-    //   this.supplierFormControl.setValue(null);
-    //   this.cartState.selectedSupplier.next(null);
-    //   this.cartState.carts.next([]);
-    // }).catch(console.log);
-  }
-
-  createCustomer() {
-    // if (this.deviceState.isSmallScreen.value === true) {
-    //   this.sheet.open(SheetCreateCustomerComponent);
-    //   return;
-    // }
-    // this.dialog.open(DialogCreateCustomerComponent, {
-    //   maxWidth: '500px'
-    // });
-  }
-
-  openOptions() {
-    // this.dialog.open(DialogCashSaleCartOptionsComponent, {
-    //   closeOnNavigation: true
-    // }).afterClosed().subscribe(value => {
-    //   switch (value) {
-    //     case 'order':
-    //       this.cartState.saveOrder(this.channel, this.currentUser)
-    //         .then(_3 => {
-    //           this.cartState.clearCart();
-    //           this.discountFormControl.setValue(0);
-    //           this.customerFormControl.reset(null);
-    //           this.setSelectedCustomer(null);
-    //         }).catch(console.log);
-    //       return;
-    //     case 'print':
-    //       this.cartState.printOnly(this.channel, this.discountFormControl.value).catch(console.log);
-    //       return;
-    //   }
-    // });
+    this.dialog.open(SavePurchaseDialogComponent, {
+      closeOnNavigation: true,
+      width: '500px',
+    });
   }
 
   setSelectedSupplier(option: SupplierModel) {
-
+    this.cartState.selectedSupplier.next(option);
   }
 }

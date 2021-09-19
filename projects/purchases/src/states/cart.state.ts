@@ -6,8 +6,7 @@ import {PrintService} from '@smartstocktz/core-libs';
 import {SupplierModel} from '../models/supplier.model';
 import {PurchaseService} from '../services/purchase.service';
 import {PurchaseItemModel} from '../models/purchase-item.model';
-import {PurchaseHeaderModel} from '../models/purchase-header.model';
-import {Router} from "@angular/router";
+import {Router} from '@angular/router';
 
 
 @Injectable({
@@ -17,7 +16,6 @@ export class CartState {
   carts = new BehaviorSubject<PurchaseItemModel[]>([]);
   cartTotal = new BehaviorSubject(0);
   cartTotalItems = new BehaviorSubject(0);
-  checkoutProgress = new BehaviorSubject(false);
   selectedSupplier = new BehaviorSubject<SupplierModel>(null);
 
   constructor(private readonly cartService: CartService,
@@ -72,31 +70,10 @@ export class CartState {
     this.carts.next(this.carts.value);
   }
 
-  clearCart(): void {
+  dispose() {
     this.carts.next([]);
-  }
-
-  savePurchase(purchaseHeader: PurchaseHeaderModel) {
-    this.checkoutProgress.next(true);
-    this.cartService.checkout({
-      type: purchaseHeader.type,
-      user: purchaseHeader.user,
-      amount: this.cartTotal.value,
-      date: purchaseHeader.date,
-      due: purchaseHeader.due,
-      draft: false,
-      items: this.carts.value,
-      returns: [],
-      refNumber: purchaseHeader.refNumber,
-      supplier: this.selectedSupplier.value,
-    }).then(_ => {
-      this.message('Done save purchase');
-      this.selectedSupplier.next(null);
-      this.router.navigateByUrl('/purchases').catch(console.log);
-    }).catch(reason => {
-      this.message(reason);
-    }).finally(() => {
-      this.checkoutProgress.next(false);
-    });
+    this.cartTotal.next(0);
+    this.cartTotalItems.next(0);
+    this.selectedSupplier.next(null);
   }
 }
