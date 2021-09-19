@@ -63,6 +63,7 @@ export class StockState {
           Object.values(localStocks).length > 0
         ) {
           this.stocks.data = Object.values(localStocks);
+          return [];
         } else {
           return this.stockService.getAllStock();
         }
@@ -110,18 +111,16 @@ export class StockState {
 
   getStocksFromRemote(): void {
     this.isFetchStocks.next(true);
-    this.stockService
-      .getAllStock()
-      .then(async (remoteStocks) => {
-        this.stocks.data = remoteStocks;
-        const hashStocks = remoteStocks.reduce((a, b) => {
-          a[b.id] = b;
-          return a;
-        }, {});
-        const shop = await this.userService.getCurrentShop();
-        return cache({database: 'stocks', collection: 'stocks'}, shop.projectId)
-          .set('all', hashStocks);
-      })
+    this.stockService.getAllStock().then(async (remoteStocks) => {
+      this.stocks.data = remoteStocks;
+      const hashStocks = remoteStocks.reduce((a, b) => {
+        a[b.id] = b;
+        return a;
+      }, {});
+      const shop = await this.userService.getCurrentShop();
+      return cache({database: 'stocks', collection: 'stocks'}, shop.projectId)
+        .set('all', hashStocks);
+    })
       .catch((reason) => {
         this.messageService.showMobileInfoMessage(
           reason && reason.message ? reason.message : reason,
@@ -155,22 +154,4 @@ export class StockState {
     return response;
   }
 
-  filter(query: string): void {
-    this.userService.getCurrentShop().then(shop => {
-      return cache({database: 'stocks', collection: 'stocks'}, shop.projectId)
-        .get('all');
-    }).then((stocks: { [id: string]: object }) => {
-      if (query) {
-        const results = Object.values(stocks).filter((x) =>
-          JSON.stringify(x)
-            .toLowerCase()
-            .includes(query.toString().toLowerCase())
-        );
-        // @ts-ignore
-        this.stocks.next(results);
-      } else {
-        this.getStocks().catch(console.log);
-      }
-    });
-  }
 }

@@ -13,13 +13,15 @@ import {CartState} from '../states/cart.state';
       (searchCallback)="filterProduct($event)"
       [hiddenMenu]="hOptions"
       [visibleMenu]="vOptions"
+      backLink="/purchase"
+      [hasBackRoute]="true"
       heading="Create purchase"
       [leftDrawer]="side"
       [leftDrawerOpened]="(deviceState.enoughWidth | async)===true"
       [leftDrawerMode]="(deviceState.enoughWidth | async)===true?'side':'over'"
       [rightDrawer]="right"
       [rightDrawerMode]="(deviceState.enoughWidth |async)===true?'side':'over'"
-      [rightDrawerOpened]="(cartState.carts | async)?.length>0"
+      [rightDrawerOpened]="(cartState.carts | async)?.length>0 && (deviceState.isSmallScreen |async)===false"
       [body]="body">
       <ng-template #right>
         <app-purchase-cart></app-purchase-cart>
@@ -28,7 +30,10 @@ import {CartState} from '../states/cart.state';
 
       </ng-template>
       <ng-template #hOptions>
-
+        <button (click)="stockState.getStocksFromRemote()" mat-menu-item>
+          <mat-icon>refresh</mat-icon>
+          Reload
+        </button>
       </ng-template>
       <ng-template #side>
         <app-drawer></app-drawer>
@@ -45,7 +50,7 @@ import {CartState} from '../states/cart.state';
 export class CreatePageComponent implements OnInit {
 
   constructor(
-    private readonly stockState: StockState,
+    public readonly stockState: StockState,
     public readonly cartState: CartState,
     private readonly supplierState: SupplierState,
     public readonly deviceState: DeviceState

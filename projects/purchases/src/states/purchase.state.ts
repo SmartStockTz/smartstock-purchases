@@ -71,25 +71,6 @@ export class PurchaseState {
     });
   }
 
-  calculateTotalReturns(returns: { [key: string]: number }) {
-    if (returns) {
-      return Object.values(returns).reduce((a, b) => {
-        return a + b;
-      });
-    } else {
-      return 0.0;
-    }
-  }
-
-  countAll(): void {
-    this.purchaseService.countAll(this.filterKeyword.value ? this.filterKeyword.value : '')
-      .then(value => {
-        this.totalPurchase.next(value);
-      }).catch(reason => {
-      this.showMessage(reason.message ? reason.message : reason.message);
-    });
-  }
-
   private showMessage(message: string) {
     this.matSnackBar.open(message, 'Ok', {
       duration: 3000

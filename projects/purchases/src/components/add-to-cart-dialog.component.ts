@@ -1,90 +1,21 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {StockModel} from '../models/stock.model';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {CartState} from '../states/cart.state';
-import {PurchaseItemModel} from '../models/purchase-item.model';
-import {StockState} from '../states/stock.state';
 
 @Component({
-  selector: 'app-add-cart-dialog',
+  selector: 'app-add-to-cart-dialog',
   template: `
-    <div class="dialog-container">
-      <div class="dialog-header">
-        <div class="dialog-header-line"></div>
-      </div>
-      <form class="inputs-container" [formGroup]="addToCartForm" (ngSubmit)="addToCart()">
-        <div class="input-container">
-          <p class="input-head">Purchased quantities</p>
-          <input formControlName="quantity" type="number" class="input-body">
-          <mat-error *ngIf="addToCartForm.get('quantity').invalid">
-            Quantity required and must be greater that zero
-          </mat-error>
-        </div>
-        <div class="input-container">
-          <p class="input-head">Purchase price</p>
-          <input formControlName="purchase" type="number" class="input-body">
-          <mat-error *ngIf="addToCartForm.get('purchase').invalid">
-            Purchase required and must be positive number
-          </mat-error>
-        </div>
-        <div class="input-container">
-          <p class="input-head">New retail price</p>
-          <input formControlName="retailPrice" type="number" class="input-body">
-          <mat-error *ngIf="addToCartForm.get('retailPrice').invalid">
-            Retail price required and must be positive number
-          </mat-error>
-        </div>
-        <div class="input-container">
-          <p class="input-head">New wholesale price</p>
-          <input formControlName="wholesalePrice" type="number" class="input-body">
-          <mat-error *ngIf="addToCartForm.get('wholesalePrice').invalid">
-            Wholesale price required and must be positive number
-          </mat-error>
-        </div>
-        <div *ngIf="data.canExpire" class="input-container">
-          <p class="input-head">Expire date</p>
-          <input formControlName="expire" type="number" class="input-body">
-        </div>
-        <div class="input-container">
-          <button color="primary" [disabled]="addToCartForm.invalid"
-                  mat-flat-button
-                  class="add-button add-button-text">
-            Add to cart [ {{addToCartForm.value.quantity * addToCartForm.value.purchase | number}} ]
-          </button>
-        </div>
-      </form>
-    </div>
+    <app-add-to-cart-form (done)="dialogRef.close($event)" [product]="data"></app-add-to-cart-form>
   `,
   styleUrls: ['../styles/add-to-cart.style.scss']
 })
 
 export class AddToCartDialogComponent implements OnInit {
-  addToCartForm: FormGroup;
 
   constructor(@Inject(MAT_DIALOG_DATA) public readonly data: StockModel,
-              private readonly cartState: CartState,
-              private readonly dialogRef: MatDialogRef<AddToCartDialogComponent>,
-              private readonly stockState: StockState,
-              private readonly formBuilder: FormBuilder) {
+              public readonly dialogRef: MatDialogRef<AddToCartDialogComponent>) {
   }
 
   ngOnInit(): void {
-    this.addToCartForm = this.formBuilder.group({
-      quantity: ['', [Validators.required, Validators.nullValidator, Validators.min(1)]],
-      purchase: [this.data.purchase, [Validators.required, Validators.nullValidator, Validators.min(0)]],
-      retailPrice: [this.data.retailPrice, [Validators.required, Validators.nullValidator, Validators.min(0)]],
-      wholesalePrice: [this.data.wholesalePrice, [Validators.required, Validators.nullValidator, Validators.min(0)]],
-      expire: [null, []],
-    });
-  }
-
-  addToCart() {
-    const purchaseItem: PurchaseItemModel = Object.assign({}, this.addToCartForm.value);
-    purchaseItem.product = this.data;
-    purchaseItem.amount = purchaseItem.quantity * purchaseItem.purchase;
-    this.cartState.addToCart(purchaseItem);
-    // this.stockState.stocks.filter = '';
-    this.dialogRef.close();
   }
 }

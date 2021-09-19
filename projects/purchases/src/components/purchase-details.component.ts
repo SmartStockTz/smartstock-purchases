@@ -99,7 +99,7 @@ export class PurchaseDetailsModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.invoiceData = new MatTableDataSource(this.data.items);
-    this.returnsData = new MatTableDataSource(Object.keys(this.data.payment));
+    this.returnsData = new MatTableDataSource(Object.keys(this.data.payment ? this.data.payment : {}));
 
     if (this.data.payment) {
       this.totalAmount = Object.values(this.data.payment).reduce((a: number, b: number) => {

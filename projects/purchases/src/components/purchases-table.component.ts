@@ -132,6 +132,9 @@ export class PurchasesTableComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   dueAmount(row: PurchaseModel) {
+    if (row.type === 'receipt'){
+      return 0;
+    }
     if (!row.payment || typeof row.payment !== 'object') {
       return row.amount;
     }

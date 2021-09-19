@@ -35,7 +35,6 @@ import {MatNativeDateModule, MatRippleModule} from '@angular/material/core';
 import {MatDialogModule} from '@angular/material/dialog';
 import {CdkTableModule} from '@angular/cdk/table';
 import {PurchaseDetailsModalComponent} from './components/purchase-details.component';
-import {AddReturnSheetComponent} from './components/add-returns-sheet.component';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatSortModule} from '@angular/material/sort';
 import {MatListModule} from '@angular/material/list';
@@ -55,6 +54,12 @@ import {ProductComponent} from './components/product.component';
 import {AddToCartDialogComponent} from './components/add-to-cart-dialog.component';
 import {SavePurchaseDialogComponent} from './components/save-purchase-dialog.component';
 import {AddPurchasePaymentDialogComponent} from './components/add-purchase-payment-dialog.component';
+import {ProductListItemComponent} from './components/product-list-item.component';
+import {AddToCartFormComponent} from './components/add-to-cart-form.component';
+import {AddToCartSheetComponent} from './components/add-to-cart-sheet.component';
+import {AddPurchasePaymentFormComponent} from './components/add-purchase-payment-form.component';
+import {SavePurchaseFormComponent} from './components/save-purchase-form.component';
+import {SavePurchaseSheetComponent} from './components/save-purchase-sheet.component';
 
 const routes: Routes = [
   {path: '', component: PurchasePageComponent},
@@ -65,7 +70,6 @@ const routes: Routes = [
 @NgModule({
   declarations: [
     PurchaseDetailsModalComponent,
-    AddReturnSheetComponent,
     PurchasePageComponent,
     PurchaseDetailsComponent,
     CreatePageComponent,
@@ -87,7 +91,13 @@ const routes: Routes = [
     ProductComponent,
     AddToCartDialogComponent,
     AddPurchasePaymentDialogComponent,
-    SavePurchaseDialogComponent
+    SavePurchaseDialogComponent,
+    ProductListItemComponent,
+    AddToCartSheetComponent,
+    AddToCartFormComponent,
+    AddPurchasePaymentFormComponent,
+    SavePurchaseFormComponent,
+    SavePurchaseSheetComponent
   ],
   imports: [
     CommonModule,

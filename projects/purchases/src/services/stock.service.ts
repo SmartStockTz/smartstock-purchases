@@ -21,7 +21,8 @@ export class StockService {
       .collection('stocks')
       .query()
       .cids(true)
-      .orderBy('createdAt', 'desc') as any[];
+      .find() as any[];
+      // .orderBy('product', 'asc') as any[];
     const stocks = await Promise.all(
       cids.map(c => {
         return IpfsService.getDataFromCid(c);

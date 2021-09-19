@@ -13,6 +13,7 @@ import {SupplierModel} from '../models/supplier.model';
 import {MatTableDataSource} from '@angular/material/table';
 import {SavePurchaseDialogComponent} from './save-purchase-dialog.component';
 import {PurchaseState} from '../states/purchase.state';
+import {SavePurchaseSheetComponent} from './save-purchase-sheet.component';
 
 @Component({
   selector: 'app-purchase-cart',
@@ -84,7 +85,7 @@ import {PurchaseState} from '../states/purchase.state';
                                   diameter="25"
                                   style="display: inline-block; float: right">
             </mat-progress-spinner>
-            <span style="float: right" *ngIf="(purchaseState.addPurchasesProgress | async)===false">Save</span>
+            <span style="float: right" *ngIf="(purchaseState.addPurchasesProgress | async)===false">Record</span>
           </button>
           <!--          <button *ngIf="(cartState.checkoutProgress | async)===false"-->
           <!--                  (click)="openOptions()" mat-icon-button>-->
@@ -193,10 +194,16 @@ export class PurchaseCartComponent implements OnInit, OnDestroy {
       });
       return;
     }
-    this.dialog.open(SavePurchaseDialogComponent, {
-      closeOnNavigation: true,
-      width: '500px',
-    });
+    if (this.deviceState.isSmallScreen.value === true) {
+      this.sheet.open(SavePurchaseSheetComponent, {
+        closeOnNavigation: true
+      });
+    } else {
+      this.dialog.open(SavePurchaseDialogComponent, {
+        closeOnNavigation: true,
+        width: '500px',
+      });
+    }
   }
 
   setSelectedSupplier(option: SupplierModel) {

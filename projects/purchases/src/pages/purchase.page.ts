@@ -8,8 +8,6 @@ import {DeviceState} from '@smartstocktz/core-libs';
     <app-layout-sidenav [heading]="'Purchases'"
                         searchPlaceholder="Filter by date"
                         (searchCallback)="searchPurchase($event)"
-                        backLink="/purchase"
-                        [hasBackRoute]="true"
                         [leftDrawer]="side"
                         [body]="body"
                         [showSearch]="true"
@@ -19,10 +17,15 @@ import {DeviceState} from '@smartstocktz/core-libs';
                         [hiddenMenu]="hOptions"
                         [showProgress]="false">
       <ng-template #vOptions>
-
+        <button routerLink="/purchase/create" mat-icon-button>
+          <mat-icon>add</mat-icon>
+        </button>
       </ng-template>
       <ng-template #hOptions>
-
+        <button (click)="purchaseState.getPurchases(0)" mat-menu-item>
+          <mat-icon>refresh</mat-icon>
+          Reload
+        </button>
       </ng-template>
       <ng-template #side>
         <app-drawer></app-drawer>
