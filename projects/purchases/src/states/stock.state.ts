@@ -5,12 +5,13 @@ import {StockModel} from '../models/stock.model';
 import {IpfsService, MessageService, UserService} from '@smartstocktz/core-libs';
 import {BehaviorSubject} from 'rxjs';
 import {StockService} from '../services/stock.service';
+import {MatTableDataSource} from '@angular/material/table';
 
 @Injectable({
   providedIn: 'root',
 })
 export class StockState {
-  stocks: BehaviorSubject<StockModel[]> = new BehaviorSubject<StockModel[]>([]);
+  stocks: MatTableDataSource<StockModel> = new MatTableDataSource<StockModel>([]);
   isFetchStocks: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   constructor(
@@ -43,12 +44,11 @@ export class StockState {
       .getAll<string>({
         cids: true
       });
-    const stocks = await Promise.all(
+    return await Promise.all(
       cids.map(c => {
         return IpfsService.getDataFromCid(c);
       })
     ) as any[];
-    return stocks;
   }
 
   async getStocks(): Promise<void> {
@@ -62,7 +62,7 @@ export class StockState {
           Array.isArray(Object.values(localStocks)) &&
           Object.values(localStocks).length > 0
         ) {
-          this.stocks.next(Object.values(localStocks));
+          this.stocks.data = Object.values(localStocks);
         } else {
           return this.stockService.getAllStock();
         }
@@ -73,7 +73,7 @@ export class StockState {
           Array.isArray(remoteStocks) &&
           remoteStocks.length > 0
         ) {
-          this.stocks.next(remoteStocks);
+          this.stocks.data = remoteStocks;
           const hashStocks = remoteStocks.reduce((a, b) => {
             a[b.id] = b;
             return a;
@@ -113,7 +113,7 @@ export class StockState {
     this.stockService
       .getAllStock()
       .then(async (remoteStocks) => {
-        this.stocks.next(remoteStocks);
+        this.stocks.data = remoteStocks;
         const hashStocks = remoteStocks.reduce((a, b) => {
           a[b.id] = b;
           return a;

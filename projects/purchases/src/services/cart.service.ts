@@ -1,5 +1,7 @@
 import {Injectable} from '@angular/core';
-import {PrintService, SecurityUtil, UserService} from '@smartstocktz/core-libs';
+import {UserService} from '@smartstocktz/core-libs';
+import {PurchaseItemModel} from '../models/purchase-item.model';
+import {PurchaseModel} from '../models/purchase.model';
 
 @Injectable({
   providedIn: 'root'
@@ -8,8 +10,7 @@ export class CartService {
   // cartWorker: CartWorker;
   // cartWorkerNative;
 
-  constructor(private userService: UserService,
-              private readonly printService: PrintService) {
+  constructor(private userService: UserService) {
   }
 
   // private async initWorker(shop: ShopModel) {
@@ -28,32 +29,32 @@ export class CartService {
   //   }
   // }
 
-  async findTotal(carts: any[], channel: string, discount: any): Promise<number> {
-    const shop = await this.userService.getCurrentShop();
-    // await this.initWorker(shop);
-    // return this.cartWorker.findTotal(carts, channel, discount);
-    return 0;
+  async findTotal(carts: PurchaseItemModel[]): Promise<number> {
+    return carts.map<number>(value => {
+      return value.quantity * value.purchase;
+    }).reduce((a, b) => {
+      return a + b;
+    }, 0);
   }
 
   async addToCart(carts: any[], cart: any) {
-    const shop = await this.userService.getCurrentShop();
-    // await this.initWorker(shop);
-    // return this.cartWorker.addToCart(carts, cart);
+    let update = false;
+    carts.map(x => {
+      if (x.product.id === cart.product.id) {
+        x.quantity += cart.quantity;
+        update = true;
+      }
+      return x;
+    });
+    if (update === false) {
+      carts.push(cart);
+    }
+    return carts;
   }
 
-  async checkout(
-    carts: any[],
-    customer: any,
-    channel: string,
-    discount: number,
-    user: any
-  ): Promise<any> {
-    discount = isNaN(discount) ? 0 : discount;
-    const shop = await this.userService.getCurrentShop();
-    // await this.initWorker(shop);
-    // await this.printCart(carts, channel, discount, customer, false);
-    // const salesToSave: SalesModel[] = await this.cartWorker.getSalesBatch(carts, channel, discount, customer, user);
-    // return this.salesService.saveSale(salesToSave);
+  async checkout(purchase: PurchaseModel): Promise<any> {
+    // const shop = await this.userService.getCurrentShop();
+    // return database(shop.projectId).table('purchases').save(purchase);
   }
 
   async printCart(carts: any[], channel: string, discount: number, customer: any, printOnly: boolean): Promise<any> {

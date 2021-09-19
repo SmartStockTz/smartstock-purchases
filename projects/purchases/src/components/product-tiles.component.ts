@@ -6,36 +6,36 @@ import {DeviceState} from '@smartstocktz/core-libs';
 @Component({
   selector: 'app-product-tiles',
   template: `
-    <app-on-fetch [isLoading]="(stockState.isFetchStocks | async)==true"
-                  *ngIf="(stockState.isFetchStocks | async)==true"
-                  (refreshCallback)="getProductsRemote()">
-    </app-on-fetch>
-    <cdk-virtual-scroll-viewport style="flex-grow: 1"
-                                 *ngIf="(purchaseState.fetchPurchasesProgress | async)===false"
-                                 itemSize="{{(deviceState.isSmallScreen | async) ===true?'80': '30'}}">
-      <mat-nav-list>
-        <app-product style="margin: 0 3px; display: inline-block"
-                          [stock]="product"
-                          *cdkVirtualFor="let product of stockState.stocks | async; let idx = index">
-        </app-product>
-        <div style="height: 200px"></div>
-      </mat-nav-list>
-    </cdk-virtual-scroll-viewport>
-    <div class="bottom-actions-container">
-      <button mat-button
-              color="primary"
-              style="margin: 16px"
-              *ngIf="(purchaseState.fetchPurchasesProgress | async) === false && showRefreshCart === true"
-              (click)="getProductsRemote()"
-              matTooltip="Refresh products from server"
-              class="mat-fab">
-        <mat-icon>refresh</mat-icon>
-      </button>
-      <span [ngStyle]="showRefreshCart?{flex: '1 1 auto'}:{}"></span>
-      <!--      <app-cart-preview [cartSidenav]="cartdrawer"></app-cart-preview>-->
-    </div>
+      <app-on-fetch [isLoading]="(stockState.isFetchStocks | async)==true"
+                    *ngIf="(stockState.isFetchStocks | async)==true"
+                    (refreshCallback)="getProductsRemote()">
+      </app-on-fetch>
+      <cdk-virtual-scroll-viewport style="height: 90vh"
+                                   *ngIf="(purchaseState.fetchPurchasesProgress | async)===false"
+                                   itemSize="{{(deviceState.isSmallScreen | async) ===true?'80': '30'}}">
+        <mat-nav-list>
+          <app-product style="margin: 0 3px; display: inline-block"
+                       [stock]="product"
+                       *cdkVirtualFor="let product of stockState.stocks.connect() | async; let idx = index">
+          </app-product>
+          <div style="height: 200px"></div>
+        </mat-nav-list>
+      </cdk-virtual-scroll-viewport>
+      <div class="bottom-actions-container">
+        <button mat-button
+                color="primary"
+                style="margin: 16px"
+                *ngIf="(purchaseState.fetchPurchasesProgress | async) === false && showRefreshCart === true"
+                (click)="getProductsRemote()"
+                matTooltip="Refresh products from server"
+                class="mat-fab">
+          <mat-icon>refresh</mat-icon>
+        </button>
+        <span [ngStyle]="showRefreshCart?{flex: '1 1 auto'}:{}"></span>
+        <!--      <app-cart-preview [cartSidenav]="cartdrawer"></app-cart-preview>-->
+      </div>
   `,
-  styleUrls: []
+  styleUrls: ['../styles/product-tiles.style.scss']
 })
 
 export class ProductTilesComponent implements OnInit{

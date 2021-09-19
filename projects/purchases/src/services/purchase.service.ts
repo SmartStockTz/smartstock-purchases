@@ -48,7 +48,6 @@ export class PurchaseService {
                   purchase: Number(item.purchase),
                   retailPrice: Number(item.retailPrice),
                   wholesalePrice: Number(item.wholesalePrice),
-                  wholesaleQuantity: Number(item.wholesaleQuantity),
                 },
                 $currentDate: {
                   _updated_at: true,

@@ -11,6 +11,7 @@ import {takeUntil} from 'rxjs/operators';
 import {SupplierState} from '../states/supplier.state';
 import {SupplierModel} from '../models/supplier.model';
 import {MatTableDataSource} from '@angular/material/table';
+import {DialogSupplierNewComponent} from './suppliers.component';
 
 @Component({
   selector: 'app-purchase-cart',
@@ -38,21 +39,22 @@ import {MatTableDataSource} from '@angular/material/table';
               </mat-option>
             </mat-autocomplete>
           </div>
-          <button color="primary" (click)="createCustomer()" mat-icon-button>
-            <mat-icon>add_circle_outline</mat-icon>
-          </button>
+          <!--          <button color="primary" (click)="addNewSupplier()" mat-icon-button>-->
+          <!--            <mat-icon>add_circle_outline</mat-icon>-->
+          <!--          </button>-->
         </div>
       </div>
       <div style="padding-bottom: 500px">
         <mat-list>
           <div *ngFor="let cart of cartState.carts | async; let i=index">
-            <mat-list-item>
+            <mat-list-item matTooltip="{{cart.product.product}}">
               <button (click)="cartState.removeItemFromCart(i)" matSuffix mat-icon-button>
                 <mat-icon color="warn">delete</mat-icon>
               </button>
-              <h4 matLine class="text-wrap">{{cart.product.product}}</h4>
+              <h4 matLine class="text-truncate">{{cart.product.product}}</h4>
               <mat-card-subtitle matLine>
-                {{cart.quantity}} {{cart.product.unit}} = {{cart.quantity * cart.purchase | currency:' '}}
+                {{cart.quantity | number}} {{cart.product.unit}} @ {{cart.purchase | number}}
+                = {{cart.quantity * cart.purchase | number}}
               </mat-card-subtitle>
               <div class="d-flex flex-row" matLine>
                 <button color="primary" (click)="cartState.decrementCartItemQuantity(i)" mat-icon-button>
@@ -87,18 +89,18 @@ import {MatTableDataSource} from '@angular/material/table';
           <button [disabled]="(cartState.checkoutProgress | async)===true" (click)="checkout()"
                   style="width: 100%;text-align:left;height: 48px;font-size: 18px" color="primary"
                   mat-flat-button>
-            <span style="float: left;">{{cartState.cartTotal | async }}</span>
+            <span style="float: left;">{{cartState.cartTotal | async | number }}</span>
             <mat-progress-spinner *ngIf="(cartState.checkoutProgress | async)===true"
                                   mode="indeterminate"
                                   diameter="25"
                                   style="display: inline-block; float: right">
             </mat-progress-spinner>
-            <span style="float: right" *ngIf="(cartState.checkoutProgress | async)===false">Record</span>
+            <span style="float: right" *ngIf="(cartState.checkoutProgress | async)===false">Save</span>
           </button>
-          <button *ngIf="(cartState.checkoutProgress | async)===false"
-                  (click)="openOptions()" mat-icon-button>
-            <mat-icon>more_vert</mat-icon>
-          </button>
+          <!--          <button *ngIf="(cartState.checkoutProgress | async)===false"-->
+          <!--                  (click)="openOptions()" mat-icon-button>-->
+          <!--            <mat-icon>more_vert</mat-icon>-->
+          <!--          </button>-->
         </div>
       </div>
     </div>
@@ -126,7 +128,7 @@ export class PurchaseCartComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.cartState.dispose();
+    // this.cartState.dispose();
     this.supplierState.suppliers.next([]);
     this.destroyer.next('done');
   }
@@ -141,7 +143,7 @@ export class PurchaseCartComponent implements OnInit, OnDestroy {
     this.cartDrawerState.drawer.pipe(
       takeUntil(this.destroyer)
     ).subscribe(value => {
-      if (value){
+      if (value) {
         this.drawer = value;
       }
     });
@@ -152,6 +154,26 @@ export class PurchaseCartComponent implements OnInit, OnDestroy {
         this.suppliersDatasource.data = value;
       }
     });
+    this.cartState.carts.pipe(
+      takeUntil(this.destroyer)
+    ).subscribe(value => {
+      if (Array.isArray(value)) {
+        this.cartState.findTotal(value);
+      }
+    });
+  }
+
+  addNewSupplier(): void {
+    this.dialog.open(DialogSupplierNewComponent, {
+      // minWidth: '80%',
+      closeOnNavigation: true,
+    })
+      .afterClosed()
+      .subscribe((value) => {
+        if (value) {
+          // this.getSuppliers();
+        }
+      });
   }
 
   private getUser(): void {
@@ -186,27 +208,22 @@ export class PurchaseCartComponent implements OnInit, OnDestroy {
   // }
 
   checkout(): void {
-    // if (!this.cartState.selectedSupplier.value && this.customerFormControl.value && this.customerFormControl.value !== '') {
-    //   this.cartState.selectedSupplier.next({
-    //     displayName: this.customerFormControl.value,
-    //   });
-    //   this.customerState.saveCustomer(this.cartState.selectedSupplier.value).catch(console.log);
-    // }
-    // if (this.channel === 'whole' && !this.cartState.selectedSupplier.value) {
-    //   this.snack.open('Please enter customer name, or add a customer', 'Ok', {
-    //     duration: 3000
-    //   });
-    //   return;
-    // }
-    // this.cartState
-    //   .checkout(this.channel, this.discountFormControl.value, this.currentUser)
-    //   .then(() => {
-    //     this.discountFormControl.setValue(null);
-    //     this.customerFormControl.setValue(null);
-    //     this.setSelectedCustomer(null);
-    //     this.cartState.carts.next([]);
-    //   })
-    //   .catch(console.log);
+    if (!this.cartState.selectedSupplier.value && this.supplierFormControl.value && this.supplierFormControl.value !== '') {
+      this.cartState.selectedSupplier.next({
+        name: this.supplierFormControl.value
+      });
+    }
+    if (!this.cartState.selectedSupplier.value) {
+      this.snack.open('Please enter supplier name', 'Ok', {
+        duration: 3000
+      });
+      return;
+    }
+    // this.cartState.savePurchase().then(() => {
+    //   this.supplierFormControl.setValue(null);
+    //   this.cartState.selectedSupplier.next(null);
+    //   this.cartState.carts.next([]);
+    // }).catch(console.log);
   }
 
   createCustomer() {

@@ -35,10 +35,8 @@ import {MatNativeDateModule, MatRippleModule} from '@angular/material/core';
 import {IndexPage} from './pages/index.page';
 import {MatDialogModule} from '@angular/material/dialog';
 import {ProductDetailComponent} from './components/product-details-component';
-import {ProductSearchDialogComponent} from './components/product-search-dialog.component';
 import {CdkTableModule} from '@angular/cdk/table';
 import {PurchaseDetailsModalComponent} from './components/purchase-details.component';
-import {IncompletePurchasesTableComponent} from './components/incomplete-purchases-list.component';
 import {AddReturnSheetComponent} from './components/add-returns-sheet.component';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatSortModule} from '@angular/material/sort';
@@ -56,6 +54,7 @@ import {ProductTilesComponent} from './components/product-tiles.component';
 import {ProductListComponent} from './components/product-list.component';
 import {PurchaseCartPreviewComponent} from './components/purchase-cart-preview.component';
 import {ProductComponent} from './components/product.component';
+import {AddToCartDialogComponent} from './components/add-to-cart-dialog.component';
 
 const routes: Routes = [
   {path: '', component: IndexPage},
@@ -66,9 +65,7 @@ const routes: Routes = [
 @NgModule({
   declarations: [
     PurchaseDetailsModalComponent,
-    IncompletePurchasesTableComponent,
     AddReturnSheetComponent,
-    ProductSearchDialogComponent,
     ProductDetailComponent,
     PurchasePageComponent,
     PurchaseDetailsComponent,
@@ -89,7 +86,8 @@ const routes: Routes = [
     ProductTilesComponent,
     ProductListComponent,
     PurchaseCartPreviewComponent,
-    ProductComponent
+    ProductComponent,
+    AddToCartDialogComponent
   ],
   imports: [
     CommonModule,
