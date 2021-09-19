@@ -1366,6 +1366,11 @@
     estree-walker "^1.0.1"
     picomatch "^2.2.2"
 
+"@scarf/scarf@^1.1.0":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@scarf/scarf/-/scarf-1.1.1.tgz#d8b9f20037b3a37dbf8dcdc4b3b72f9285bfce35"
+  integrity sha512-VGbKDbk1RFIaSmdVb0cNjjWJoRWRI/Weo23AjRCC2nryO0iAS8pzsToJfPVPtVs74WHw4L1UTADNdIYRLkirZQ==
+
 "@schematics/angular@12.2.6":
   version "12.2.6"
   resolved "https://registry.yarnpkg.com/@schematics/angular/-/angular-12.2.6.tgz#bf48e80e9b1db406d0eb7a5200d0f8661d1d05f2"
@@ -1375,10 +1380,10 @@
     "@angular-devkit/schematics" "12.2.6"
     jsonc-parser "3.0.0"
 
-"@smartstocktz/core-libs@~0.2.34":
-  version "0.2.34"
-  resolved "https://npm.pkg.github.com/download/@smartstocktz/core-libs/0.2.34/9808a8044cf3ea9aebbe0b472b7caa7f602d5ba740581f134ebf5ce6c320c1f5#fd4ffba29831107b0c80f8ff9df9c2d8797c0dba"
-  integrity sha512-WV+NV4F3UFOPrB2QwY+GGCWiBx8xntGK0DrolqBEL+Q0QR09YZT8sHzbxr/49o43eGPLXtIGxoPSOWDtxDsbaw==
+"@smartstocktz/core-libs@~0.2.35":
+  version "0.2.35"
+  resolved "https://npm.pkg.github.com/download/@smartstocktz/core-libs/0.2.35/bf80d096f874bfa3c148e49eee58ff69d1a82500bac65f0bcf990d06719cbd02#02986e80b8d63b45e04b2f8e57b3f7f05fe748c9"
+  integrity sha512-euU3TT70YuSbQMY0fLBLcbNj8ZKoeowNVXOaXzTATpoVCrfBKgP5DJp79CQqgdhSZuitQwhvM2ZIO0MI6KQ4CA==
   dependencies:
     tslib "^2.0.0"
 
@@ -5617,6 +5622,14 @@ ngx-bottom-nav@^11.0.0:
   dependencies:
     tslib "^2.0.0"
 
+ngx-infinite-scroll@^10.0.1:
+  version "10.0.1"
+  resolved "https://registry.yarnpkg.com/ngx-infinite-scroll/-/ngx-infinite-scroll-10.0.1.tgz#6f51f2f8775a7c50d1dd8bad125d4e748abbe880"
+  integrity sha512-7is0eJZ9kJPsaHohRmMhJ/QFHAW9jp9twO5HcHRvFM/Yl/R8QCiokgjwmH0/CR3MuxUanxfHZMfO3PbYTwlBEg==
+  dependencies:
+    "@scarf/scarf" "^1.1.0"
+    opencollective-postinstall "^2.0.2"
+
 nice-napi@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/nice-napi/-/nice-napi-1.0.2.tgz#dc0ab5a1eac20ce548802fc5686eaa6bc654927b"
@@ -5891,6 +5904,11 @@ open@8.2.1:
     define-lazy-prop "^2.0.0"
     is-docker "^2.1.1"
     is-wsl "^2.2.0"
+
+opencollective-postinstall@^2.0.2:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/opencollective-postinstall/-/opencollective-postinstall-2.0.3.tgz#7a0fff978f6dbfa4d006238fbac98ed4198c3259"
+  integrity sha512-8AV/sCtuzUeTo8gQK5qDZzARrulB3egtLzFgteqB2tcT4Mw7B8Kt7JcDHmltjz6FOAHsvTevk70gZEbhM4ZS9Q==
 
 opn@^5.5.0:
   version "5.5.0"

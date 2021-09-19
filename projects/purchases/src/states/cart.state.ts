@@ -40,6 +40,7 @@ export class CartState {
   }
 
   findTotal(carts: PurchaseItemModel[]) {
+    this.totalItems();
     this.cartService.findTotal(carts).then(value => {
       this.cartTotal.next(value);
     }).catch(reason => {
@@ -48,9 +49,9 @@ export class CartState {
   }
 
   totalItems(): void {
-    // this.cartTotalItems.next(
-    //   this.carts.value.map(cartItem => cartItem.quantity).reduce((a, b) => a + b, 0)
-    // );
+    this.cartTotalItems.next(
+      this.carts.value.map(cartItem => cartItem.quantity).reduce((a, b) => a + b, 0)
+    );
   }
 
   incrementCartItemQuantity(indexOfProductInCart: number): void {

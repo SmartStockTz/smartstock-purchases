@@ -9,6 +9,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 })
 export class PurchaseState {
   fetchPurchasesProgress = new BehaviorSubject<boolean>(false);
+  loadMoreProgress = new BehaviorSubject<boolean>(false);
   addPurchasesProgress = new BehaviorSubject<boolean>(false);
   addPaymentProgress = new BehaviorSubject<boolean>(false);
   purchases = new BehaviorSubject<PurchaseModel[]>([]);
@@ -74,6 +75,19 @@ export class PurchaseState {
   private showMessage(message: string) {
     this.matSnackBar.open(message, 'Ok', {
       duration: 3000
+    });
+  }
+
+  loadMore() {
+    this.loadMoreProgress.next(true);
+    this.purchaseService
+      .fetchPurchases(this.size, this.purchases.value.length, this.filterKeyword.value)
+      .then(value => {
+        this.purchases.next([...this.purchases.value, ...value]);
+      }).catch(reason => {
+      this.showMessage(reason.message ? reason.message : reason.toString());
+    }).finally(() => {
+      this.loadMoreProgress.next(false);
     });
   }
 }

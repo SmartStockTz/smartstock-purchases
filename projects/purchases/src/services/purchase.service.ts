@@ -19,7 +19,7 @@ export class PurchaseService {
       .cids(true)
       .size(size)
       .skip(skip)
-      .searchByRegex('date', searchKeyword)
+      .searchByRegex('date', searchKeyword === null ? '' : searchKeyword)
       .orderBy('date', 'desc') as any[];
     return await Promise.all(
       cids.map(c => {
@@ -70,9 +70,9 @@ export class PurchaseService {
       .find();
   }
 
-  async addPayment(id: string, payment: {[key: string]: number}): Promise<PurchaseModel> {
+  async addPayment(id: string, payment: { [key: string]: number }): Promise<PurchaseModel> {
     const shop = await this.userService.getCurrentShop();
-    return  await database(shop.projectId)
+    return await database(shop.projectId)
       .collection('purchases')
       .query()
       .byId(id)

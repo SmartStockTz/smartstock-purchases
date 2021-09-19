@@ -16,39 +16,34 @@ import {AddPurchasePaymentDialogComponent} from './add-purchase-payment-dialog.c
   template: `
     <div>
       <app-data-not-ready *ngIf="(purchaseState.purchases | async).length === 0"></app-data-not-ready>
-      <table mat-table *ngIf="(purchaseState.purchases | async).length !== 0"
+      <table mat-table
+             *ngIf="(purchaseState.purchases | async).length !== 0"
              [dataSource]="dataSource" matSort>
         <ng-container matColumnDef="Purchase Id">
           <th class="column-head-text" mat-header-cell *matHeaderCellDef mat-sort-header>Id</th>
           <td mat-cell *matCellDef="let row"> {{row.refNumber}} </td>
         </ng-container>
-
         <ng-container matColumnDef="Supplier">
           <th class="column-head-text" mat-header-cell *matHeaderCellDef mat-sort-header>Supplier</th>
           <td mat-cell *matCellDef="let row"> {{row.supplierName}} </td>
         </ng-container>
-
         <ng-container matColumnDef="Amount Due">
           <th class="column-head-text" mat-header-cell *matHeaderCellDef mat-sort-header>Amount Due</th>
           <td mat-cell *matCellDef="let row"> {{(row.type === 'invoice' ? dueAmount(row) : 0)| currency:' '}} </td>
         </ng-container>
-
         <ng-container matColumnDef="Amount Paid">
           <th class="column-head-text" mat-header-cell *matHeaderCellDef mat-sort-header>Amount Paid</th>
           <td mat-cell
               *matCellDef="let row"> {{(row.type === 'invoice' ? amountPaid(row) : row.amount)|currency: ' '}} </td>
         </ng-container>
-
         <ng-container matColumnDef="Due Date">
           <th class="column-head-text" mat-header-cell *matHeaderCellDef mat-sort-header>Due Date</th>
           <td mat-cell *matCellDef="let row"> {{(row.type === 'receipt' ? row.date : row.due) | date}} </td>
         </ng-container>
-
         <ng-container matColumnDef="Date of Sale">
           <th class="column-head-text" mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
           <td mat-cell *matCellDef="let row"> {{row.date | date:'short'}} </td>
         </ng-container>
-
         <ng-container matColumnDef="Actions">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Actions</th>
           <td mat-cell *matCellDef="let row">
@@ -65,7 +60,6 @@ import {AddPurchasePaymentDialogComponent} from './add-purchase-payment-dialog.c
             </mat-menu>
           </td>
         </ng-container>
-
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row class="table-data-row" *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>
@@ -132,7 +126,7 @@ export class PurchasesTableComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   dueAmount(row: PurchaseModel) {
-    if (row.type === 'receipt'){
+    if (row.type === 'receipt') {
       return 0;
     }
     if (!row.payment || typeof row.payment !== 'object') {

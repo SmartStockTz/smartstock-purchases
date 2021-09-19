@@ -20,6 +20,7 @@ import {CartState} from '../states/cart.state';
       [leftDrawerOpened]="(deviceState.enoughWidth | async)===true"
       [leftDrawerMode]="(deviceState.enoughWidth | async)===true?'side':'over'"
       [rightDrawer]="right"
+      [cartBadge]="cartState.cartTotalItems | async"
       [rightDrawerMode]="(deviceState.enoughWidth |async)===true?'side':'over'"
       [rightDrawerOpened]="(cartState.carts | async)?.length>0 && (deviceState.isSmallScreen |async)===false"
       [body]="body">
