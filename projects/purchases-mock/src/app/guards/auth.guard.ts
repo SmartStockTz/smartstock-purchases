@@ -17,7 +17,9 @@ export class AuthGuard implements CanActivate {
       if (user && user.role) {
         init({
           applicationId: user.applicationId,
-          projectId: user.projectId
+          projectId: user.projectId,
+          databaseURL: `https://smartstock-faas.bfast.fahamutech.com/shop/${user.projectId}/${user.applicationId}/${user.masterKey}`,
+          functionsURL: `https://smartstock-faas.bfast.fahamutech.com/shop/${user.projectId}/${user.applicationId}/${user.masterKey}/functions`
         }, user.projectId);
         resolve(true);
       } else {

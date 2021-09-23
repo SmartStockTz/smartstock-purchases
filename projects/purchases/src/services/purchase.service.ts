@@ -13,19 +13,19 @@ export class PurchaseService {
 
   async fetchPurchases(size: number, skip: number, searchKeyword: string): Promise<PurchaseModel[]> {
     const activeShop = await this.userService.getCurrentShop();
-    const cids: string[] = await database(activeShop.projectId)
+    return await database(activeShop.projectId)
       .collection('purchases')
       .query()
-      .cids(true)
+      .cids(false)
       .size(size)
       .skip(skip)
       .searchByRegex('date', searchKeyword === null ? '' : searchKeyword)
       .orderBy('date', 'desc') as any[];
-    return await Promise.all(
-      cids.map(c => {
-        return IpfsService.getDataFromCid(c);
-      })
-    ) as any[];
+    // return await Promise.all(
+    //   cids.map(c => {
+    //     return IpfsService.getDataFromCid(c);
+    //   })
+    // ) as any[];
   }
 
   async addPurchase(purchase: PurchaseModel): Promise<any> {

@@ -18,6 +18,7 @@ import {AddPurchasePaymentDialogComponent} from './add-purchase-payment-dialog.c
       <app-data-not-ready *ngIf="(purchaseState.purchases | async).length === 0"></app-data-not-ready>
       <table mat-table
              *ngIf="(purchaseState.purchases | async).length !== 0"
+             style="background: transparent"
              [dataSource]="dataSource" matSort>
         <ng-container matColumnDef="Purchase Id">
           <th class="column-head-text" mat-header-cell *matHeaderCellDef mat-sort-header>Id</th>
