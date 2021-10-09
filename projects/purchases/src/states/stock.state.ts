@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {SupplierModel} from '../models/supplier.model';
-import {cache, database} from 'bfast';
+import {database} from 'bfast';
 import {StockModel} from '../models/stock.model';
 import {IpfsService, MessageService, UserService} from '@smartstocktz/core-libs';
 import {BehaviorSubject} from 'rxjs';
@@ -51,48 +51,19 @@ export class StockState {
     ) as any[];
   }
 
-  async getStocks(): Promise<void> {
+  getStocks(): void {
     this.isFetchStocks.next(true);
-    const shop = await this.userService.getCurrentShop();
-    cache({database: 'stocks', collection: 'stocks'}, shop.projectId)
-      .get('all')
-      .then((localStocks) => {
-        if (
-          localStocks &&
-          Array.isArray(Object.values(localStocks)) &&
-          Object.values(localStocks).length > 0
-        ) {
-          this.stocks.data = Object.values(localStocks);
-          return [];
-        } else {
-          return this.stockService.getAllStock();
-        }
-      })
-      .then((remoteStocks) => {
-        if (
-          remoteStocks &&
-          Array.isArray(remoteStocks) &&
-          remoteStocks.length > 0
-        ) {
-          this.stocks.data = remoteStocks;
-          const hashStocks = remoteStocks.reduce((a, b) => {
-            a[b.id] = b;
-            return a;
-          }, {});
-          return cache({database: 'stocks', collection: 'stocks'}, shop.projectId)
-            .set('all', hashStocks);
-        }
-      })
-      .catch((reason) => {
-        this.messageService.showMobileInfoMessage(
-          reason && reason.message ? reason.message : reason,
-          2000,
-          'bottom'
-        );
-      })
-      .finally(() => {
-        this.isFetchStocks.next(false);
-      });
+    this.stockService.getAllStock().then((remoteStocks) => {
+      this.stocks.data = remoteStocks;
+    }).catch((reason) => {
+      this.messageService.showMobileInfoMessage(
+        reason && reason.message ? reason.message : reason,
+        2000,
+        'bottom'
+      );
+    }).finally(() => {
+      this.isFetchStocks.next(false);
+    });
   }
 
   async getAllSupplier(): Promise<SupplierModel[]> {
@@ -111,26 +82,17 @@ export class StockState {
 
   getStocksFromRemote(): void {
     this.isFetchStocks.next(true);
-    this.stockService.getAllStock().then(async (remoteStocks) => {
+    this.stockService.getAllStockRemote().then(async (remoteStocks) => {
       this.stocks.data = remoteStocks;
-      const hashStocks = remoteStocks.reduce((a, b) => {
-        a[b.id] = b;
-        return a;
-      }, {});
-      const shop = await this.userService.getCurrentShop();
-      return cache({database: 'stocks', collection: 'stocks'}, shop.projectId)
-        .set('all', hashStocks);
-    })
-      .catch((reason) => {
-        this.messageService.showMobileInfoMessage(
-          reason && reason.message ? reason.message : reason,
-          2000,
-          'bottom'
-        );
-      })
-      .finally(() => {
-        this.isFetchStocks.next(false);
-      });
+    }).catch((reason) => {
+      this.messageService.showMobileInfoMessage(
+        reason && reason.message ? reason.message : reason,
+        2000,
+        'bottom'
+      );
+    }).finally(() => {
+      this.isFetchStocks.next(false);
+    });
   }
 
   async updateSupplier(value: {

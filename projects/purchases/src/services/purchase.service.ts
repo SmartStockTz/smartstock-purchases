@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {IpfsService, UserService} from '@smartstocktz/core-libs';
+import {UserService} from '@smartstocktz/core-libs';
 import {PurchaseModel} from '../models/purchase.model';
 import {database} from 'bfast';
 

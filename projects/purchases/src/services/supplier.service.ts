@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {IpfsService, UserService} from '@smartstocktz/core-libs';
+import {UserService} from '@smartstocktz/core-libs';
 import {database} from 'bfast';
 
 @Injectable({
@@ -12,16 +12,11 @@ export class SupplierService {
 
   async fetchAllSuppliers() {
     const shop = await this.userService.getCurrentShop();
-    const cids = await database(shop.projectId)
-      .table('suppliers')
-      .query()
-      .cids(true)
-      .orderBy('name', 'asc') as any[];
-    return await Promise.all(
-      cids.map(x => {
-        return IpfsService.getDataFromCid(x);
-      })
-    );
+    const s = await database(shop.projectId)
+      .syncs('suppliers')
+      .changes()
+      .values();
+    return Array.from(s);
   }
 
 }

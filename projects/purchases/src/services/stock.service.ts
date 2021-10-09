@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {IpfsService, StorageService, UserService} from '@smartstocktz/core-libs';
+import {UserService} from '@smartstocktz/core-libs';
 import {database} from 'bfast';
 import {StockModel} from '../models/stock.model';
 
@@ -8,28 +7,21 @@ import {StockModel} from '../models/stock.model';
   providedIn: 'root',
 })
 export class StockService {
-  constructor(
-    private readonly httpClient: HttpClient,
-    private readonly userService: UserService,
-    private readonly storageService: StorageService
-  ) {
+  constructor(private readonly userService: UserService) {
   }
 
   async getAllStock(): Promise<StockModel[]> {
     const shop = await this.userService.getCurrentShop();
-    const cids = await database(shop.projectId)
-      .collection('stocks')
-      .query()
-      .cids(true)
-      .find() as any[];
-      // .orderBy('product', 'asc') as any[];
-    const stocks = await Promise.all(
-      cids.map(c => {
-        return IpfsService.getDataFromCid(c);
-      })
-    ) as any[];
-    await this.storageService.saveStocks(stocks as any);
-    return stocks;
+    const s = await database(shop.projectId)
+      .syncs('stocks')
+      .changes()
+      .values();
+    return Array.from(s);
+  }
+
+  async getAllStockRemote(): Promise<StockModel[]> {
+    const shop = await this.userService.getCurrentShop();
+    return database(shop.projectId).syncs('stocks').upload();
   }
 
 }

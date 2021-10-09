@@ -3,7 +3,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {auth, init} from 'bfast';
-import {StorageService, UserService} from '@smartstocktz/core-libs';
+import {getDaasAddress, getFaasAddress, StorageService, UserService} from '@smartstocktz/core-libs';
 
 @Component({
   selector: 'app-login',
@@ -23,7 +23,8 @@ import {StorageService, UserService} from '@smartstocktz/core-libs';
               <mat-error>Field required</mat-error>
             </mat-form-field>
             <button *ngIf="!isLogin" mat-flat-button color="primary">Login</button>
-            <mat-progress-spinner color="primary" mode="indeterminate" diameter="30" *ngIf="isLogin"></mat-progress-spinner>
+            <mat-progress-spinner color="primary" mode="indeterminate" diameter="30"
+                                  *ngIf="isLogin"></mat-progress-spinner>
           </form>
         </mat-card-content>
       </mat-card>
@@ -50,12 +51,14 @@ export class LoginPageComponent implements OnInit {
       auth().logIn(this.loginForm.value.username, this.loginForm.value.password)
         .then(async user => {
           this.router.navigateByUrl('/purchase').catch(console.log);
-          init({
-            applicationId: user.applicationId,
-            projectId: user.projectId
-          }, user.projectId);
           const shops = await this.userService.getShops(user);
-          await this.storageService.saveCurrentProjectId(user.projectId);
+          init({
+            applicationId: shops[0].applicationId,
+            projectId: shops[0].projectId,
+            databaseURL: getDaasAddress(shops[0]),
+            functionsURL: getFaasAddress(shops[0])
+          }, shops[0].projectId);
+          await this.storageService.saveCurrentProjectId(shops[0].projectId);
           await this.userService.saveCurrentShop(shops[0]);
         })
         .catch(reason => {
