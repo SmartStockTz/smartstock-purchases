@@ -12,10 +12,7 @@ export class SupplierService {
 
   async fetchAllSuppliers() {
     const shop = await this.userService.getCurrentShop();
-    const s = await database(shop.projectId)
-      .syncs('suppliers')
-      .changes()
-      .values();
+    const s = await database(shop.projectId).syncs('suppliers').changes().values();
     return Array.from(s);
   }
 

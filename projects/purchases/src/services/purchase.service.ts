@@ -20,12 +20,8 @@ export class PurchaseService {
       .size(size)
       .skip(skip)
       .searchByRegex('date', searchKeyword === null ? '' : searchKeyword)
-      .orderBy('date', 'desc') as any[];
-    // return await Promise.all(
-    //   cids.map(c => {
-    //     return IpfsService.getDataFromCid(c);
-    //   })
-    // ) as any[];
+      .orderBy('date', 'desc')
+      .find();
   }
 
   async addPurchase(purchase: PurchaseModel): Promise<any> {
@@ -33,11 +29,9 @@ export class PurchaseService {
     return database(shop.projectId)
       .bulk()
       .create('purchases', purchase)
-      .update(
-        'stocks',
-        purchase.items
-          .filter((x) => x.product.stockable === true)
-          .map((item) => {
+      .update('stocks', purchase.items
+        .filter((x) => x.product.stockable === true)
+        .map((item) => {
             return {
               query: {
                 id: item.product.id,

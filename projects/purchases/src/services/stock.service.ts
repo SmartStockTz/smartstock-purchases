@@ -12,10 +12,7 @@ export class StockService {
 
   async getAllStock(): Promise<StockModel[]> {
     const shop = await this.userService.getCurrentShop();
-    const s = await database(shop.projectId)
-      .syncs('stocks')
-      .changes()
-      .values();
+    const s = await database(shop.projectId).syncs('stocks').changes().values();
     return Array.from(s);
   }
 
