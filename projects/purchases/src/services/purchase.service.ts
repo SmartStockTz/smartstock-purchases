@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {UserService} from '@smartstocktz/core-libs';
+import {SecurityUtil, UserService} from '@smartstocktz/core-libs';
 import {PurchaseModel} from '../models/purchase.model';
 import {database} from 'bfast';
 
@@ -26,32 +26,51 @@ export class PurchaseService {
 
   async addPurchase(purchase: PurchaseModel): Promise<any> {
     const shop = await this.userService.getCurrentShop();
-    return database(shop.projectId)
-      .bulk()
+    const stockableItems = purchase.items.filter((x) => x.product.stockable === true);
+    const r = await database(shop.projectId).bulk()
       .create('purchases', purchase)
-      .update('stocks', purchase.items
-        .filter((x) => x.product.stockable === true)
-        .map((item) => {
-            return {
-              query: {
-                id: item.product.id,
-              },
-              update: {
-                $set: {
-                  expire: item.expire,
-                  purchase: Number(item.purchase),
-                  retailPrice: Number(item.retailPrice),
-                  wholesalePrice: Number(item.wholesalePrice),
-                  updatedAt: new Date()
-                },
-                $inc: {
-                  quantity: Number(item.quantity),
-                },
-              },
-            };
-          })
-      )
-      .commit();
+      .update('stocks', stockableItems.map((item) => {
+        return {
+          query: {
+            id: item.product.id,
+          },
+          update: {
+            $set: {
+              expire: item.expire,
+              purchase: Number(item.purchase),
+              retailPrice: Number(item.retailPrice),
+              wholesalePrice: Number(item.wholesalePrice),
+              updatedAt: new Date(),
+              [`quantity.${SecurityUtil.generateUUID()}`]: {
+                q: Number(item.quantity),
+                s: 'purchase',
+                d: new Date().toISOString()
+              }
+            }
+          },
+        };
+      })).commit();
+    for (const item of stockableItems) {
+      const oldStock = database(shop.projectId).syncs('stocks').changes().get(item.product.id);
+      if (oldStock && typeof oldStock.quantity === 'object') {
+        oldStock.quantity[SecurityUtil.generateUUID()] = {
+          q: Number(item.quantity),
+          s: 'purchase',
+          d: new Date().toISOString()
+        };
+      }
+      if (oldStock && typeof oldStock.quantity === 'number') {
+        oldStock.quantity = {
+          [SecurityUtil.generateUUID()]: {
+            q: Number(item.quantity),
+            s: 'purchase',
+            d: new Date().toISOString()
+          }
+        };
+      }
+      database(shop.projectId).syncs('stocks').changes().set(oldStock);
+    }
+    return r;
   }
 
   async countAll(date: string): Promise<any> {

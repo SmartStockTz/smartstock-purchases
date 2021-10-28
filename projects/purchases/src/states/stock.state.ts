@@ -23,32 +23,12 @@ export class StockState {
 
   async addSupplier(supplier: SupplierModel): Promise<any> {
     const shop = await this.userService.getCurrentShop();
-    return database(shop.projectId)
-      .collection('suppliers')
-      .save(supplier);
+    return database(shop.projectId).collection('suppliers').save(supplier);
   }
 
   async deleteSupplier(id: string): Promise<any> {
     const shop = await this.userService.getCurrentShop();
-    return database(shop.projectId)
-      .collection('suppliers')
-      .query()
-      .byId(id)
-      .delete();
-  }
-
-  async getAllStock(): Promise<StockModel[]> {
-    const shop = await this.userService.getCurrentShop();
-    const cids = await database(shop.projectId)
-      .collection<StockModel>('stocks')
-      .getAll<string>({
-        cids: true
-      });
-    return await Promise.all(
-      cids.map(c => {
-        return IpfsService.getDataFromCid(c);
-      })
-    ) as any[];
+    return database(shop.projectId).collection('suppliers').query().byId(id).delete();
   }
 
   getStocks(): void {

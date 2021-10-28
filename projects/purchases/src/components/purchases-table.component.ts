@@ -14,7 +14,7 @@ import {AddPurchasePaymentDialogComponent} from './add-purchase-payment-dialog.c
 @Component({
   selector: 'app-purchases-table',
   template: `
-    <div>
+    <div style="background: transparent">
       <app-data-not-ready *ngIf="(purchaseState.purchases | async).length === 0"></app-data-not-ready>
       <table mat-table
              *ngIf="(purchaseState.purchases | async).length !== 0"

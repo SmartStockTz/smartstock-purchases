@@ -1,5 +1,4 @@
 import {Injectable} from '@angular/core';
-import {UserService} from '@smartstocktz/core-libs';
 import {PurchaseItemModel} from '../models/purchase-item.model';
 import {PurchaseModel} from '../models/purchase.model';
 
@@ -10,7 +9,7 @@ export class CartService {
   // cartWorker: CartWorker;
   // cartWorkerNative;
 
-  constructor(private userService: UserService) {
+  constructor() {
   }
 
   // private async initWorker(shop: ShopModel) {

@@ -19,7 +19,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {HttpClientModule} from '@angular/common/http';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatBottomSheetModule} from '@angular/material/bottom-sheet';
-import {IpfsService} from '@smartstocktz/core-libs';
+import {SyncsService} from '@smartstocktz/core-libs';
 
 const routes: Routes = [
   {path: '', component: WelcomePage},
@@ -59,14 +59,12 @@ const routes: Routes = [
   bootstrap: [AppComponent],
 })
 export class AppModule {
-  constructor() {
-    IpfsService.getVersion().then(value => {
-      console.log('ipfs version : ', value.version);
-    }).catch(console.log);
+  constructor(private readonly syncService: SyncsService) {
     init({
       applicationId: environment.smartstock.applicationId,
       projectId: environment.smartstock.projectId,
       appPassword: environment.smartstock.pass,
     });
+    syncService.startWorker().catch(console.log);
   }
 }

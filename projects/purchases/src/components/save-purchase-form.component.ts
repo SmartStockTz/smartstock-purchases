@@ -1,5 +1,4 @@
-import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {StockModel} from '../models/stock.model';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {CartState} from '../states/cart.state';
@@ -7,6 +6,7 @@ import {PurchaseState} from '../states/purchase.state';
 import {UserService} from '@smartstocktz/core-libs';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {Router} from '@angular/router';
+import {StockState} from '../states/stock.state';
 
 @Component({
   selector: 'app-save-purchase-form',
@@ -71,6 +71,7 @@ export class SavePurchaseFormComponent implements OnInit {
               private readonly userService: UserService,
               private readonly snack: MatSnackBar,
               private readonly router: Router,
+              private readonly stockState: StockState,
               private readonly formBuilder: FormBuilder) {
   }
 
@@ -105,6 +106,7 @@ export class SavePurchaseFormComponent implements OnInit {
     }).then(_ => {
       this.cartState.dispose();
       this.router.navigateByUrl('/purchase').catch(console.log);
+      this.stockState.stocks.filter = '';
     }).catch(reason => {
       this.snack.open(reason && reason.message ? reason.message : reason.toString(), 'Ok', {
         duration: 3000
