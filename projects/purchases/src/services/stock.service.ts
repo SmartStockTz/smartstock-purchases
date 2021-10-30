@@ -12,8 +12,20 @@ export class StockService {
 
   async getAllStock(): Promise<StockModel[]> {
     const shop = await this.userService.getCurrentShop();
-    const s = await database(shop.projectId).syncs('stocks').changes().values();
-    return Array.from(s);
+    return new Promise((resolve, reject) => {
+      try {
+        database(shop.projectId).syncs('stocks', syncs => {
+          const s = Array.from(syncs.changes().values());
+          if (s.length === 0) {
+            this.getAllStockRemote().then(resolve).catch(reject);
+          } else {
+            resolve(s);
+          }
+        });
+      } catch (e) {
+        reject(e);
+      }
+    });
   }
 
   async getAllStockRemote(): Promise<StockModel[]> {

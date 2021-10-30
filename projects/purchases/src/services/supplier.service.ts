@@ -12,8 +12,20 @@ export class SupplierService {
 
   async fetchAllSuppliers() {
     const shop = await this.userService.getCurrentShop();
-    const s = await database(shop.projectId).syncs('suppliers').changes().values();
-    return Array.from(s);
+    return new Promise((resolve, reject) => {
+      try {
+        database(shop.projectId).syncs('suppliers', syncs => {
+          const s = Array.from(syncs.changes().values());
+          if (s.length === 0) {
+            syncs.upload().then(resolve).catch(reject);
+          } else {
+            resolve(s);
+          }
+        });
+      } catch (e) {
+        reject(e);
+      }
+    });
   }
 
 }
