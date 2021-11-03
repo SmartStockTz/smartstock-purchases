@@ -43,12 +43,9 @@ import {database} from 'bfast';
 
 export class ProductTilesComponent implements OnInit, OnDestroy {
   showRefreshCart = true;
-  private sig = false;
-  private obfn;
 
   constructor(public readonly purchaseState: PurchaseState,
               public readonly cartState: CartState,
-              private readonly userService: UserService,
               public readonly stockState: StockState) {
   }
 
@@ -57,21 +54,9 @@ export class ProductTilesComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit(): Promise<void> {
-    const shop = await this.userService.getCurrentShop();
     this.stockState.getStocks();
-    this.obfn = database(shop.projectId).syncs('stocks').changes().observe(response => {
-      if (this?.sig === false) {
-        this.stockState.getStocks();
-        this.sig = true;
-      } else {
-        return;
-      }
-    });
   }
 
   ngOnDestroy(): void {
-    if (this.obfn) {
-      this?.obfn?.unobserve();
-    }
   }
 }

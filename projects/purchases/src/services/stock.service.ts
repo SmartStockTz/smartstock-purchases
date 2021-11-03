@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {UserService} from '@smartstocktz/core-libs';
-import {database} from 'bfast';
+import {cache, database} from 'bfast';
 import {StockModel} from '../models/stock.model';
 
 @Injectable({
@@ -12,25 +12,23 @@ export class StockService {
 
   async getAllStock(): Promise<StockModel[]> {
     const shop = await this.userService.getCurrentShop();
-    return new Promise((resolve, reject) => {
-      try {
-        database(shop.projectId).syncs('stocks', syncs => {
-          const s = Array.from(syncs.changes().values());
-          if (s.length === 0) {
-            this.getAllStockRemote().then(resolve).catch(reject);
-          } else {
-            resolve(s);
-          }
-        });
-      } catch (e) {
-        reject(e);
+    return cache({database: shop.projectId, collection: 'stocks'}).getAll().then(stocks => {
+      if (Array.isArray(stocks) && stocks.length > 0) {
+        return stocks;
       }
+      return this.getAllStockRemote().then(value => {
+        if (!Array.isArray(value)) {
+          return [];
+        }
+        cache({database: shop.projectId, collection: 'stocks'}).setBulk(value.map(x => x.id), value).catch(console.log);
+        return value;
+      });
     });
   }
 
   async getAllStockRemote(): Promise<StockModel[]> {
     const shop = await this.userService.getCurrentShop();
-    return database(shop.projectId).syncs('stocks').upload();
+    return database(shop.projectId).table('stocks').getAll();
   }
 
 }

@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {UserService} from '@smartstocktz/core-libs';
-import {database} from 'bfast';
+import {cache, database} from 'bfast';
 
 @Injectable({
   providedIn: 'root'
@@ -12,19 +12,15 @@ export class SupplierService {
 
   async fetchAllSuppliers() {
     const shop = await this.userService.getCurrentShop();
-    return new Promise((resolve, reject) => {
-      try {
-        database(shop.projectId).syncs('suppliers', syncs => {
-          const s = Array.from(syncs.changes().values());
-          if (s.length === 0) {
-            syncs.upload().then(resolve).catch(reject);
-          } else {
-            resolve(s);
-          }
-        });
-      } catch (e) {
-        reject(e);
+    return cache({database: shop.projectId, collection: 'suppliers'}).getAll().then(suppliers => {
+      if (Array.isArray(suppliers) && suppliers.length > 0) {
+        return suppliers;
       }
+      return database(shop.projectId).table('suppliers').getAll().then((rS: any[]) => {
+        cache({database: shop.projectId, collection: 'suppliers'}).setBulk(rS.map(x => x.id), rS)
+          .catch(console.log);
+        return rS;
+      });
     });
   }
 

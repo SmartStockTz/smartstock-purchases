@@ -50,34 +50,12 @@ export class PurchaseService {
           },
         };
       })).commit();
-    for (const item of stockableItems) {
-      const oldStock = database(shop.projectId).syncs('stocks').changes().get(item.product.id);
-      if (oldStock && typeof oldStock.quantity === 'object') {
-        oldStock.quantity[SecurityUtil.generateUUID()] = {
-          q: Number(item.quantity),
-          s: 'purchase',
-          d: new Date().toISOString()
-        };
-      }
-      if (oldStock && typeof oldStock.quantity === 'number') {
-        oldStock.quantity = {
-          [SecurityUtil.generateUUID()]: {
-            q: Number(item.quantity),
-            s: 'purchase',
-            d: new Date().toISOString()
-          }
-        };
-      }
-      database(shop.projectId).syncs('stocks').changes().set(oldStock);
-    }
     return r;
   }
 
   async countAll(date: string): Promise<any> {
     const shop = await this.userService.getCurrentShop();
-    return await database(shop.projectId)
-      .collection('purchases')
-      .query()
+    return await database(shop.projectId).collection('purchases').query()
       .searchByRegex('date', date)
       .count(true)
       .find();
@@ -85,11 +63,7 @@ export class PurchaseService {
 
   async addPayment(id: string, payment: { [key: string]: number }): Promise<PurchaseModel> {
     const shop = await this.userService.getCurrentShop();
-    return await database(shop.projectId)
-      .collection('purchases')
-      .query()
-      .byId(id)
-      .updateBuilder()
+    return await database(shop.projectId).collection('purchases').query().byId(id).updateBuilder()
       .set('payment', payment)
       .update();
   }

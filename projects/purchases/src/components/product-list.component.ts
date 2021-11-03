@@ -1,7 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {StockState} from '../states/stock.state';
-import {database} from 'bfast';
-import {UserService} from '@smartstocktz/core-libs';
 
 @Component({
   selector: 'app-product-list',
@@ -23,29 +21,14 @@ import {UserService} from '@smartstocktz/core-libs';
 })
 
 export class ProductListComponent implements OnInit, OnDestroy {
-  private sig = false;
-  private obfn;
 
-  constructor(public readonly stockState: StockState,
-              private readonly userService: UserService) {
+  constructor(public readonly stockState: StockState) {
   }
 
   async ngOnInit(): Promise<void> {
-    const shop = await this.userService.getCurrentShop();
     this.stockState.getStocks();
-    this.obfn = database(shop.projectId).syncs('stocks').changes().observe(_ => {
-      if (this?.sig === false) {
-        this.stockState.getStocks();
-        this.sig = true;
-      } else {
-        return;
-      }
-    });
   }
 
   ngOnDestroy(): void {
-    if (this.obfn) {
-      this?.obfn?.unobserve();
-    }
   }
 }
