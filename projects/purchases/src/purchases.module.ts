@@ -60,7 +60,7 @@ import {AddToCartSheetComponent} from './components/add-to-cart-sheet.component'
 import {AddPurchasePaymentFormComponent} from './components/add-purchase-payment-form.component';
 import {SavePurchaseFormComponent} from './components/save-purchase-form.component';
 import {SavePurchaseSheetComponent} from './components/save-purchase-sheet.component';
-import {InfiniteScrollModule} from "ngx-infinite-scroll";
+import {InfiniteScrollModule} from 'ngx-infinite-scroll';
 
 const routes: Routes = [
   {path: '', component: PurchasePageComponent},

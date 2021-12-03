@@ -3,7 +3,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {auth, init} from 'bfast';
-import {getDaasAddress, getFaasAddress, StorageService, UserService} from '@smartstocktz/core-libs';
+import {getDaasAddress, getFaasAddress, UserService} from '@smartstocktz/core-libs';
 
 @Component({
   selector: 'app-login',
@@ -38,7 +38,6 @@ export class LoginPageComponent implements OnInit {
 
   constructor(private readonly formBuilder: FormBuilder,
               private readonly router: Router,
-              private readonly storageService: StorageService,
               private readonly userService: UserService,
               private readonly snack: MatSnackBar) {
   }
@@ -58,7 +57,6 @@ export class LoginPageComponent implements OnInit {
             databaseURL: getDaasAddress(shops[0]),
             functionsURL: getFaasAddress(shops[0])
           }, shops[0].projectId);
-          await this.storageService.saveCurrentProjectId(shops[0].projectId);
           await this.userService.saveCurrentShop(shops[0]);
         })
         .catch(reason => {
