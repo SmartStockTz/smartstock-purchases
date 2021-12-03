@@ -12,7 +12,7 @@ import {database} from 'bfast';
                   *ngIf="(stockState.isFetchStocks | async)==true"
                   (refreshCallback)="getProductsRemote()">
     </app-on-fetch>
-    <cdk-virtual-scroll-viewport style="height: 90vh"
+    <cdk-virtual-scroll-viewport style="height: 100%"
                                  *ngIf="(stockState.isFetchStocks | async) === false"
                                  itemSize="30">
       <mat-nav-list>
