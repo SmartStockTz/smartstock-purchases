@@ -1,8 +1,9 @@
 {
   "name": "smartstock-purchases",
-  "version": "0.1.1",
+  "version": "1.0.0",
   "scripts": {
     "ng": "ng",
+    "box": "yarn install && yarn start",
     "start": "ng serve purchases-mock",
     "publish": "ng build -c production purchases && cd dist/purchases && npm publish --ignore-script",
     "build": "ng build",
@@ -24,7 +25,7 @@
     "@angular/platform-browser": "~13.0.3",
     "@angular/platform-browser-dynamic": "~13.0.3",
     "@angular/router": "~13.0.3",
-    "@smartstocktz/core-libs": "^0.5.0",
+    "smartstock-core": "^1.0.1",
     "bfast": "^6.0.0-alpha.17",
     "comlink": "^4.3.1",
     "ngx-infinite-scroll": "^10.0.1",
