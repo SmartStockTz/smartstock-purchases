@@ -1,19 +1,18 @@
-import {Injectable} from '@angular/core';
-import {NavigationService} from '@smartstocktz/core-libs';
+import { Injectable } from "@angular/core";
+import { NavigationService } from "smartstock-core";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root"
 })
 export class PurchaseNavigationService {
-  constructor(private readonly configs: NavigationService) {
-  }
+  constructor(private readonly configs: NavigationService) {}
 
   init(): void {
     this.configs.addMenu({
-      name: 'Purchase',
-      icon: 'receipt',
-      roles: ['admin', 'manager'],
-      link: '/purchase',
+      name: "Purchase",
+      icon: "receipt",
+      roles: ["admin", "manager"],
+      link: "/purchase",
       pages: [
         // {
         //   name: 'receipts & invoices',
@@ -26,6 +25,6 @@ export class PurchaseNavigationService {
   }
 
   selected(): void {
-    this.configs.selectedModuleName = 'Purchase';
+    this.configs.selectedModuleName = "Purchase";
   }
 }
