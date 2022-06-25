@@ -6834,10 +6834,10 @@ smart-buffer@^4.1.0:
   resolved "https://registry.yarnpkg.com/smart-buffer/-/smart-buffer-4.2.0.tgz#6e1d71fa4f18c05f7d0ff216dd16a481d0e8d9ae"
   integrity sha512-94hK0Hh8rPqQl2xXc3HsaBoOXKV20MToPkcXvwbISWLEs+64sBq5kFgn2kJDHb1Pry9yrP0dxrCI9RRci7RXKg==
 
-smartstock-core@1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/smartstock-core/-/smartstock-core-1.0.1.tgz#a9036725e8b6a8a2d7225c6356cd9309ef70ddc6"
-  integrity sha512-MEFGz2eYGnKMnEy1bU2sLAziVmTL8jVGnuXhYExOuvZnAcYmVzsf3zy+gHwKeK8Fv2z6YxWsiMBEfAWe5120Pg==
+smartstock-core@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/smartstock-core/-/smartstock-core-1.0.0.tgz#bfc2a6f4fdba4a9489dae9c62df6f236b0fb0c7b"
+  integrity sha512-1F7Kfrb0zho2blZIlUWF6TK1tVA1NjdX5h0A76x7yAJO0WPRerNTNFc8sDTtZgeARYRSbN8F5TEnkhYV6Xm1Jw==
   dependencies:
     tslib "^2.0.0"
 
