@@ -1,9 +1,9 @@
 import { StockState } from '../states/stock.state';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
+  UntypedFormBuilder,
+  UntypedFormControl,
+  UntypedFormGroup,
   Validators,
 } from '@angular/forms';
 import { SupplierModel } from '../models/supplier.model';
@@ -269,14 +269,14 @@ export class SuppliersComponent implements OnInit {
   suppliersTableColums = ['name', 'email', 'mobile', 'address', 'actions'];
   suppliersArray: SupplierModel[];
   fetchSuppliersFlag = false;
-  nameFormControl = new FormControl();
-  addressFormControl = new FormControl();
-  emailFormControl = new FormControl();
-  mobileFormControl = new FormControl();
+  nameFormControl = new UntypedFormControl();
+  addressFormControl = new UntypedFormControl();
+  emailFormControl = new UntypedFormControl();
+  mobileFormControl = new UntypedFormControl();
 
   constructor(
     private readonly stockState: StockState,
-    private readonly formBuilder: FormBuilder,
+    private readonly formBuilder: UntypedFormBuilder,
     private readonly dialog: MatDialog,
     private readonly snack: MatSnackBar
   ) {}
@@ -563,11 +563,11 @@ export class DialogSupplierDeleteComponent {
   `,
 })
 export class DialogSupplierNewComponent implements OnInit {
-  newSupplierForm: FormGroup;
+  newSupplierForm: UntypedFormGroup;
   createSupplierProgress = false;
 
   constructor(
-    private readonly formBuilder: FormBuilder,
+    private readonly formBuilder: UntypedFormBuilder,
     private readonly snack: MatSnackBar,
     private readonly stockDatabase: StockState,
     public dialogRef: MatDialogRef<DialogSupplierDeleteComponent>

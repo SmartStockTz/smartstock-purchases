@@ -146,6 +146,5 @@
     }},
   "cli": {
     "analytics": "6f8e5b6f-6390-4c0a-9463-e7b060f0b071"
-  },
-  "defaultProject": "purchases"
+  }
 }

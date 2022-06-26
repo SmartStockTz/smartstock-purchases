@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {PurchaseState} from '../states/purchase.state';
 import {PurchaseModel} from '../models/purchase.model';
 
@@ -44,12 +44,12 @@ import {PurchaseModel} from '../models/purchase.model';
 })
 
 export class AddPurchasePaymentFormComponent implements OnInit {
-  purchasePaymentForm: FormGroup;
+  purchasePaymentForm: UntypedFormGroup;
   @Input() purchase: PurchaseModel;
   @Output() done = new EventEmitter();
 
   constructor(public readonly purchaseState: PurchaseState,
-              private readonly formBuilder: FormBuilder) {
+              private readonly formBuilder: UntypedFormBuilder) {
   }
 
   ngOnInit(): void {
