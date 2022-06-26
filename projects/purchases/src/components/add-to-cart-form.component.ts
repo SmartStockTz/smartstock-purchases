@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {StockModel} from '../models/stock.model';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {CartState} from '../states/cart.state';
 import {PurchaseItemModel} from '../models/purchase-item.model';
 import {StockState} from '../states/stock.state';
@@ -69,13 +69,13 @@ import {StockState} from '../states/stock.state';
 })
 
 export class AddToCartFormComponent implements OnInit {
-  addToCartForm: FormGroup;
+  addToCartForm: UntypedFormGroup;
   @Input() product: StockModel;
   @Output() done = new EventEmitter();
 
   constructor(private readonly cartState: CartState,
               private readonly stockState: StockState,
-              private readonly formBuilder: FormBuilder) {
+              private readonly formBuilder: UntypedFormBuilder) {
   }
 
   ngOnInit(): void {
